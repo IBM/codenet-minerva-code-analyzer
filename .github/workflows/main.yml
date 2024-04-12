@@ -29,8 +29,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean fatJar
 
-      - name: Publish Jar to GitHub Packages
-        uses: actions/upload-artifact@v4
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: codeanalyzer.jar
-          path: build/libs/*.jar
+          files: build/libs/codeanalyzer.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
