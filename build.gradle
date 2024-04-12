@@ -1,0 +1,203 @@
+/*
+Copyright IBM Corporation 2023, 2024
+
+Licensed under the Apache Public License 2.0, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+plugins {
+    // Apply the application plugin to add support for building a CLI application in Java.
+    id 'eclipse'
+    id 'application'
+    id 'org.graalvm.buildtools.native' version '0.9.28'
+}
+
+version = 'latest'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+if (project.hasProperty('mainClass')) {
+    mainClassName = project.getProperty('mainClass')
+} else {
+    // use a default
+    mainClassName =("com.ibm.northstar.CodeAnalyzer")
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs= ["src/test/resources"]
+        }
+    }
+}
+
+// Remove that nagging bin folder vscode seems to generate every single time
+clean.doFirst {
+    delete "${rootDir}/bin"
+}
+
+dependencies {
+    // PICOCLI for handling commandline interface
+    implementation 'info.picocli:picocli:4.1.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.1.0'
+
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    implementation 'commons-io:commons-io:2.8.0'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
+    def walaVersion = '1.6.3'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation "com.ibm.wala:com.ibm.wala.shrike:${walaVersion}"
+    implementation "com.ibm.wala:com.ibm.wala.util:${walaVersion}"
+    implementation "com.ibm.wala:com.ibm.wala.core:${walaVersion}"
+    implementation "com.ibm.wala:com.ibm.wala.cast:${walaVersion}"
+    implementation "com.ibm.wala:com.ibm.wala.cast.java:${walaVersion}"
+    implementation "com.ibm.wala:com.ibm.wala.cast.java.ecj:${walaVersion}"
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    implementation 'com.google.guava:guava:33.0.0-jre'
+
+    implementation("commons-io:commons-io:2.15.1")
+    implementation("org.ow2.asm:asm:9.6")
+    implementation("org.eclipse.jdt:org.eclipse.jdt.core:3.21.0")
+    implementation("org.eclipse.platform:org.eclipse.core.commands:3.9.700")
+    implementation("org.eclipse.platform:org.eclipse.core.contenttype:3.7.1000")
+    implementation("org.eclipse.platform:org.eclipse.core.expressions:3.7.100")
+    implementation("org.eclipse.platform:org.eclipse.core.filesystem:1.9.0")
+    implementation("org.eclipse.platform:org.eclipse.core.jobs:3.11.0")
+    implementation('org.eclipse.platform:org.eclipse.core.resources:3.20.0')
+    implementation("org.eclipse.platform:org.eclipse.core.runtime:3.17.100")
+    implementation("org.eclipse.platform:org.eclipse.equinox.app:1.5.100")
+    implementation("org.eclipse.platform:org.eclipse.equinox.common:3.14.100")
+    implementation("org.eclipse.platform:org.eclipse.equinox.preferences:3.8.200")
+    implementation("org.eclipse.platform:org.eclipse.equinox.registry:3.10.200")
+    implementation("org.eclipse.platform:org.eclipse.osgi:3.16.300")
+    implementation("org.eclipse.platform:org.eclipse.text:3.11.0")
+
+    implementation('org.json:json:20231013')
+    implementation('com.google.code.gson:gson:2.10.1')
+    implementation('org.jgrapht:jgrapht-core:1.5.2')
+    implementation('org.jgrapht:jgrapht-io:1.5.2')
+    implementation('org.jgrapht:jgrapht-ext:1.5.2')
+    implementation('com.github.javaparser:javaparser-symbol-solver-core:3.25.9')
+
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+}
+
+task fatjar(type: Jar) {
+    archiveBaseName = 'codeanalyzer'
+    archiveFileName = 'codeanalyzer.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes  'Implementation-Title': 'Northstar Codeanalyzer',
+                    'Implementation-Version': archiveVersion,
+                    'Main-Class': 'com.ibm.northstar.CodeAnalyzer'
+    }
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+run {
+    if (project.hasProperty('args')) {
+        args = project.args.split(',')
+    }
+}
+
+graalvmNative {
+    binaries {
+        main {
+            imageName = "codeanalyzer"
+            mainClass = "com.ibm.northstar.CodeAnalyzer"
+            buildArgs.add("-Ob")
+            buildArgs.add("-march=compatibility")
+            buildArgs.add("--no-fallback")
+            buildArgs.add("--no-server")
+            buildArgs.add("-H:ReflectionConfigurationFiles=$projectDir/src/main/resources/META-INF/native-image-config/reflect-config.json")
+            buildArgs.add("-H:ResourceConfigurationFiles=$projectDir/src/main/resources/META-INF/native-image-config/resource-config.json")
+            buildArgs.add("-H:JNIConfigurationFiles=$projectDir/src/main/resources/META-INF/native-image-config/jni-config.json")
+            buildArgs.add("-H:DynamicProxyConfigurationFiles=$projectDir/src/main/resources/META-INF/native-image-config/proxy-config.json")
+        }
+        test {
+            buildArgs.add("-O0")
+        }
+    }
+    binaries.configureEach {
+        buildArgs.add("--verbose")
+    }
+}
+
+// Define a property for the output directory
+def binDir = project.hasProperty('binDir') ? project.property('binDir') : "$projectDir/artifacts/bin"
+
+
+// Task to copy the native executable to the specified directory
+task copyNativeExecutable(type: Copy) {
+    dependsOn nativeCompile // Ensure this runs after the native image is built
+
+    from "${buildDir}/native/nativeCompile/codeanalyzer"
+    into binDir
+
+    fileMode = 0755
+}
+
+task createRelease {
+    doLast {
+        def releaseTitle = 'latest'
+        def hostName = 'git@github.ibm.com'
+        def repo = 'northstar/codeanalyzer'
+
+        // Command to create release
+        def delete = "gh release delete latest --cleanup-tag --yes -R ${hostName}:${repo}"//
+        // Execute command
+        def proc = delete.execute()
+        proc.in.eachLine { line -> println line } // Print output
+        proc.err.eachLine { line -> println "Error: $line" } // Print error
+        proc.waitFor() // Wait for process to complete
+        def command = "gh release create latest $projectDir/build/libs/codeanalyzer.jar -t ${releaseTitle} -R ${hostName}:${repo}"
+        try {
+            def release = command.execute()
+            release.in.eachLine { line -> println line } // Print output
+            release.err.eachLine { line -> println "Error: $line" } // Print error
+            release.waitFor() // Wait for process to complete
+        } catch (Exception e) {
+            throw new GradleException("Error executing gh command: ${e.message}")
+        }
+    }
+
+}
+
+nativeCompile.finalizedBy copyNativeExecutable
