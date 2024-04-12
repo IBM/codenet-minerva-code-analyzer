@@ -1,0 +1,45 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    
+    env:
+      JAVA_HOME: ${{ github.workspace }}/graalvm-community-openjdk-17.0.9+9.1
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 from GraalVM
+        run: |
+          echo "${{ env.JAVA_HOME }}/bin" >> $GITHUB_PATH
+          wget https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
+          tar -xvzf graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
+          ${{ env.JAVA_HOME }}/bin/gu install native-image
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean fatJar
+
+      - name: Determine new tag
+        id: newtag
+        run: echo "::set-output name=tag::$(date +'%Y%m%dT%H%M%S')"
+
+      - name: Create Git Tag
+        run: git tag ${{ steps.newtag.outputs.tag }} && git push origin ${{ steps.newtag.outputs.tag }}
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/libs/codeanalyzer.jar
+          tag_name: ${{ steps.newtag.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
