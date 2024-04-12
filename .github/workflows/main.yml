@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Install tar (if necessary)
-        run: sudo apt-get update && sudo apt-get install -y tar
+        run: apt-get update && apt-get install -y tar
 
       - name: Check out code
         uses: actions/checkout@v2
