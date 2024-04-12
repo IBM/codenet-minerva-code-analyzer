@@ -14,11 +14,8 @@ jobs:
       PATH: ${{ github.workspace }}/graalvm-community-openjdk-17.0.9+9.1/bin:$PATH
 
     steps:
-      - name: Install tar (if necessary)
-        run: apt-get update && apt-get install -y tar
-
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17 from GraalVM
         run: |
@@ -34,7 +31,7 @@ jobs:
         run: ./gradlew clean fatJar nativeCompile
 
       - name: Publish Jar to GitHub Packages
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: codeanalyzer.jar
           path: build/libs/*.jar
@@ -52,7 +49,7 @@ jobs:
           prerelease: false
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
