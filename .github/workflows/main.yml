@@ -27,33 +27,10 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean fatJar nativeCompile
+        run: ./gradlew clean fatJar
 
       - name: Publish Jar to GitHub Packages
         uses: actions/upload-artifact@v4
         with:
           name: codeanalyzer.jar
           path: build/libs/*.jar
-
-      # If you want to create a release instead of uploading to GitHub Packages
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/codeanalyzer.jar
-          asset_name: codeanalyzer.jar
-          asset_content_type: application/java-archive
-
