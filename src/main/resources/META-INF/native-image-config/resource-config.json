@@ -1,0 +1,7 @@
+{
+  "resources":{
+  "includes":[{
+    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt67b/nfkc.nrm\\E"
+  }]},
+  "bundles":[]
+}
