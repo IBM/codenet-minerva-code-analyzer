@@ -21,7 +21,6 @@ jobs:
           echo "${{ env.JAVA_HOME }}/bin" >> $GITHUB_PATH
           wget https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
           tar -xvzf graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
-          mv graalvm-community-openjdk-17.0.9+9.1 ${{ github.workspace }}
           gu install native-image
 
       - name: Make gradlew executable
