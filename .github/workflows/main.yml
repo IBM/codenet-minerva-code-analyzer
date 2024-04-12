@@ -29,6 +29,13 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean fatJar
 
+      - name: Determine new tag
+        id: newtag
+        run: echo "::set-output name=tag::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Create Git Tag
+        run: git tag ${{ steps.newtag.outputs.tag }} && git push origin ${{ steps.newtag.outputs.tag }}
+
       - name: Publish Release
         uses: softprops/action-gh-release@v1
         with:
