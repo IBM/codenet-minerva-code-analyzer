@@ -1,0 +1,60 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    
+    env:
+      JAVA_HOME: ${{ github.workspace }}/graalvm-community-openjdk-17.0.9+9.1
+      PATH: ${{ github.workspace }}/graalvm-community-openjdk-17.0.9+9.1/bin:$PATH
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17 from GraalVM
+        run: |
+          wget https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
+          tar -xvzf graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
+          mv graalvm-community-openjdk-17.0.9+9.1 ${{ github.workspace }}
+          gu install native-image
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean fatJar nativeCompile
+
+      - name: Publish Jar to GitHub Packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: codeanalyzer.jar
+          path: build/libs/*.jar
+
+      # If you want to create a release instead of uploading to GitHub Packages
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/libs/codeanalyzer.jar
+          asset_name: codeanalyzer.jar
+          asset_content_type: application/java-archive
+
