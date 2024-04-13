@@ -127,7 +127,21 @@ task fatjar(type: Jar) {
                     'Implementation-Version': archiveVersion,
                     'Main-Class': 'com.ibm.northstar.CodeAnalyzer'
     }
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    // Collect and include files from compile classpath, excluding signature-related files
+    from (configurations.runtimeClasspath) {
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/MANIFEST.MF'
+        // Use zipTree to process JAR files
+        eachFile { details ->
+            if (details.file.isFile() && details.name.endsWith('.jar')) {
+                zipTree(details.file)
+            } else {
+                details.file
+            }
+        }
+    }
     with jar
 }
 
