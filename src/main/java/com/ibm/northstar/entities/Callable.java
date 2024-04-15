@@ -9,6 +9,7 @@ public class Callable {
     private String comment;
     private List<String> annotations;
     private List<String> modifiers;
+    private List<String> thrownExceptions;
     private String declaration;
     private List<ParameterInCallable> parameters;
     private String code;
