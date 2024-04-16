@@ -3,6 +3,7 @@ package com.ibm.northstar;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
@@ -10,6 +11,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -222,7 +224,6 @@ public class SymbolTable {
         return enumConstant;
     }
 
-
     /**
      * Process parameter declarations on callables.
      *
@@ -259,6 +260,13 @@ public class SymbolTable {
 
         // add method or constructor modifiers
         callableNode.setModifiers((List<String>) callableDecl.getModifiers().stream().map(mod -> mod.toString().strip()).collect(Collectors.toList()));
+
+        // add exceptions declared in "throws" clause
+        callableNode.setThrownExceptions(
+            ((NodeList<ReferenceType>)callableDecl.getThrownExceptions())
+            .stream()
+            .map(SymbolTable::resolveType)
+            .collect(Collectors.toList()));
 
         // add the complete declaration string, including modifiers, throws, and
         // parameter names
@@ -427,8 +435,8 @@ public class SymbolTable {
             if (resolvedType.isReferenceType() || resolvedType.isUnionType()) {
                 return resolvedType.describe();
             }
-        } catch (UnsolvedSymbolException use) {
-            Log.warn("Could not resolve expression: "+expression+"\n"+use.getMessage());
+        } catch (UnsolvedSymbolException | IllegalStateException exception) {
+            Log.warn("Could not resolve expression: "+expression+"\n"+exception.getMessage());
         }
         return "";
     }
