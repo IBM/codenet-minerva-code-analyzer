@@ -252,6 +252,9 @@ public class SymbolTable {
                                                                      List<String> classFields, String typeName) {
         Callable callableNode = new Callable();
 
+        // add callable signature
+        callableNode.setSignature(callableDecl.getSignature().asString());
+
         // add comment associated with method/constructor
         callableNode.setComment(callableDecl.getComment().isPresent() ? callableDecl.getComment().get().asString() : "");
 
@@ -435,7 +438,7 @@ public class SymbolTable {
             if (resolvedType.isReferenceType() || resolvedType.isUnionType()) {
                 return resolvedType.describe();
             }
-        } catch (UnsolvedSymbolException | IllegalStateException exception) {
+        } catch (RuntimeException exception) {
             Log.warn("Could not resolve expression: "+expression+"\n"+exception.getMessage());
         }
         return "";
