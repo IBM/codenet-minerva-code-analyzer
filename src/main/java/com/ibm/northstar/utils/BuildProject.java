@@ -85,14 +85,25 @@ public class BuildProject {
         return buildWithTool(gradleCommand);
     }
 
-    private static boolean buildProject(String projectPath) {
+    private static boolean buildProject(String projectPath, String build) {
         File pomFile = new File(projectPath, "pom.xml");
-        if (pomFile.exists()) {
-            Log.info("Found pom.xml in the project directory. Using Maven to build the project.");
-            return mavenBuild(projectPath); // Use Maven if pom.xml exists
-        } else {
-            Log.info("Did not find a pom.xml in the project directory. Using Gradle to build the project.");
-            return gradleBuild(projectPath); // Otherwise, use Gradle
+        if (build ==null) {
+            return true;
+        } else if (build.equals("auto")) {
+            if (pomFile.exists()) {
+                Log.info("Found pom.xml in the project directory. Using Maven to build the project.");
+                return mavenBuild(projectPath); // Use Maven if pom.xml exists
+            } else {
+                Log.info("Did not find a pom.xml in the project directory. Using Gradle to build the project.");
+                return gradleBuild(projectPath); // Otherwise, use Gradle
+            }
+        }
+        else {
+            // Update command with a project path
+            build = build.replace("mvn", "mvn -f " + projectPath);
+            Log.info("Using custom build command: " + build);
+            String[] customBuildCommand = build.split(" ");
+            return buildWithTool(customBuildCommand);
         }
     }
 
@@ -102,8 +113,8 @@ public class BuildProject {
      * @param projectPath is the path to the project to be streamed.
      * @return true if the streaming was successful, false otherwise.
      */
-    public static List<Path> buildProjectAndStreamClassFiles(String projectPath) throws IOException {
-        return buildProject(projectPath) ? classFilesStream(projectPath) : null;
+    public static List<Path> buildProjectAndStreamClassFiles(String projectPath, String build) throws IOException {
+        return buildProject(projectPath, build) ? classFilesStream(projectPath) : null;
     }
 
     /**
