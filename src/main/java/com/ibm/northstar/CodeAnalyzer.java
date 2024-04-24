@@ -46,6 +46,12 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"-i", "--input"}, required = true, description = "Path to the project root directory.")
     private static String input;
 
+    @Option(names = {"-b", "--build-cmd"}, description = "Custom build command. Defaults to auto build.")
+    private static String build;
+
+    @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
+    private static boolean noBuild = false;
+
     @Option(names = {"-a", "--analysis-level"}, description = "[Optional] Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for full analysis including the system depenedency graph). Default: 1")
     private static int analysisLevel = 1;
 
@@ -114,7 +120,11 @@ public class CodeAnalyzer implements Runnable {
         combinedJsonObject.add("symbol_table", symbolTableJSON);
         if (analysisLevel > 1) {
             // Save SDG, IPCFG, and Call graph as JSON
-            String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, analyzeSource);
+            // If noBuild is not true, and build is also not provided, we will use "auto" as the build command
+            build = build == null ? "auto" : build;
+            // Is noBuild is true, we will not build the project
+            build = noBuild ? null : build;
+            String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, build);
             JsonElement sdgAsJSONElement = gson.fromJson(sdgAsJSONString, JsonElement.class);
             JsonObject sdgAsJSONObject = sdgAsJSONElement.getAsJsonObject();
 

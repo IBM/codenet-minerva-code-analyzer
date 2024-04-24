@@ -195,7 +195,7 @@ public class SystemDependencyGraph {
      *
      * @param input        the input
      * @param dependencies the dependencies
-     * @param experimental the experimental
+     * @param build The build options
      * @return A List of triples containing the source, destination, and edge type
      * @throws IOException                     the io exception
      * @throws ClassHierarchyException         the class hierarchy exception
@@ -204,16 +204,11 @@ public class SystemDependencyGraph {
      *                                         exception
      */
     public static String construct(
-            String input, String dependencies, boolean experimental)
+            String input, String dependencies, String build)
             throws IOException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException {
 
         // Initialize scope
-        AnalysisScope scope;
-        if (dependencies == null) {
-            scope = ScopeUtils.createScope(input, experimental);
-        } else {
-            scope = ScopeUtils.createScope(input, dependencies, experimental);
-        }
+        AnalysisScope scope = ScopeUtils.createScope(input, dependencies, build);
         IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope,
                 new ECJClassLoaderFactory(scope.getExclusions()));
         Log.done("There were a total of " + cha.getNumberOfClasses() + " classes of which "

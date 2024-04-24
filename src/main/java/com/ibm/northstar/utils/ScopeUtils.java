@@ -52,11 +52,6 @@ public class ScopeUtils {
    * @return scope The created analysis scope
    * @throws IOException the io exception
    */
-  public static AnalysisScope createScope(String projectPath, boolean experimental)
-      throws IOException {
-    return createScope(projectPath, null, experimental);
-  }
-
   /**
    * Create an analysis scope base on the input
    *
@@ -65,7 +60,7 @@ public class ScopeUtils {
    * @return scope The created analysis scope
    * @throws IOException the io exception
    */
-  public static AnalysisScope createScope(String projectPath, String applicationDeps, boolean experimental)
+  public static AnalysisScope createScope(String projectPath, String applicationDeps, String build)
       throws IOException {
     Log.info("Create analysis scope.");
     AnalysisScope scope = new JavaSourceAnalysisScope();
@@ -106,7 +101,7 @@ public class ScopeUtils {
     Path workDir = Paths.get(tmpDirString);
     FileUtils.cleanDirectory(workDir.toFile());
 
-    List<Path> applicationClassFiles = BuildProject.buildProjectAndStreamClassFiles(projectPath);
+    List<Path> applicationClassFiles = BuildProject.buildProjectAndStreamClassFiles(projectPath, build);
     Log.debug("Application class files: " + String.valueOf(applicationClassFiles.size()));
     if (applicationClassFiles == null) {
       Log.error("No application classes found.");
