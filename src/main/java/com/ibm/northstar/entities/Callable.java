@@ -22,4 +22,5 @@ public class Callable {
     private List<String> referencedTypes;
     private List<String> accessedFields;
     private List<String> calledMethodDeclaringTypes;
+    private List<CallSite> callSites;
 }

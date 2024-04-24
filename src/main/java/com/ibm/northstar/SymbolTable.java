@@ -300,6 +300,7 @@ public class SymbolTable {
 
         callableNode.setCalledMethodDeclaringTypes(getCalledMethodDeclaringTypes(body));
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
+        callableNode.setCallSites(getCallSites(body));
 
         String callableSignature = (callableDecl instanceof MethodDeclaration) ? callableDecl.getSignature().asString() : callableDecl.getSignature().asString().replace(callableDecl.getSignature().getName(), "<init>");
         return Pair.of(callableSignature, callableNode);
@@ -423,6 +424,53 @@ public class SymbolTable {
             .forEach(calledMethodDeclaringTypes::add)
         );
         return new ArrayList<>(calledMethodDeclaringTypes);
+    }
+
+    /**
+     * Returns information about call sites in the given callable. The information includes:
+     * the method name, the declaring type name, and types of arguments used in method call.
+     *
+     * @param callableBody callable to compute call-site information for
+     * @return list of call sites
+     */
+    private static List<CallSite> getCallSites(Optional<BlockStmt> callableBody) {
+        List<CallSite> callSites = new ArrayList<>();
+        if (callableBody.isEmpty()) {
+            return callSites;
+        }
+        for (MethodCallExpr methodCallExpr : callableBody.get().findAll(MethodCallExpr.class)) {
+            // resolve declaring type for called method
+            String declaringType = "";
+            if (methodCallExpr.getScope().isPresent()) {
+                declaringType = resolveExpression(methodCallExpr.getScope().get());
+                if (declaringType.contains(" | ")) {
+                    declaringType = declaringType.split(" \\| ")[0];
+                }
+            }
+
+            // resolve arguments of the method call to types
+            List<String> arguments = methodCallExpr.getArguments().stream()
+                .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
+
+            // add a new call site object
+            CallSite callSite = new CallSite();
+            callSite.setMethodName(methodCallExpr.getNameAsString());
+            callSite.setDeclaringType(declaringType);
+            callSite.setArgumentTypes(arguments);
+            if (methodCallExpr.getRange().isPresent()) {
+                callSite.setStartLine(methodCallExpr.getRange().get().begin.line);
+                callSite.setStartColumn(methodCallExpr.getRange().get().begin.column);
+                callSite.setEndLine(methodCallExpr.getRange().get().end.line);
+                callSite.setEndColumn(methodCallExpr.getRange().get().end.column);
+            } else {
+                callSite.setStartLine(-1);
+                callSite.setStartColumn(-1);
+                callSite.setEndLine(-1);
+                callSite.setEndColumn(-1);
+            }
+            callSites.add(callSite);
+        }
+        return callSites;
     }
 
     /**
