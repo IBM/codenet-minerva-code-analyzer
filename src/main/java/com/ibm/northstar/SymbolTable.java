@@ -301,6 +301,7 @@ public class SymbolTable {
         callableNode.setCalledMethodDeclaringTypes(getCalledMethodDeclaringTypes(body));
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
         callableNode.setCallSites(getCallSites(body));
+        callableNode.setVariableDeclarations(getVariableDeclarations(body));
 
         String callableSignature = (callableDecl instanceof MethodDeclaration) ? callableDecl.getSignature().asString() : callableDecl.getSignature().asString().replace(callableDecl.getSignature().getName(), "<init>");
         return Pair.of(callableSignature, callableNode);
@@ -359,7 +360,41 @@ public class SymbolTable {
     }
 
     /**
-     * Computes and returns the list if fields accessed in the given callable body. The returned values contain
+     * Returns information about variable declarations in the given callable. The information includes
+     * var name, var type, var initializer, and position.
+     *
+     * @param blockStmt Callable to compute var declaration information for
+     * @return list of variable declarations
+     */
+    private static List<VariableDeclaration> getVariableDeclarations(Optional<BlockStmt> blockStmt) {
+        List<VariableDeclaration> varDeclarations = new ArrayList<>();
+        if (blockStmt.isEmpty()) {
+            return varDeclarations;
+        }
+        for (VariableDeclarator declarator : blockStmt.get().findAll(VariableDeclarator.class)) {
+            VariableDeclaration varDeclaration = new VariableDeclaration();
+            varDeclaration.setName(declarator.getNameAsString());
+            varDeclaration.setType(resolveType(declarator.getType()));
+            varDeclaration.setInitializer(declarator.getInitializer().isPresent() ?
+                declarator.getInitializer().get().toString() : "");
+            if (declarator.getRange().isPresent()) {
+                varDeclaration.setStartLine(declarator.getRange().get().begin.line);
+                varDeclaration.setStartColumn(declarator.getRange().get().begin.column);
+                varDeclaration.setEndLine(declarator.getRange().get().end.line);
+                varDeclaration.setEndColumn(declarator.getRange().get().end.column);
+            } else {
+                varDeclaration.setStartLine(-1);
+                varDeclaration.setStartColumn(-1);
+                varDeclaration.setEndLine(-1);
+                varDeclaration.setEndColumn(-1);
+            }
+            varDeclarations.add(varDeclaration);
+        }
+        return varDeclarations;
+    }
+
+    /**
+     * Computes and returns the list of fields accessed in the given callable body. The returned values contain
      * field names qualified by names of the declaring types.
      *
      * @param callableBody Callable body to compute accessed fields for
