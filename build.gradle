@@ -118,16 +118,23 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
-task fatjar(type: Jar) {
+task fatJar(type: Jar) {
     archiveBaseName = 'codeanalyzer'
     archiveFileName = 'codeanalyzer.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes  'Implementation-Title': 'Northstar Codeanalyzer',
-                    'Implementation-Version': archiveVersion,
-                    'Main-Class': 'com.ibm.northstar.CodeAnalyzer'
+        attributes(
+                'Implementation-Title': 'Northstar Codeanalyzer',
+                'Implementation-Version': project.version,
+                'Main-Class': 'com.ibm.northstar.CodeAnalyzer'
+        )
     }
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+
+    // Collect and include runtime classpath dependencies, excluding signature files
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     with jar
 }
 
