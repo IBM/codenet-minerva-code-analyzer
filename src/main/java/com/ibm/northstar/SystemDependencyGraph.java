@@ -227,21 +227,6 @@ public class SystemDependencyGraph {
         IAnalysisCacheView cache = new AnalysisCacheImpl(AstIRFactory.makeDefaultFactory(),
                 options.getSSAOptions());
 
-        // set cyclomatic complexity for callables in the symbol table
-        int numClasses = cha.getNumberOfClasses();
-        for (Iterator<IClass> classIter = cha.iterator(); classIter.hasNext(); ) {
-            IClass cls = classIter.next();
-            for (IMethod method: cls.getAllMethods()) {
-                Callable callable = getCallableFromSymbolTable(method).getRight();
-                if (callable != null) {
-                    IR ir = cache.getIR(method);
-                    if (ir != null) {
-                        callable.setCyclomaticComplexity(getCyclomaticComplexity(ir));
-                    }
-                }
-            }
-        }
-
         // Build call graph
         Log.info("Building call graph.");
 
@@ -263,6 +248,14 @@ public class SystemDependencyGraph {
 
         Log.done("Finished construction of call graph. Took "
                 + Math.ceil((double) (System.currentTimeMillis() - start_time) / 1000) + " seconds.");
+
+        // set cyclomatic complexity for callables in the symbol table
+        callGraph.forEach(cgNode -> {
+            Callable callable = getCallableFromSymbolTable(cgNode.getMethod()).getRight();
+            if (callable != null) {
+                callable.setCyclomaticComplexity(getCyclomaticComplexity(cgNode.getIR()));
+            }
+        });
 
         // Build SDG graph
         Log.info("Building System Dependency Graph.");
