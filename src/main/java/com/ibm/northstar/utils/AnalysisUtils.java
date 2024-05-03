@@ -22,6 +22,8 @@ import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
+import com.ibm.wala.ssa.IR;
+import com.ibm.wala.ssa.SSAConditionalBranchInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
 
 import java.util.*;
@@ -75,6 +77,19 @@ public class AnalysisUtils {
         declaredMethodsAndConstructors.put(declaringClassSignature, methodSignature, newCallable);
 
         return Pair.of(declaringClassSignature, newCallable);
+    }
+
+    /**
+     * Computes and returns cyclomatic complexity for the given IR (for a method or constructor).
+     *
+     * @param ir IR for method or constructor
+     * @return int Cyclomatic complexity for method/constructor
+     */
+    public static int getCyclomaticComplexity(IR ir) {
+        int branchCount = (int)Arrays.stream(ir.getInstructions())
+            .filter(inst -> inst instanceof SSAConditionalBranchInstruction)
+            .count();
+        return branchCount + 1;
     }
 
     public static Pair<String, Callable> getCallableFromSymbolTable(IMethod method) {

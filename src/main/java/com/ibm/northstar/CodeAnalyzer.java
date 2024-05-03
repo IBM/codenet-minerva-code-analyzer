@@ -112,12 +112,7 @@ public class CodeAnalyzer implements Runnable {
             gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
         }
 
-        // Convert the JavaCompilationUnit to JSON
-        String symbolTableJSONString = gson.toJson(symbolTable);
-        JsonElement symbolTableJSON = gson.fromJson(symbolTableJSONString, JsonElement.class);
-
         JsonObject combinedJsonObject = new JsonObject();
-        combinedJsonObject.add("symbol_table", symbolTableJSON);
         if (analysisLevel > 1) {
             // Save SDG, IPCFG, and Call graph as JSON
             // If noBuild is not true, and build is also not provided, we will use "auto" as the build command
@@ -138,6 +133,12 @@ public class CodeAnalyzer implements Runnable {
              combinedJsonObject.add("system_dependency_graph", edges);
 
         }
+
+        // Convert the JavaCompilationUnit to JSON and add to consolidated json object
+        String symbolTableJSONString = gson.toJson(symbolTable);
+        JsonElement symbolTableJSON = gson.fromJson(symbolTableJSONString, JsonElement.class);
+        combinedJsonObject.add("symbol_table", symbolTableJSON);
+
         String consolidatedJSONString = gson.toJson(combinedJsonObject);
         emit(consolidatedJSONString);
     }

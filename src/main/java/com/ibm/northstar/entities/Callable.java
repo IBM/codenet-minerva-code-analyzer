@@ -24,4 +24,5 @@ public class Callable {
     private List<String> calledMethodDeclaringTypes;
     private List<CallSite> callSites;
     private List<VariableDeclaration> variableDeclarations;
+    private int cyclomaticComplexity;
 }

@@ -13,14 +13,18 @@ limitations under the License.
 
 package com.ibm.northstar;
 
+import com.ibm.northstar.entities.AbstractGraphEdge;
+import com.ibm.northstar.entities.CallEdge;
+import com.ibm.northstar.entities.Callable;
+import com.ibm.northstar.entities.SystemDepEdge;
 import com.ibm.northstar.utils.AnalysisUtils;
 import com.ibm.northstar.utils.Log;
-import com.ibm.northstar.entities.*;
 import com.ibm.northstar.utils.ScopeUtils;
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
-import com.ibm.wala.cast.java.client.impl.ZeroCFABuilderFactory;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.CallSiteReference;
+import com.ibm.wala.classLoader.IClass;
+import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.impl.Util;
@@ -51,8 +55,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import static com.ibm.northstar.CodeAnalyzer.gson;
-import static com.ibm.northstar.utils.AnalysisUtils.getCallableFromSymbolTable;
-import static com.ibm.northstar.utils.AnalysisUtils.createAndPutNewCallableInSymbolTable;
+import static com.ibm.northstar.utils.AnalysisUtils.*;
 
 /**
  * The type Sdg 2 json.
@@ -222,6 +225,18 @@ public class SystemDependencyGraph {
         options.setReflectionOptions(ReflectionOptions.NONE);
         IAnalysisCacheView cache = new AnalysisCacheImpl(AstIRFactory.makeDefaultFactory(),
                 options.getSSAOptions());
+
+        // set cyclomatic complexity for callables in the symbol table
+        int numClasses = cha.getNumberOfClasses();
+        for (Iterator<IClass> classIter = cha.iterator(); classIter.hasNext(); ) {
+            IClass cls = classIter.next();
+            for (IMethod method: cls.getAllMethods()) {
+                Callable callable = getCallableFromSymbolTable(method).getRight();
+                if (callable != null) {
+                    callable.setCyclomaticComplexity(getCyclomaticComplexity(cache.getIR(method)));
+                }
+            }
+        }
 
         // Build call graph
         Log.info("Building call graph.");
