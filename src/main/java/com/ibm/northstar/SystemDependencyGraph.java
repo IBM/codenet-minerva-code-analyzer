@@ -37,6 +37,7 @@ import com.ibm.wala.ipa.slicer.MethodEntryStatement;
 import com.ibm.wala.ipa.slicer.SDG;
 import com.ibm.wala.ipa.slicer.Slicer;
 import com.ibm.wala.ipa.slicer.Statement;
+import com.ibm.wala.ssa.IR;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.util.graph.Graph;
@@ -233,7 +234,10 @@ public class SystemDependencyGraph {
             for (IMethod method: cls.getAllMethods()) {
                 Callable callable = getCallableFromSymbolTable(method).getRight();
                 if (callable != null) {
-                    callable.setCyclomaticComplexity(getCyclomaticComplexity(cache.getIR(method)));
+                    IR ir = cache.getIR(method);
+                    if (ir != null) {
+                        callable.setCyclomaticComplexity(getCyclomaticComplexity(ir));
+                    }
                 }
             }
         }
