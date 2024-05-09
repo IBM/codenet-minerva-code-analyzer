@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      JAVA_HOME: ${{ github.workspace }}/graalvm-community-openjdk-17.0.9+9.1
+      JAVA_HOME: ${{ github.workspace }}/graalvm-ce-java11-linux-aarch64-22.3.3
 
     steps:
       - name: Check out code
@@ -21,11 +21,11 @@ jobs:
         with: 
             persist-credentials: true
 
-      - name: Set up JDK 17 from GraalVM
+      - name: Set up JDK 11 from GraalVM
         run: |
           echo "${{ env.JAVA_HOME }}/bin" >> $GITHUB_PATH
-          wget https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-17.0.9/graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
-          tar -xvzf graalvm-community-jdk-17.0.9_linux-x64_bin.tar.gz
+          wget https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.3/graalvm-ce-java11-linux-aarch64-22.3.3.tar.gz
+          tar -xvzf graalvm-ce-java11-linux-aarch64-22.3.3.tar.gz
           ${{ env.JAVA_HOME }}/bin/gu install native-image
 
       - name: Make gradlew executable
