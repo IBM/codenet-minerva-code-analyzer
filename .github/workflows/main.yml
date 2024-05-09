@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      JAVA_HOME: ${{ github.workspace }}/graalvm-ce-java11-linux-aarch64-22.3.3
+      JAVA_HOME: ${{ github.workspace }}/graalvm-ce-java11-22.3.3
 
     steps:
       - name: Check out code
