@@ -104,58 +104,58 @@ public class SystemDependencyGraph {
         // We'll use forward and backward search on the DFS to identify which CFG nodes
         // are dominant
         // This is a forward DFS search (or exit time first search)
-        int dfsNumber = 0;
-        Map<Statement, Integer> dfsFinish = HashMapFactory.make();
-        Iterator<Statement> search = DFS.iterateFinishTime(sdg, entryPoints.get());
-
-        while (search.hasNext()) {
-            dfsFinish.put(search.next(), dfsNumber++);
-        }
-
-        // This is a reverse DFS search (or entry time first search)
-        int reverseDfsNumber = 0;
-        Map<Statement, Integer> dfsStart = HashMapFactory.make();
-        Iterator<Statement> reverseSearch = DFS.iterateDiscoverTime(sdg, entryPoints.get());
-
-        while (reverseSearch.hasNext()) {
-            dfsStart.put(reverseSearch.next(), reverseDfsNumber++);
-        }
+//        int dfsNumber = 0;
+//        Map<Statement, Integer> dfsFinish = HashMapFactory.make();
+//        Iterator<Statement> search = DFS.iterateFinishTime(sdg, entryPoints.get());
+//
+//        while (search.hasNext()) {
+//            dfsFinish.put(search.next(), dfsNumber++);
+//        }
+//
+//        // This is a reverse DFS search (or entry time first search)
+//        int reverseDfsNumber = 0;
+//        Map<Statement, Integer> dfsStart = HashMapFactory.make();
+//        Iterator<Statement> reverseSearch = DFS.iterateDiscoverTime(sdg, entryPoints.get());
+//
+//        while (reverseSearch.hasNext()) {
+//            dfsStart.put(reverseSearch.next(), reverseDfsNumber++);
+//        }
 
         // Populate graph
-        sdg.stream()
-                .filter(dfsFinish::containsKey)
-                .sorted(Comparator.comparingInt(dfsFinish::get))
-                .forEach(p -> sdg.getSuccNodes(p).forEachRemaining(s -> {
-                    if (dfsFinish.containsKey(s)
-                            && dfsStart.get(p) != null && dfsStart.get(s) != null
-                            && !((dfsStart.get(p) >= dfsStart.get(s))
-                            && (dfsFinish.get(p) <= dfsFinish.get(s)))
-                            && !p.getNode().getMethod().equals(s.getNode().getMethod())) {
-
-                        // Add the source nodes to the graph as vertices
-                        Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getNode().getMethod()));
-                        graph.addVertex(source);
-
-                        // Add the target nodes to the graph as vertices
-                        Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(s.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(s.getNode().getMethod()));
-                        graph.addVertex(target);
-
-
-                        String edgeType = edgeLabels.apply(p, s);
-                        SystemDepEdge graphEdge = new SystemDepEdge(p, s, edgeType);
-                        SystemDepEdge cgEdge = (SystemDepEdge) graph.getEdge(source, target);
-                        if (source.getRight() != null && target.getRight() != null) {
-                            if (cgEdge == null || !cgEdge.equals(graphEdge)) {
-                                graph.addEdge(
-                                        source,
-                                        target,
-                                        graphEdge);
-                            } else {
-                                graphEdge.incrementWeight();
-                            }
-                        }
-                    }
-                }));
+//        sdg.stream()
+//                .filter(dfsFinish::containsKey)
+//                .sorted(Comparator.comparingInt(dfsFinish::get))
+//                .forEach(p -> sdg.getSuccNodes(p).forEachRemaining(s -> {
+//                    if (dfsFinish.containsKey(s)
+//                            && dfsStart.get(p) != null && dfsStart.get(s) != null
+//                            && !((dfsStart.get(p) >= dfsStart.get(s))
+//                            && (dfsFinish.get(p) <= dfsFinish.get(s)))
+//                            && !p.getNode().getMethod().equals(s.getNode().getMethod())) {
+//
+//                        // Add the source nodes to the graph as vertices
+//                        Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getNode().getMethod()));
+//                        graph.addVertex(source);
+//
+//                        // Add the target nodes to the graph as vertices
+//                        Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(s.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(s.getNode().getMethod()));
+//                        graph.addVertex(target);
+//
+//
+//                        String edgeType = edgeLabels.apply(p, s);
+//                        SystemDepEdge graphEdge = new SystemDepEdge(p, s, edgeType);
+//                        SystemDepEdge cgEdge = (SystemDepEdge) graph.getEdge(source, target);
+//                        if (source.getRight() != null && target.getRight() != null) {
+//                            if (cgEdge == null || !cgEdge.equals(graphEdge)) {
+//                                graph.addEdge(
+//                                        source,
+//                                        target,
+//                                        graphEdge);
+//                            } else {
+//                                graphEdge.incrementWeight();
+//                            }
+//                        }
+//                    }
+//                }));
 
         callGraph.getEntrypointNodes()
                 .forEach(p -> {
