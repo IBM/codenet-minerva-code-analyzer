@@ -140,7 +140,6 @@ public class SystemDependencyGraph {
                         Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(s.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(s.getNode().getMethod()));
                         graph.addVertex(target);
 
-
                         String edgeType = edgeLabels.apply(p, s);
                         SystemDepEdge graphEdge = new SystemDepEdge(p, s, edgeType);
                         SystemDepEdge cgEdge = (SystemDepEdge) graph.getEdge(source, target);

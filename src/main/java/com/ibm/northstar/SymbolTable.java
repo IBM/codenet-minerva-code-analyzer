@@ -1,6 +1,8 @@
 package com.ibm.northstar;
 
+import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
@@ -16,6 +18,8 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
@@ -90,7 +94,7 @@ public class SymbolTable {
     private static JavaCompilationUnit processCompilationUnit(CompilationUnit parseResult) {
         JavaCompilationUnit cUnit = new JavaCompilationUnit();
 
-        cUnit.setFilePath(parseResult.getStorage().get().getFileName());
+        cUnit.setFilePath(parseResult.getStorage().map(s -> s.getPath().toString()).orElse("<in-memory>"));
 
         // Add the comment field to the compilation unit
         cUnit.setComment(parseResult.getComment().isPresent() ? parseResult.getComment().get().asString() : "");
@@ -569,6 +573,29 @@ public class SymbolTable {
                     parseProblems.put(sourceRoot.getRoot().toString(), parseResult.getProblems());
                 }
             }
+        }
+        return Pair.of(symbolTable, parseProblems);
+    }
+
+    public static Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> extractSingle(String code) throws IOException {
+        Map symbolTable = new LinkedHashMap<String, JavaCompilationUnit>();
+        Map parseProblems = new HashMap<String, List<Problem>>();
+        // Setting up symbol solvers
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+
+        ParserConfiguration parserConfiguration = new ParserConfiguration();
+        parserConfiguration.setSymbolResolver(new JavaSymbolSolver(combinedTypeSolver));
+
+        JavaParser javaParser = new JavaParser(parserConfiguration);
+        ParseResult<CompilationUnit> parseResult = javaParser.parse(code);
+        if (parseResult.isSuccessful()) {
+            CompilationUnit compilationUnit = parseResult.getResult().get();
+            Log.debug("Successfully parsed code. Now processing compilation unit");
+            symbolTable.put("<pseudo-path>", processCompilationUnit(compilationUnit));
+        } else {
+            Log.error(parseResult.getProblems().toString());
+            parseProblems.put("code", parseResult.getProblems());
         }
         return Pair.of(symbolTable, parseProblems);
     }
