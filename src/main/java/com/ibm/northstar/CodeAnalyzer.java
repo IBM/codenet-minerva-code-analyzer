@@ -58,7 +58,7 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
-    @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for full analysis including the system depenedency graph). Default: 1")
+    @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
 
     @Option(names = {"-d", "--dependencies"}, description = "Path to the application 3rd party dependencies that may be helpful in analyzing the application.")
@@ -158,15 +158,7 @@ public class CodeAnalyzer implements Runnable {
 
     private static void emit(String consolidatedJSONString) throws IOException {
         if (output == null) {
-            byte[] bytes = consolidatedJSONString.getBytes(StandardCharsets.UTF_8);
-            // Create the GZIPOutputStream, using System.out
-            GZIPOutputStream gzipOS = new GZIPOutputStream(System.out);
-            // Write the byte array to the GZIPOutputStream
-            gzipOS.write(bytes);
-            // Flush the GZIPOutputStream
-            gzipOS.flush();
-            // Close the GZIPOutputStream
-            gzipOS.close();
+            System.out.println(consolidatedJSONString);
         } else {
             // If output is not null, export to a file
             File file = new File(output, "analysis.json");
