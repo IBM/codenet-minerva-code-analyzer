@@ -41,6 +41,8 @@ public class SystemDepEdge extends AbstractGraphEdge {
      * The Type.
      */
     public final String type;
+    public final String sourceKind;
+    public final String destinationKind;
 
     /**
      * Instantiates a new System dep edge.
@@ -51,6 +53,8 @@ public class SystemDepEdge extends AbstractGraphEdge {
      */
     public SystemDepEdge(Statement sourceStatement, Statement destinationStatement, String type) {
         super();
+        this.sourceKind = sourceStatement.getKind().toString();
+        this.destinationKind = destinationStatement.getKind().toString();
         this.type = type;
         this.sourcePos = getStatementPosition(sourceStatement);
         this.destinationPos = getStatementPosition(destinationStatement);
@@ -67,6 +71,15 @@ public class SystemDepEdge extends AbstractGraphEdge {
         return (o instanceof SystemDepEdge) && (this.toString().equals(o.toString()))
                 && Integer.valueOf(this.hashCode()).equals(o.hashCode())
                 && this.type.equals(((SystemDepEdge) o).getType());
+    }
+
+
+    public String getSourceKind() {
+        return sourceKind;
+    }
+
+    public String getDestinationKind() {
+        return destinationKind;
     }
 
     /**
@@ -98,7 +111,9 @@ public class SystemDepEdge extends AbstractGraphEdge {
 
     public Map<String, Attribute> getAttributes() {
         Map<String, Attribute> map = new LinkedHashMap<>();
+        map.put("source_kind", DefaultAttribute.createAttribute(getSourceKind()));
         map.put("type", DefaultAttribute.createAttribute(getType()));
+        map.put("destination_kind", DefaultAttribute.createAttribute(getDestinationKind()));
         map.put("weight", DefaultAttribute.createAttribute(String.valueOf(getWeight())));
         return map;
     }

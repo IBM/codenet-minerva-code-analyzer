@@ -43,8 +43,14 @@ import java.util.zip.GZIPOutputStream;
 @Command(name = "codeanalyzer", mixinStandardHelpOptions = true, sortOptions = false, version = "codeanalyzer v1.1", description = "Convert java binary (*.jar, *.ear, *.war) into a comprehensive system dependency graph.")
 public class CodeAnalyzer implements Runnable {
 
-    @Option(names = {"-i", "--input"}, required = true, description = "Path to the project root directory.")
+    @Option(names = {"-i", "--input"}, description = "Path to the project root directory.")
     private static String input;
+
+    @Option(names = {"-s", "--source-analysis"}, description = "Analyze a single string of java source code instead the project.")
+    private static String sourceAnalysis;
+
+    @Option(names = {"-o", "--output"}, description = "Destination directory to save the output graphs. By default, the SDG formatted as a JSON will be printed to the console.")
+    private static String output;
 
     @Option(names = {"-b", "--build-cmd"}, description = "Custom build command. Defaults to auto build.")
     private static String build;
@@ -52,17 +58,11 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
-    @Option(names = {"-a", "--analysis-level"}, description = "[Optional] Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for full analysis including the system depenedency graph). Default: 1")
+    @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for full analysis including the system depenedency graph). Default: 1")
     private static int analysisLevel = 1;
 
-    @Option(names = {"-o", "--output"}, description = "[Optional] Destination directory to save the output graphs. By default, the SDG formatted as a JSON will be printed to the console.")
-    private static String output;
-
-    @Option(names = {"-d", "--dependencies"}, description = "[Optional] Path to the application 3rd party dependencies that may be helpful in analyzing the application.")
+    @Option(names = {"-d", "--dependencies"}, description = "Path to the application 3rd party dependencies that may be helpful in analyzing the application.")
     private static String dependencies;
-
-    @Option(names = {"-s", "--source-analysis"}, description = "[Experimental] Analyze the source code instead directly of the binary. Warning: This option is experimental and may not work as expected.")
-    private static boolean analyzeSource = false;
 
     @Option(names = {"-v", "--verbose"}, description = "Print logs to console.")
     private static boolean verbose = false;
@@ -96,42 +96,55 @@ public class CodeAnalyzer implements Runnable {
 
     private static void analyze() throws IOException, ClassHierarchyException, CallGraphBuilderCancelException {
 
-        // download library dependencies of project for type resolution
-        if (!BuildProject.downloadLibraryDependencies(input)) {
-            Log.warn("Failed to download library dependencies of project");
-        }
-        // construct symbol table for project, write parse problems to file in output directory if specified
-        Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
-            SymbolTable.extractAll(Paths.get(input));
-        Map<String, JavaCompilationUnit> symbolTable = symbolTableExtractionResult.getLeft();
-        if (output != null) {
-            Path outputPath = Paths.get(output);
-            if (!Files.exists(outputPath)) {
-                Files.createDirectories(outputPath);
-            }
-            gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
-        }
-
         JsonObject combinedJsonObject = new JsonObject();
-        if (analysisLevel > 1) {
-            // Save SDG, IPCFG, and Call graph as JSON
-            // If noBuild is not true, and build is also not provided, we will use "auto" as the build command
-            build = build == null ? "auto" : build;
-            // Is noBuild is true, we will not build the project
-            build = noBuild ? null : build;
-            String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, build);
-            JsonElement sdgAsJSONElement = gson.fromJson(sdgAsJSONString, JsonElement.class);
-            JsonObject sdgAsJSONObject = sdgAsJSONElement.getAsJsonObject();
+        Map<String, JavaCompilationUnit> symbolTable;
+        // First of all if, sourceAnalysis is provided, we will analyze the source code instead of the project.
+        if (sourceAnalysis != null) {
+            // Construct symbol table for source code
+            Log.debug("Single file analysis.");
+            Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult = SymbolTable.extractSingle(sourceAnalysis);
+            symbolTable = symbolTableExtractionResult.getLeft();
+        }
 
-            // We don't really need these fields, so we'll remove it.
-            sdgAsJSONObject.remove("nodes");
-            sdgAsJSONObject.remove("creator");
-            sdgAsJSONObject.remove("version");
+        else {
 
-             // Remove the 'edges' element and move the list of edges up one level
-             JsonElement edges = sdgAsJSONObject.get("edges");
-             combinedJsonObject.add("system_dependency_graph", edges);
+            // download library dependencies of project for type resolution
+            if (!BuildProject.downloadLibraryDependencies(input)) {
+                Log.warn("Failed to download library dependencies of project");
+            }
+            // construct symbol table for project, write parse problems to file in output directory if specified
+            Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
+                SymbolTable.extractAll(Paths.get(input));
 
+            symbolTable = symbolTableExtractionResult.getLeft();
+            if (output != null) {
+                Path outputPath = Paths.get(output);
+                if (!Files.exists(outputPath)) {
+                    Files.createDirectories(outputPath);
+                }
+                gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
+            }
+
+            if (analysisLevel > 1) {
+                // Save SDG, and Call graph as JSON
+                // If noBuild is not true, and build is also not provided, we will use "auto" as the build command
+                build = build == null ? "auto" : build;
+                // Is noBuild is true, we will not build the project
+                build = noBuild ? null : build;
+                String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, build);
+                JsonElement sdgAsJSONElement = gson.fromJson(sdgAsJSONString, JsonElement.class);
+                JsonObject sdgAsJSONObject = sdgAsJSONElement.getAsJsonObject();
+
+                // We don't really need these fields, so we'll remove it.
+                sdgAsJSONObject.remove("nodes");
+                sdgAsJSONObject.remove("creator");
+                sdgAsJSONObject.remove("version");
+
+                 // Remove the 'edges' element and move the list of edges up one level
+                 JsonElement edges = sdgAsJSONObject.get("edges");
+                 combinedJsonObject.add("system_dependency_graph", edges);
+
+            }
         }
 
         // Convert the JavaCompilationUnit to JSON and add to consolidated json object
