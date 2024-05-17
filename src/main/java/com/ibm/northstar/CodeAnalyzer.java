@@ -40,7 +40,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * The type Code analyzer.
  */
-@Command(name = "codeanalyzer", mixinStandardHelpOptions = true, sortOptions = false, version = "codeanalyzer v1.1", description = "Convert java binary (*.jar, *.ear, *.war) into a comprehensive system dependency graph.")
+@Command(name = "codeanalyzer", mixinStandardHelpOptions = true, sortOptions = false, version = "codeanalyzer v1.1", description = "Convert java binary into a comprehensive system dependency graph.")
 public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-i", "--input"}, description = "Path to the project root directory.")
