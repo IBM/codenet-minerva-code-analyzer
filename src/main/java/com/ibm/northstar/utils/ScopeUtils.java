@@ -67,6 +67,12 @@ public class ScopeUtils {
     addDefaultExclusions(scope);
 
     Log.info("Loading Java SE standard libs.");
+
+    if (System.getenv("JAVA_HOME") == null) {
+      Log.error("JAVA_HOME is not set.");
+      throw new RuntimeException("JAVA_HOME is not set.");
+    }
+    
     String[] stdlibs = Files.walk(Paths.get(System.getenv("JAVA_HOME"), "jmods"))
         .filter(path -> path.toString().endsWith(".jmod"))
         .map(path -> path.toAbsolutePath().toString())

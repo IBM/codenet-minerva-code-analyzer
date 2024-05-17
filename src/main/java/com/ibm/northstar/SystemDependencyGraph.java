@@ -23,8 +23,6 @@ import com.ibm.northstar.utils.ScopeUtils;
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.CallSiteReference;
-import com.ibm.wala.classLoader.IClass;
-import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.impl.Util;
@@ -37,7 +35,6 @@ import com.ibm.wala.ipa.slicer.MethodEntryStatement;
 import com.ibm.wala.ipa.slicer.SDG;
 import com.ibm.wala.ipa.slicer.Slicer;
 import com.ibm.wala.ipa.slicer.Statement;
-import com.ibm.wala.ssa.IR;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.util.graph.Graph;
@@ -79,7 +76,6 @@ public class SystemDependencyGraph {
                     return gson.toJson(vertex);
                 }
         );
-//        exporter.setVertexAttributeProvider(v -> v.getRight().getAttributes());
         exporter.setEdgeAttributeProvider(AbstractGraphEdge::getAttributes);
         return exporter;
     }
@@ -155,41 +151,6 @@ public class SystemDependencyGraph {
                         }
                     }
                 }));
-
-        callGraph.getEntrypointNodes()
-                .forEach(p -> {
-                    // Get call statements that may execute in a given method
-                    Iterator<CallSiteReference> outGoingCalls = p.iterateCallSites();
-                    outGoingCalls.forEachRemaining(n -> {
-                        callGraph.getPossibleTargets(p, n).stream()
-                                .filter(o -> AnalysisUtils.isApplicationClass(o.getMethod().getDeclaringClass()))
-                                .forEach(o -> {
-
-                                    // Add the source nodes to the graph as vertices
-                                    Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getMethod()));
-                                    graph.addVertex(source);
-
-                                    // Add the target nodes to the graph as vertices
-                                    Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(o.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(o.getMethod()));
-                                    graph.addVertex(target);
-
-                                    if (!source.equals(target) && source.getRight() != null && target.getRight() != null) {
-
-                                        // Get the edge between the source and the target
-                                        AbstractGraphEdge cgEdge = graph.getEdge(source, target);
-
-                                        if (cgEdge == null) {
-                                            graph.addEdge(source, target, new CallEdge());
-                                        }
-                                        // If edge exists, then increment the weight
-                                        else {
-                                            cgEdge.incrementWeight();
-                                        }
-                                    }
-                                });
-                    });
-                });
-
         return graph;
     }
 
