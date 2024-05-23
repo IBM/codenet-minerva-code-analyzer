@@ -117,13 +117,15 @@ public class CodeAnalyzer implements Runnable {
                 SymbolTable.extractAll(Paths.get(input));
 
             symbolTable = symbolTableExtractionResult.getLeft();
-            if (output != null) {
-                Path outputPath = Paths.get(output);
-                if (!Files.exists(outputPath)) {
-                    Files.createDirectories(outputPath);
-                }
-                gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
-            }
+            /*
+             * if (output != null) {
+             *   Path outputPath = Paths.get(output);
+             *   if (!Files.exists(outputPath)) {
+             *       Files.createDirectories(outputPath);
+             *     }
+             *   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
+             *   }
+             **/
 
             if (analysisLevel > 1) {
                 // Save SDG, and Call graph as JSON
