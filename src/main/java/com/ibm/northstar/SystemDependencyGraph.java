@@ -174,13 +174,10 @@ public class SystemDependencyGraph {
 
                                         // Get the edge between the source and the target
                                         AbstractGraphEdge cgEdge = graph.getEdge(source, target);
-
-                                        if (cgEdge == null) {
+                                        if (cgEdge instanceof CallEdge) {
+                                            ((CallEdge) cgEdge).incrementWeight();
+                                        } else {
                                             graph.addEdge(source, target, new CallEdge());
-                                        }
-                                        // If edge exists, then increment the weight
-                                        else {
-                                            cgEdge.incrementWeight();
                                         }
                                     }
                                 });
