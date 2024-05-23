@@ -117,15 +117,18 @@ public class CodeAnalyzer implements Runnable {
                 SymbolTable.extractAll(Paths.get(input));
 
             symbolTable = symbolTableExtractionResult.getLeft();
-            /*
-             * if (output != null) {
-             *   Path outputPath = Paths.get(output);
-             *   if (!Files.exists(outputPath)) {
-             *       Files.createDirectories(outputPath);
-             *     }
-             *   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
+
+            if (output != null) {
+             Path outputPath = Paths.get(output);
+             if (!Files.exists(outputPath)) {
+                 Files.createDirectories(outputPath);
+             }
+             String parseError = gson.toJson(symbolTableExtractionResult.getRight());
+             emit(parseError, "parse_errors.json");
+             /*   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
              *   }
              **/
+             }
 
             if (analysisLevel > 1) {
                 // Save SDG, and Call graph as JSON
@@ -155,15 +158,15 @@ public class CodeAnalyzer implements Runnable {
         combinedJsonObject.add("symbol_table", symbolTableJSON);
 
         String consolidatedJSONString = gson.toJson(combinedJsonObject);
-        emit(consolidatedJSONString);
+        emit(consolidatedJSONString, "analysis.json");
     }
 
-    private static void emit(String consolidatedJSONString) throws IOException {
+    private static void emit(String consolidatedJSONString, String filename) throws IOException {
         if (output == null) {
             System.out.println(consolidatedJSONString);
         } else {
             // If output is not null, export to a file
-            File file = new File(output, "analysis.json");
+            File file = new File(output, filename);
             try (FileWriter fileWriter = new FileWriter(file)) {
                 fileWriter.write(consolidatedJSONString);
                 Log.done("Analysis output saved at " + output);
