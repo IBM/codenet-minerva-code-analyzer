@@ -15,6 +15,9 @@ public class BuildProject {
 
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_libdeps";
 
+    private static final String MAVEN_CMD = System.getProperty("os.name").contains("win") ? "mvn.cmd" : "mvn";
+    private static final String GRADLE_CMD = System.getProperty("os.name").contains("win") ? "gradlew.bat" : "gradlew";
+
     private static boolean buildWithTool(String[] buildCommand) {
         Log.info("Building the project using " + buildCommand[0] + ".");
         ProcessBuilder processBuilder = new ProcessBuilder(buildCommand);
@@ -41,7 +44,7 @@ public class BuildProject {
      * @return true if Maven is installed, false otherwise.
      */
     private static boolean isMavenInstalled() {
-        ProcessBuilder processBuilder = new ProcessBuilder("mvn", "--version");
+        ProcessBuilder processBuilder = new ProcessBuilder(MAVEN_CMD, "--version");
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -70,7 +73,7 @@ public class BuildProject {
             return false;
         }
         String[] mavenCommand = {
-                    "mvn", "clean", "package", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip",
+                    MAVEN_CMD, "clean", "package", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip",
                     "-Dfindbugs.skip", "-Dcheckstyle.skip", "-Dpmd.skip=true", "-Dspotbugs.skip", "-Denforcer.skip",
                     "-Dmaven.javadoc.skip", "-DskipTests", "-Dmaven.test.skip.exec", "-Dlicense.skip=true",
                     "-Drat.skip=true", "-Dspotless.check.skip=true" };
@@ -80,7 +83,7 @@ public class BuildProject {
 
     public static boolean gradleBuild(String projectPath) {
         // Adjust Gradle command as needed
-        String gradleWrapper = projectPath + "/gradlew";
+        String gradleWrapper = projectPath + File.separator + GRADLE_CMD;
         String[] gradleCommand = { gradleWrapper, "clean", "compileJava", "-p", projectPath };
         return buildWithTool(gradleCommand);
     }
@@ -100,7 +103,7 @@ public class BuildProject {
         }
         else {
             // Update command with a project path
-            build = build.replace("mvn", "mvn -f " + projectPath);
+            build = build.replace(MAVEN_CMD, MAVEN_CMD + " -f " + projectPath);
             Log.info("Using custom build command: " + build);
             String[] customBuildCommand = build.split(" ");
             return buildWithTool(customBuildCommand);
@@ -139,7 +142,7 @@ public class BuildProject {
         if (pomFile.exists()) {
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
             String[] mavenCommand = {
-                "mvn", "--no-transfer-progress", "-f",
+                MAVEN_CMD, "--no-transfer-progress", "-f",
                 Paths.get(projectPath, "pom.xml").toString(),
                 "dependency:copy-dependencies",
                 "-DoutputDirectory=" + libDownloadPath.toString()
