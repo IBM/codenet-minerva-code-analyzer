@@ -76,6 +76,7 @@ public class SystemDependencyGraph {
                     return gson.toJson(vertex);
                 }
         );
+//        exporter.setVertexAttributeProvider(v -> v.getRight().getAttributes());
         exporter.setEdgeAttributeProvider(AbstractGraphEdge::getAttributes);
         return exporter;
     }
@@ -151,6 +152,41 @@ public class SystemDependencyGraph {
                         }
                     }
                 }));
+
+        callGraph.getEntrypointNodes()
+                .forEach(p -> {
+                    // Get call statements that may execute in a given method
+                    Iterator<CallSiteReference> outGoingCalls = p.iterateCallSites();
+                    outGoingCalls.forEachRemaining(n -> {
+                        callGraph.getPossibleTargets(p, n).stream()
+                                .filter(o -> AnalysisUtils.isApplicationClass(o.getMethod().getDeclaringClass()))
+                                .forEach(o -> {
+
+                                    // Add the source nodes to the graph as vertices
+                                    Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getMethod()));
+                                    graph.addVertex(source);
+
+                                    // Add the target nodes to the graph as vertices
+                                    Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(o.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(o.getMethod()));
+                                    graph.addVertex(target);
+
+                                    if (!source.equals(target) && source.getRight() != null && target.getRight() != null) {
+
+                                        // Get the edge between the source and the target
+                                        AbstractGraphEdge cgEdge = graph.getEdge(source, target);
+
+                                        if (cgEdge == null) {
+                                            graph.addEdge(source, target, new CallEdge());
+                                        }
+                                        // If edge exists, then increment the weight
+                                        else {
+                                            cgEdge.incrementWeight();
+                                        }
+                                    }
+                                });
+                    });
+                });
+
         return graph;
     }
 
