@@ -102,10 +102,11 @@ public class CodeAnalyzer implements Runnable {
         }
 
         else {
-            String dependencies = null;
             // download library dependencies of project for type resolution
-            if (!BuildProject.downloadLibraryDependencies(input)) {
+            String dependencies = null;
+            if (BuildProject.downloadLibraryDependencies(input)) {
                 dependencies = String.valueOf(BuildProject.libDownloadPath);
+            } else {
                 Log.warn("Failed to download library dependencies of project");
             }
             // construct symbol table for project, write parse problems to file in output directory if specified
