@@ -15,8 +15,8 @@ public class BuildProject {
 
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_libdeps";
 
-    private static final String MAVEN_CMD = System.getProperty("os.name").contains("win") ? "mvn.cmd" : "mvn";
-    private static final String GRADLE_CMD = System.getProperty("os.name").contains("win") ? "gradlew.bat" : "gradlew";
+    private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn";
+    private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
 
     private static boolean buildWithTool(String[] buildCommand) {
         Log.info("Building the project using " + buildCommand[0] + ".");
