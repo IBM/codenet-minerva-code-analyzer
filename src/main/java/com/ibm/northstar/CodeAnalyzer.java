@@ -29,13 +29,11 @@ import picocli.CommandLine.Option;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * The type Code analyzer.
@@ -60,9 +58,6 @@ public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
-
-    @Option(names = {"-d", "--dependencies"}, description = "Path to the application 3rd party dependencies that may be helpful in analyzing the application.")
-    private static String dependencies;
 
     @Option(names = {"-v", "--verbose"}, description = "Print logs to console.")
     private static boolean verbose = false;
@@ -107,9 +102,11 @@ public class CodeAnalyzer implements Runnable {
         }
 
         else {
-
             // download library dependencies of project for type resolution
-            if (!BuildProject.downloadLibraryDependencies(input)) {
+            String dependencies = null;
+            if (BuildProject.downloadLibraryDependencies(input)) {
+                dependencies = String.valueOf(BuildProject.libDownloadPath);
+            } else {
                 Log.warn("Failed to download library dependencies of project");
             }
             // construct symbol table for project, write parse problems to file in output directory if specified
@@ -123,8 +120,8 @@ public class CodeAnalyzer implements Runnable {
              if (!Files.exists(outputPath)) {
                  Files.createDirectories(outputPath);
              }
-             String parseError = gson.toJson(symbolTableExtractionResult.getRight());
-             emit(parseError, "parse_errors.json");
+//             String parseError = gson.toJson(symbolTableExtractionResult.getRight());
+//             emit(parseError, "parse_errors.json");
              /*   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
              *   }
              **/

@@ -13,8 +13,8 @@ import static com.ibm.northstar.utils.ProjectDirectoryScanner.classFilesStream;
 
 public class BuildProject {
 
-    private static final String LIB_DEPS_DOWNLOAD_DIR = "_libdeps";
-
+    public static Path libDownloadPath;
+    private static final String LIB_DEPS_DOWNLOAD_DIR = ".library-dependencies";
     private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn";
     private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
 
@@ -129,7 +129,7 @@ public class BuildProject {
      */
     public static boolean downloadLibraryDependencies(String projectPath) {
         // created download dir if it does not exist
-        Path libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR);
+        libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR);
         if (!Files.exists(libDownloadPath)) {
             try {
                 Files.createDirectory(libDownloadPath);
