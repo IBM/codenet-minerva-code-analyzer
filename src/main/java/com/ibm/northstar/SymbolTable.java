@@ -7,10 +7,7 @@ import com.github.javaparser.Problem;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
@@ -479,37 +476,79 @@ public class SymbolTable {
         }
         for (MethodCallExpr methodCallExpr : callableBody.get().findAll(MethodCallExpr.class)) {
             // resolve declaring type for called method
+            boolean isStaticCall = false;
             String declaringType = "";
             if (methodCallExpr.getScope().isPresent()) {
+                Expression scopeExpr = methodCallExpr.getScope().get();
                 declaringType = resolveExpression(methodCallExpr.getScope().get());
                 if (declaringType.contains(" | ")) {
                     declaringType = declaringType.split(" \\| ")[0];
                 }
+                String declaringTypeName = declaringType.substring(declaringType.lastIndexOf(".")+1);
+                if (declaringTypeName.equals(scopeExpr.toString())) {
+                    isStaticCall = true;
+                }
             }
-
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
+            // add a new call site object
+            callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), declaringType,
+                arguments, isStaticCall, false));
+        }
+
+        for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
+            // resolve declaring type for called method
+            String instantiatedType = objectCreationExpr.getTypeAsString();
+            try {
+                instantiatedType = objectCreationExpr.getType().resolve().describe();
+            } catch (UnsolvedSymbolException | IllegalStateException e) {
+                Log.warn("Could not resolve "+instantiatedType+": "+e.getMessage());
+            }
+            // resolve arguments of the constructor call to types
+            List<String> arguments = objectCreationExpr.getArguments().stream()
+                .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
 
             // add a new call site object
-            CallSite callSite = new CallSite();
-            callSite.setMethodName(methodCallExpr.getNameAsString());
-            callSite.setDeclaringType(declaringType);
-            callSite.setArgumentTypes(arguments);
-            if (methodCallExpr.getRange().isPresent()) {
-                callSite.setStartLine(methodCallExpr.getRange().get().begin.line);
-                callSite.setStartColumn(methodCallExpr.getRange().get().begin.column);
-                callSite.setEndLine(methodCallExpr.getRange().get().end.line);
-                callSite.setEndColumn(methodCallExpr.getRange().get().end.column);
-            } else {
-                callSite.setStartLine(-1);
-                callSite.setStartColumn(-1);
-                callSite.setEndLine(-1);
-                callSite.setEndColumn(-1);
-            }
-            callSites.add(callSite);
+            callSites.add(createCallSite(objectCreationExpr, "<init>",
+                instantiatedType, arguments, false, true));
         }
+
         return callSites;
+    }
+
+    /**
+     * Creates and returns a new CallSite object for the given expression, which can be a method-call or
+     * object-creation expression.
+     *
+     * @param callExpr
+     * @param calleeName
+     * @param declaringType
+     * @param arguments
+     * @param isStaticCall
+     * @param isConstructorCall
+     * @return
+     */
+    private static CallSite createCallSite(Expression callExpr, String calleeName, String declaringType,
+                                           List<String> arguments, boolean isStaticCall, boolean isConstructorCall) {
+        CallSite callSite = new CallSite();
+        callSite.setMethodName(calleeName);
+        callSite.setDeclaringType(declaringType);
+        callSite.setArgumentTypes(arguments);
+        callSite.setStaticCall(isStaticCall);
+        callSite.setConstructorCall(isConstructorCall);
+        if (callExpr.getRange().isPresent()) {
+            callSite.setStartLine(callExpr.getRange().get().begin.line);
+            callSite.setStartColumn(callExpr.getRange().get().begin.column);
+            callSite.setEndLine(callExpr.getRange().get().end.line);
+            callSite.setEndColumn(callExpr.getRange().get().end.column);
+        } else {
+            callSite.setStartLine(-1);
+            callSite.setStartColumn(-1);
+            callSite.setEndLine(-1);
+            callSite.setEndColumn(-1);
+        }
+        return callSite;
     }
 
     /**
