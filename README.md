@@ -72,17 +72,26 @@ Run the Gradle wrapper script to build the project. This will compile the projec
 The jar will be built at `build/libs/codeanalyzer-1.0.jar`. It may be used as follows:
 
 ```help
-Usage: java -jar /path/to/codeanalyzer-1.0.jar [-hqV] [-d=<appDeps>] [-e=<extraLibs>] -i=<input>
-                    -o=<outDir>
-Convert java binary (*.jar, *.ear, *.war) to a neo4j graph.
-  -d, --app-deps=<appDeps>   Path to the application dependencies.
-  -e, --extra-libs=<extraLibs>
-                             Path to the extra libraries.
-  -h, --help                 Show this help message and exit.
-  -i, --input=<input>        Path to the input jar(s).
-  -o, --output=<outDir>      Destination directory to save the output graphs.
-  -q, --quiet                Don't print logs to console.
-  -V, --version              Print version information and exit.
+Usage: java -jar /path/to/codeanalyzer.jar [-hvV] [--no-build] [-a=<analysisLevel>] [-b=<build>]
+                    [-i=<input>] [-o=<output>] [-s=<sourceAnalysis>]
+Convert java binary into a comprehensive system dependency graph.
+  -i, --input=<input>       Path to the project root directory.
+  -s, --source-analysis=<sourceAnalysis>
+                            Analyze a single string of java source code instead
+                              the project.
+  -o, --output=<output>     Destination directory to save the output graphs. By
+                              default, the SDG formatted as a JSON will be
+                              printed to the console.
+  -b, --build-cmd=<build>   Custom build command. Defaults to auto build.
+      --no-build            Do not build your application. Use this option if
+                              you have already built your application.
+  -a, --analysis-level=<analysisLevel>
+                            Level of analysis to perform. Options: 1 (for just
+                              symbol table) or 2 (for call graph). Default: 1
+  -v, --verbose             Print logs to console.
+  -h, --help                Show this help message and exit.
+  -V, --version             Print version information and exit.
+
 ```
 
 
