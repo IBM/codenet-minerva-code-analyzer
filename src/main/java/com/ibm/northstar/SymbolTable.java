@@ -484,7 +484,8 @@ public class SymbolTable {
                 if (declaringType.contains(" | ")) {
                     declaringType = declaringType.split(" \\| ")[0];
                 }
-                String declaringTypeName = declaringType.substring(declaringType.lastIndexOf(".")+1);
+                String declaringTypeName = declaringType.contains(".") ?
+                    declaringType.substring(declaringType.lastIndexOf(".")+1) : declaringType;
                 if (declaringTypeName.equals(scopeExpr.toString())) {
                     isStaticCall = true;
                 }
