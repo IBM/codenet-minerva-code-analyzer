@@ -115,19 +115,6 @@ public class CodeAnalyzer implements Runnable {
 
             symbolTable = symbolTableExtractionResult.getLeft();
 
-            if (output != null) {
-             Path outputPath = Paths.get(output);
-             if (!Files.exists(outputPath)) {
-                 Files.createDirectories(outputPath);
-             }
-             // Make parse error as a list/csv
-//              String parseError = gson.toJson(symbolTableExtractionResult.getRight());
-             // emit(parseError, "parse_errors.json");
-             /*   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
-             *   }
-             **/
-             }
-
             if (analysisLevel > 1) {
                 // Save SDG, and Call graph as JSON
                 // If noBuild is not true, and build is also not provided, we will use "auto" as the build command
@@ -156,15 +143,19 @@ public class CodeAnalyzer implements Runnable {
         combinedJsonObject.add("symbol_table", symbolTableJSON);
 
         String consolidatedJSONString = gson.toJson(combinedJsonObject);
-        emit(consolidatedJSONString, "analysis.json");
+        emit(consolidatedJSONString);
     }
 
-    private static void emit(String consolidatedJSONString, String filename) throws IOException {
+    private static void emit(String consolidatedJSONString) throws IOException {
         if (output == null) {
             System.out.println(consolidatedJSONString);
         } else {
+            Path outputPath = Paths.get(output);
+            if (!Files.exists(outputPath)) {
+                Files.createDirectories(outputPath);
+            }
             // If output is not null, export to a file
-            File file = new File(output, filename);
+            File file = new File(output, "analysis.json");
             try (FileWriter fileWriter = new FileWriter(file)) {
                 fileWriter.write(consolidatedJSONString);
                 Log.done("Analysis output saved at " + output);
