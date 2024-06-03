@@ -73,7 +73,7 @@ public class BuildProject {
             return false;
         }
         String[] mavenCommand = {
-                    MAVEN_CMD, "clean", "package", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip",
+                    MAVEN_CMD, "package", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip",
                     "-Dfindbugs.skip", "-Dcheckstyle.skip", "-Dpmd.skip=true", "-Dspotbugs.skip", "-Denforcer.skip",
                     "-Dmaven.javadoc.skip", "-DskipTests", "-Dmaven.test.skip.exec", "-Dlicense.skip=true",
                     "-Drat.skip=true", "-Dspotless.check.skip=true" };
@@ -84,7 +84,7 @@ public class BuildProject {
     public static boolean gradleBuild(String projectPath) {
         // Adjust Gradle command as needed
         String gradleWrapper = projectPath + File.separator + GRADLE_CMD;
-        String[] gradleCommand = { gradleWrapper, "clean", "compileJava", "-p", projectPath };
+        String[] gradleCommand = { gradleWrapper, "compileJava", "-p", projectPath };
         return buildWithTool(gradleCommand);
     }
 

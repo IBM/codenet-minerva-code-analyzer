@@ -120,8 +120,9 @@ public class CodeAnalyzer implements Runnable {
              if (!Files.exists(outputPath)) {
                  Files.createDirectories(outputPath);
              }
-//             String parseError = gson.toJson(symbolTableExtractionResult.getRight());
-//             emit(parseError, "parse_errors.json");
+             // Make parse error as a list/csv
+//              String parseError = gson.toJson(symbolTableExtractionResult.getRight());
+             // emit(parseError, "parse_errors.json");
              /*   gson.toJson(symbolTableExtractionResult.getRight(), new FileWriter(new File(outputPath.toString(), "parse_errors.json")));
              *   }
              **/
