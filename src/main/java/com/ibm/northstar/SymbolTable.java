@@ -12,6 +12,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
@@ -557,7 +558,7 @@ public class SymbolTable {
     private static String resolveType(Type type) {
         try {
             return type.resolve().describe();
-        } catch (UnsolvedSymbolException | IllegalStateException e) {
+        } catch (UnsolvedSymbolException | IllegalStateException | MethodAmbiguityException e) {
             Log.warn("Could not resolve "+type.asString()+": "+e.getMessage());
             return type.asString();
         }
