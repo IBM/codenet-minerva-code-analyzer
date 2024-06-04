@@ -7,7 +7,8 @@ import java.util.List;
 @Data
 public class CallSite {
     private String methodName;
-    private String declaringType;
+    private String receiverExpr;
+    private String receiverType;
     private List<String> argumentTypes;
     private boolean isStaticCall;
     private boolean isConstructorCall;
