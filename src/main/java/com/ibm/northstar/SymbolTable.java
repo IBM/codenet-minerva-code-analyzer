@@ -12,6 +12,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.MethodAmbiguityException;
 import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
@@ -299,7 +300,6 @@ public class SymbolTable {
         callableNode.setReferencedTypes(getReferencedTypes(body));
         callableNode.setCode(body.isPresent() ? body.get().toString() : "");
 
-        callableNode.setCalledMethodDeclaringTypes(getCalledMethodDeclaringTypes(body));
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
         callableNode.setCallSites(getCallSites(body));
         callableNode.setVariableDeclarations(getVariableDeclarations(body));
@@ -435,34 +435,6 @@ public class SymbolTable {
     }
 
     /**
-     * For method calls occurring in the given callable, computes the set of declaring types and returns
-     * their qualified names.
-     *
-     * @param callableBody Callable to compute declaring types for called methods
-     * @return List of qualified type names for method calls
-     */
-    private static List<String> getCalledMethodDeclaringTypes(Optional<BlockStmt> callableBody) {
-        Set<String> calledMethodDeclaringTypes = new HashSet<>();
-        callableBody.ifPresent(cb -> cb.findAll(MethodCallExpr.class)
-            .stream()
-            .map(expr -> {
-                String resolvedExpr = "";
-                if (expr.getScope().isPresent()) {
-                    resolvedExpr = resolveExpression(expr.getScope().get());
-                    if (resolvedExpr.contains(" | ")) {
-                        return resolvedExpr.split(" \\| ");
-                    }
-                }
-                return new String[]{resolvedExpr};
-            })
-            .flatMap(type -> Arrays.stream(type))
-            .filter(type -> !type.isEmpty())
-            .forEach(calledMethodDeclaringTypes::add)
-        );
-        return new ArrayList<>(calledMethodDeclaringTypes);
-    }
-
-    /**
      * Returns information about call sites in the given callable. The information includes:
      * the method name, the declaring type name, and types of arguments used in method call.
      *
@@ -478,9 +450,11 @@ public class SymbolTable {
             // resolve declaring type for called method
             boolean isStaticCall = false;
             String declaringType = "";
+            String receiverName = "";
             if (methodCallExpr.getScope().isPresent()) {
                 Expression scopeExpr = methodCallExpr.getScope().get();
-                declaringType = resolveExpression(methodCallExpr.getScope().get());
+                receiverName = scopeExpr.toString();
+                declaringType = resolveExpression(scopeExpr);
                 if (declaringType.contains(" | ")) {
                     declaringType = declaringType.split(" \\| ")[0];
                 }
@@ -494,7 +468,7 @@ public class SymbolTable {
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
             // add a new call site object
-            callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), declaringType,
+            callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
                 arguments, isStaticCall, false));
         }
 
@@ -512,6 +486,7 @@ public class SymbolTable {
 
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
+                objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
                 instantiatedType, arguments, false, true));
         }
 
@@ -524,17 +499,20 @@ public class SymbolTable {
      *
      * @param callExpr
      * @param calleeName
-     * @param declaringType
+     * @param  receiverExpr
+     * @param receiverType
      * @param arguments
      * @param isStaticCall
      * @param isConstructorCall
      * @return
      */
-    private static CallSite createCallSite(Expression callExpr, String calleeName, String declaringType,
-                                           List<String> arguments, boolean isStaticCall, boolean isConstructorCall) {
+    private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr,
+                                           String receiverType, List<String> arguments, boolean isStaticCall,
+                                           boolean isConstructorCall) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
-        callSite.setDeclaringType(declaringType);
+        callSite.setReceiverExpr(receiverExpr);
+        callSite.setReceiverType(receiverType);
         callSite.setArgumentTypes(arguments);
         callSite.setStaticCall(isStaticCall);
         callSite.setConstructorCall(isConstructorCall);
@@ -580,7 +558,7 @@ public class SymbolTable {
     private static String resolveType(Type type) {
         try {
             return type.resolve().describe();
-        } catch (UnsolvedSymbolException | IllegalStateException e) {
+        } catch (UnsolvedSymbolException | IllegalStateException | MethodAmbiguityException e) {
             Log.warn("Could not resolve "+type.asString()+": "+e.getMessage());
             return type.asString();
         }

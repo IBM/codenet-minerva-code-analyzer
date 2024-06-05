@@ -21,7 +21,6 @@ public class Callable {
     private boolean isConstructor = false;
     private List<String> referencedTypes;
     private List<String> accessedFields;
-    private List<String> calledMethodDeclaringTypes;
     private List<CallSite> callSites;
     private List<VariableDeclaration> variableDeclarations;
     private int cyclomaticComplexity;
