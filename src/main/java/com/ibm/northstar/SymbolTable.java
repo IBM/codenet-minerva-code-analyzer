@@ -39,6 +39,8 @@ import java.util.stream.IntStream;
 public class SymbolTable {
 
     private static JavaSymbolSolver javaSymbolSolver;
+    private static Set<String> unresolvedTypes = new HashSet<>();
+    private static Set<String> unresolvedExpressions = new HashSet<>();
 
     /**
      * Processes the given compilation unit to extract information about classes and
@@ -408,6 +410,7 @@ public class SymbolTable {
         // process field access expressions in the callable
         callableBody.ifPresent(cb -> cb.findAll(FieldAccessExpr.class)
             .stream()
+            .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
             .map(faExpr -> {
                 String fieldDeclaringType = resolveExpression(faExpr.getScope());
                 if (!fieldDeclaringType.isEmpty()) {
@@ -474,12 +477,8 @@ public class SymbolTable {
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
             // resolve declaring type for called method
-            String instantiatedType = objectCreationExpr.getTypeAsString();
-            try {
-                instantiatedType = objectCreationExpr.getType().resolve().describe();
-            } catch (UnsolvedSymbolException | IllegalStateException e) {
-                Log.warn("Could not resolve "+instantiatedType+": "+e.getMessage());
-            }
+            String instantiatedType = resolveType(objectCreationExpr.getType());
+
             // resolve arguments of the constructor call to types
             List<String> arguments = objectCreationExpr.getArguments().stream()
                 .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
@@ -538,13 +537,17 @@ public class SymbolTable {
      * @return Resolved type name or empty string if type resolution fails
      */
     private static String resolveExpression(Expression expression) {
-        try {
-            ResolvedType resolvedType = javaSymbolSolver.calculateType(expression);
-            if (resolvedType.isReferenceType() || resolvedType.isUnionType()) {
-                return resolvedType.describe();
+        // perform expression resolution if resolution of this expression did not fail previously
+        if (!unresolvedExpressions.contains(expression.toString())) {
+            try {
+                ResolvedType resolvedType = javaSymbolSolver.calculateType(expression);
+                if (resolvedType.isReferenceType() || resolvedType.isUnionType()) {
+                    return resolvedType.describe();
+                }
+            } catch (RuntimeException exception) {
+                Log.debug("Could not resolve expression: " + expression + ": " + exception.getMessage());
+                unresolvedExpressions.add(expression.toString());
             }
-        } catch (RuntimeException exception) {
-            Log.warn("Could not resolve expression: "+expression+"\n"+exception.getMessage());
         }
         return "";
     }
@@ -556,12 +559,16 @@ public class SymbolTable {
      * @return Resolved (qualified) type name
      */
     private static String resolveType(Type type) {
-        try {
-            return type.resolve().describe();
-        } catch (UnsolvedSymbolException | IllegalStateException | MethodAmbiguityException e) {
-            Log.warn("Could not resolve "+type.asString()+": "+e.getMessage());
-            return type.asString();
+        // perform type resolution if resolution of this type did not fail previously
+        if (!unresolvedTypes.contains(type.asString())) {
+            try {
+                return type.resolve().describe();
+            } catch (RuntimeException e) {
+                Log.warn("Could not resolve type: " + type.asString() + ": " + e.getMessage());
+                unresolvedTypes.add(type.asString());
+            }
         }
+        return type.asString();
     }
 
     /**
