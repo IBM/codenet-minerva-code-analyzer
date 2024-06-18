@@ -10,6 +10,7 @@ public class CallSite {
     private String receiverExpr;
     private String receiverType;
     private List<String> argumentTypes;
+    private String returnType;
     private boolean isStaticCall;
     private boolean isConstructorCall;
     private int startLine;

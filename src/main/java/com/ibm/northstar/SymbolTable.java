@@ -12,8 +12,6 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.MethodAmbiguityException;
-import com.github.javaparser.resolution.UnsolvedSymbolException;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -454,6 +452,7 @@ public class SymbolTable {
             boolean isStaticCall = false;
             String declaringType = "";
             String receiverName = "";
+            String returnType = "";
             if (methodCallExpr.getScope().isPresent()) {
                 Expression scopeExpr = methodCallExpr.getScope().get();
                 receiverName = scopeExpr.toString();
@@ -466,13 +465,14 @@ public class SymbolTable {
                 if (declaringTypeName.equals(scopeExpr.toString())) {
                     isStaticCall = true;
                 }
+                returnType = resolveExpression(methodCallExpr);
             }
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
-                arguments, isStaticCall, false));
+                arguments, returnType, isStaticCall, false));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -486,7 +486,7 @@ public class SymbolTable {
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
                 objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
-                instantiatedType, arguments, false, true));
+                instantiatedType, arguments, instantiatedType, false, true));
         }
 
         return callSites;
@@ -506,13 +506,14 @@ public class SymbolTable {
      * @return
      */
     private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr,
-                                           String receiverType, List<String> arguments, boolean isStaticCall,
-                                           boolean isConstructorCall) {
+                                           String receiverType, List<String> arguments, String returnType,
+                                           boolean isStaticCall, boolean isConstructorCall) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
         callSite.setReceiverExpr(receiverExpr);
         callSite.setReceiverType(receiverType);
         callSite.setArgumentTypes(arguments);
+        callSite.setReturnType(returnType);
         callSite.setStaticCall(isStaticCall);
         callSite.setConstructorCall(isConstructorCall);
         if (callExpr.getRange().isPresent()) {
