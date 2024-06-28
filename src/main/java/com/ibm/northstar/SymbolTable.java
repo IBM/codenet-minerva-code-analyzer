@@ -357,6 +357,23 @@ public class SymbolTable {
             .filter(vd -> vd.getType().isClassOrInterfaceType())
             .map(vd -> resolveType(vd.getType()))
             .forEach(referencedTypes::add));
+
+        // add types of accessed fields to the set of referenced types
+        blockStmt.ifPresent(bs -> bs.findAll(FieldAccessExpr.class)
+            .stream()
+            .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
+            .map(faExpr -> {
+                if (faExpr.getParentNode().isPresent() && faExpr.getParentNode().get() instanceof CastExpr) {
+                    return resolveType(((CastExpr)faExpr.getParentNode().get()).getType());
+                } else {
+                    return resolveExpression(faExpr);
+                }
+            })
+            .filter(type -> !type.isEmpty())
+            .forEach(referencedTypes::add));
+
+        // TODO: add resolved method access expressions
+
         return new ArrayList<>(referencedTypes);
     }
 
@@ -465,8 +482,15 @@ public class SymbolTable {
                 if (declaringTypeName.equals(scopeExpr.toString())) {
                     isStaticCall = true;
                 }
+            }
+
+            // compute return type for method call taking into account typecast of return value
+            if (methodCallExpr.getParentNode().isPresent() && methodCallExpr.getParentNode().get() instanceof CastExpr) {
+                returnType = resolveType(((CastExpr)methodCallExpr.getParentNode().get()).getType());
+            } else {
                 returnType = resolveExpression(methodCallExpr);
             }
+
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
