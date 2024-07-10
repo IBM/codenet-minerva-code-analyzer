@@ -136,6 +136,8 @@ public class CodeAnalyzer implements Runnable {
 
             }
         }
+        // Cleanup library dependencies directory
+        BuildProject.cleanLibraryDependencies();
 
         // Convert the JavaCompilationUnit to JSON and add to consolidated json object
         String symbolTableJSONString = gson.toJson(symbolTable);

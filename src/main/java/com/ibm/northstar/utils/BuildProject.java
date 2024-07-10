@@ -153,4 +153,19 @@ public class BuildProject {
             return false;
         }
     }
+
+    public void cleanLibraryDependencies() {
+        if (libDownloadPath != null) {
+            Log.info("Cleaning up library dependency directory: " + libDownloadPath);
+            try {
+                Files.walk(libDownloadPath)
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                Files.delete(libDownloadPath);
+            } catch (IOException e) {
+                Log.error("Error deleting library dependency directory: " + e.getMessage());
+            }
+        }
+    }
 }
