@@ -12,6 +12,8 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -27,8 +29,7 @@ import com.ibm.northstar.utils.Log;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -490,13 +491,14 @@ public class SymbolTable {
             } else {
                 returnType = resolveExpression(methodCallExpr);
             }
+            ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
 
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
-                .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
+                .map(SymbolTable::resolveExpression).collect(Collectors.toList());
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
-                arguments, returnType, isStaticCall, false));
+                arguments, returnType, resolvedMethodDeclaration.getSignature(), isStaticCall, false));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -505,12 +507,15 @@ public class SymbolTable {
 
             // resolve arguments of the constructor call to types
             List<String> arguments = objectCreationExpr.getArguments().stream()
-                .map(arg -> resolveExpression(arg)).collect(Collectors.toList());
+                .map(SymbolTable::resolveExpression).collect(Collectors.toList());
+
+            ResolvedConstructorDeclaration resolvedConstructorDeclaration = objectCreationExpr.resolve();
 
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
                 objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
-                instantiatedType, arguments, instantiatedType, false, true));
+                instantiatedType, arguments, instantiatedType, resolvedConstructorDeclaration.getSignature(),
+                false, true));
         }
 
         return callSites;
@@ -531,13 +536,14 @@ public class SymbolTable {
      */
     private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr,
                                            String receiverType, List<String> arguments, String returnType,
-                                           boolean isStaticCall, boolean isConstructorCall) {
+                                           String calleeSignature, boolean isStaticCall, boolean isConstructorCall) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
         callSite.setReceiverExpr(receiverExpr);
         callSite.setReceiverType(receiverType);
         callSite.setArgumentTypes(arguments);
         callSite.setReturnType(returnType);
+        callSite.setCalleeSignature(calleeSignature);
         callSite.setStaticCall(isStaticCall);
         callSite.setConstructorCall(isConstructorCall);
         if (callExpr.getRange().isPresent()) {
