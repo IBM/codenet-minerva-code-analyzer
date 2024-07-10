@@ -14,7 +14,7 @@ import static com.ibm.northstar.utils.ProjectDirectoryScanner.classFilesStream;
 public class BuildProject {
 
     public static Path libDownloadPath;
-    private static final String LIB_DEPS_DOWNLOAD_DIR = ".library-dependencies";
+    private static final String LIB_DEPS_DOWNLOAD_DIR = "library-dependencies";
     private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn";
     private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
 
