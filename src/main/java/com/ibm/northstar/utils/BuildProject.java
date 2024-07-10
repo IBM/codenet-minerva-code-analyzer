@@ -129,7 +129,7 @@ public class BuildProject {
      */
     public static boolean downloadLibraryDependencies(String projectPath) {
         // created download dir if it does not exist
-        libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR);
+        libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
         if (!Files.exists(libDownloadPath)) {
             try {
                 Files.createDirectory(libDownloadPath);
