@@ -154,7 +154,7 @@ public class BuildProject {
         }
     }
 
-    public void cleanLibraryDependencies() {
+    public static void cleanLibraryDependencies() {
         if (libDownloadPath != null) {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
