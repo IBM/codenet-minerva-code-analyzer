@@ -14,7 +14,7 @@ import static com.ibm.northstar.utils.ProjectDirectoryScanner.classFilesStream;
 public class BuildProject {
 
     public static Path libDownloadPath;
-    private static final String LIB_DEPS_DOWNLOAD_DIR = ".library-dependencies";
+    private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
     private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn";
     private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
 
@@ -151,6 +151,21 @@ public class BuildProject {
         } else {
             // TODO: implement for gradle
             return false;
+        }
+    }
+
+    public void cleanLibraryDependencies() {
+        if (libDownloadPath != null) {
+            Log.info("Cleaning up library dependency directory: " + libDownloadPath);
+            try {
+                Files.walk(libDownloadPath)
+                        .filter(Files::isRegularFile)
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                Files.delete(libDownloadPath);
+            } catch (IOException e) {
+                Log.error("Error deleting library dependency directory: " + e.getMessage());
+            }
         }
     }
 }
