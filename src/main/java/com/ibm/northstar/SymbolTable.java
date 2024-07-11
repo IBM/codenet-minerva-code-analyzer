@@ -12,8 +12,6 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.resolution.declarations.ResolvedConstructorDeclaration;
-import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -491,14 +489,21 @@ public class SymbolTable {
             } else {
                 returnType = resolveExpression(methodCallExpr);
             }
-            ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
+
+            // resolve callee and get signature
+            String calleeSignature = "";
+            try {
+                calleeSignature = methodCallExpr.resolve().getSignature();
+            } catch (RuntimeException exception) {
+                Log.debug("Could not resolve method call: " + methodCallExpr + ": " + exception.getMessage());
+            }
 
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(SymbolTable::resolveExpression).collect(Collectors.toList());
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
-                arguments, returnType, resolvedMethodDeclaration.getSignature(), isStaticCall, false));
+                arguments, returnType, calleeSignature, isStaticCall, false));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -509,13 +514,18 @@ public class SymbolTable {
             List<String> arguments = objectCreationExpr.getArguments().stream()
                 .map(SymbolTable::resolveExpression).collect(Collectors.toList());
 
-            ResolvedConstructorDeclaration resolvedConstructorDeclaration = objectCreationExpr.resolve();
+            // resolve callee and get signature
+            String calleeSignature = "";
+            try {
+                calleeSignature = objectCreationExpr.resolve().getSignature();
+            } catch (RuntimeException exception) {
+                Log.debug("Could not resolve constructor call: " + objectCreationExpr + ": " + exception.getMessage());
+            }
 
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
                 objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
-                instantiatedType, arguments, instantiatedType, resolvedConstructorDeclaration.getSignature(),
-                false, true));
+                instantiatedType, arguments, instantiatedType, calleeSignature,false, true));
         }
 
         return callSites;
