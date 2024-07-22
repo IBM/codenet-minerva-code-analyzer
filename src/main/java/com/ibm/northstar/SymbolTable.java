@@ -4,6 +4,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.Problem;
+import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
@@ -12,6 +13,7 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
@@ -498,12 +500,21 @@ public class SymbolTable {
                 Log.debug("Could not resolve method call: " + methodCallExpr + ": " + exception.getMessage());
             }
 
+            // Resolve access qualifier
+            AccessSpecifier accessSpecifier = AccessSpecifier.NONE;
+            try {
+                ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
+                accessSpecifier = resolvedMethodDeclaration.accessSpecifier();
+            }
+            catch (RuntimeException exception) {
+                Log.debug("Could not resolve access specifier for method call: " + methodCallExpr + ": " + exception.getMessage());
+            }
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
                 .map(SymbolTable::resolveExpression).collect(Collectors.toList());
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
-                arguments, returnType, calleeSignature, isStaticCall, false));
+                arguments, returnType, calleeSignature, isStaticCall, false, accessSpecifier));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -525,7 +536,7 @@ public class SymbolTable {
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
                 objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
-                instantiatedType, arguments, instantiatedType, calleeSignature,false, true));
+                instantiatedType, arguments, instantiatedType, calleeSignature,false, true, AccessSpecifier.NONE));
         }
 
         return callSites;
@@ -546,7 +557,7 @@ public class SymbolTable {
      */
     private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr,
                                            String receiverType, List<String> arguments, String returnType,
-                                           String calleeSignature, boolean isStaticCall, boolean isConstructorCall) {
+                                           String calleeSignature, boolean isStaticCall, boolean isConstructorCall, AccessSpecifier accessSpecifier) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
         callSite.setReceiverExpr(receiverExpr);
@@ -556,6 +567,10 @@ public class SymbolTable {
         callSite.setCalleeSignature(calleeSignature);
         callSite.setStaticCall(isStaticCall);
         callSite.setConstructorCall(isConstructorCall);
+        callSite.setPrivate(accessSpecifier.equals(AccessSpecifier.PRIVATE));
+        callSite.setPublic(accessSpecifier.equals(AccessSpecifier.PUBLIC));
+        callSite.setProtected(accessSpecifier.equals(AccessSpecifier.PROTECTED));
+        callSite.setUnspecified(accessSpecifier.equals(AccessSpecifier.NONE));
         if (callExpr.getRange().isPresent()) {
             callSite.setStartLine(callExpr.getRange().get().begin.line);
             callSite.setStartColumn(callExpr.getRange().get().begin.column);

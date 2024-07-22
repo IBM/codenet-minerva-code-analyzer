@@ -12,6 +12,11 @@ public class CallSite {
     private List<String> argumentTypes;
     private String returnType;
     private String calleeSignature;
+    // Access specifiers
+    private boolean isPublic = false;
+    private boolean isProtected = false;
+    private boolean isPrivate = false;
+    private boolean isUnspecified = false;
     private boolean isStaticCall;
     private boolean isConstructorCall;
     private int startLine;
