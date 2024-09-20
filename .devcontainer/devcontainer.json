@@ -1,0 +1,46 @@
+// cspell: disable
+{
+	"name": "CodeAnalyzer",
+	"dockerFile": "Dockerfile",
+	"context": "..",
+	"remoteUser": "vscode",
+	"workspaceFolder": "/code-analyzer",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/code-analyzer,type=bind,consistency=delegated",
+    "runArgs": ["-h", "codenet"],
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"markdown-preview-github-styles.colorTheme": "light",
+				"makefile.extensionOutputFolder": "/tmp",
+				"cSpell.words": [
+					"northstar",
+					"cyclomatic",
+					"jgrapht",
+					"stdlibs"
+				],
+				"files.exclude": {
+					"**/.git": true,
+					"**/.DS_Store": true,
+					"**/*.pyc": true,
+					"**/__pycache__": true,
+					"**/.pytest_cache": true
+				}
+			},
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-java-test",
+				"vscjava.vscode-java-debug",
+				"vscjava.vscode-gradle",
+				"donjayamanne.githistory",
+				"bierner.github-markdown-preview",
+				"yzhang.markdown-all-in-one",
+				"hnw.vscode-auto-open-markdown-preview",
+				"davidanson.vscode-markdownlint",
+				"bierner.markdown-preview-github-styles",
+				"streetsidesoftware.code-spell-checker",
+				"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+	// "postCreateCommand": ""
+}
