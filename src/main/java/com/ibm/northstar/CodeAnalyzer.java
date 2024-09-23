@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The type Code analyzer.
@@ -129,8 +130,10 @@ public class CodeAnalyzer implements Runnable {
                     analysisLevel = 1;
                 }
 
+                // Previous code was pointing to toList, which has been introduced in Java 16
+                // symbolTable = SymbolTable.extract(Paths.get(input), targetFiles.stream().map(Paths::get).toList()).getLeft();
                 // extract symbol table for the specified files
-                symbolTable = SymbolTable.extract(Paths.get(input), targetFiles.stream().map(Paths::get).toList()).getLeft();
+                symbolTable = SymbolTable.extract(Paths.get(input), targetFiles.stream().map(Paths::get).collect(Collectors.toList())).getLeft();
 
                 // if analysis file exists, update it with new symbol table information for the specified fiels
                 if (analysisFileExists) {
