@@ -13,8 +13,8 @@ limitations under the License.
 
 package com.ibm.northstar;
 
-
 import com.github.javaparser.Problem;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.ibm.northstar.entities.JavaCompilationUnit;
 import com.ibm.northstar.utils.BuildProject;
@@ -27,8 +27,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +45,9 @@ public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-i", "--input"}, description = "Path to the project root directory.")
     private static String input;
+
+    @Option(names = {"-t", "--target-files"}, description = "Paths to files to be analyzed from the input application.")
+    private static List<String> targetFiles;
 
     @Option(names = {"-s", "--source-analysis"}, description = "Analyze a single string of java source code instead the project.")
     private static String sourceAnalysis;
@@ -61,6 +66,8 @@ public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-v", "--verbose"}, description = "Print logs to console.")
     private static boolean verbose = false;
+
+    private static final String outputFileName = "analysis.json";
 
 
     public static Gson gson = new GsonBuilder()
@@ -109,11 +116,46 @@ public class CodeAnalyzer implements Runnable {
             } else {
                 Log.warn("Failed to download library dependencies of project");
             }
-            // construct symbol table for project, write parse problems to file in output directory if specified
-            Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
-                SymbolTable.extractAll(Paths.get(input));
+            boolean analysisFileExists = output != null && Files.exists(Paths.get(output + File.separator + outputFileName));
 
-            symbolTable = symbolTableExtractionResult.getLeft();
+            // if target files are specified, compute symbol table information for the given files
+            if (targetFiles != null) {
+                Log.info(targetFiles.size() + "target files specified for analysis: " + targetFiles);
+
+                // if target files specified for analysis level 2, downgrade to analysis level 1
+                if (analysisLevel > 1) {
+                    Log.warn("Incremental analysis is supported at analysis level 1 only; " +
+                            "performing analysis level 1 for target files");
+                    analysisLevel = 1;
+                }
+
+                // extract symbol table for the specified files
+                symbolTable = SymbolTable.extract(Paths.get(input), targetFiles.stream().map(Paths::get).toList()).getLeft();
+
+                // if analysis file exists, update it with new symbol table information for the specified fiels
+                if (analysisFileExists) {
+                    // read symbol table information from existing analysis file
+                    Map<String, JavaCompilationUnit> existingSymbolTable = readSymbolTableFromFile(
+                            new File(output, outputFileName));
+                    if (existingSymbolTable != null) {
+                        // for each file, tag its symbol table information as "updated" and update existing symbol table
+                        for (String targetFile : targetFiles) {
+                            String targetPathAbs = Paths.get(targetFile).toAbsolutePath().toString();
+                            JavaCompilationUnit javaCompilationUnit = symbolTable.get(targetPathAbs);
+                            javaCompilationUnit.setModified(true);
+                            existingSymbolTable.put(targetPathAbs, javaCompilationUnit);
+                        }
+                    }
+                    symbolTable = existingSymbolTable;
+                }
+            }
+            else {
+                // construct symbol table for project, write parse problems to file in output directory if specified
+                Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
+                        SymbolTable.extractAll(Paths.get(input));
+
+                symbolTable = symbolTableExtractionResult.getLeft();
+            }
 
             if (analysisLevel > 1) {
                 // Save SDG, and Call graph as JSON
@@ -165,5 +207,16 @@ public class CodeAnalyzer implements Runnable {
                 Log.error("Error writing to file: " + e.getMessage());
             }
         }
+    }
+
+    private static Map<String, JavaCompilationUnit> readSymbolTableFromFile(File analysisJsonFile) {
+        Type symbolTableType = new TypeToken<Map<String, JavaCompilationUnit>>() {}.getType();
+        try (FileReader reader = new FileReader(analysisJsonFile)) {
+            JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
+            return gson.fromJson(jsonObject.get("symbol_table"), symbolTableType);
+        } catch (IOException e) {
+            Log.error("Error reading analysis file: " + e.getMessage());
+        }
+        return null;
     }
 }

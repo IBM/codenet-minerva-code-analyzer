@@ -17,6 +17,7 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
@@ -640,8 +641,8 @@ public class SymbolTable {
         SymbolSolverCollectionStrategy symbolSolverCollectionStrategy = new SymbolSolverCollectionStrategy();
         ProjectRoot projectRoot = symbolSolverCollectionStrategy.collect(projectRootPath);
         javaSymbolSolver = (JavaSymbolSolver)symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
-        Map symbolTable = new LinkedHashMap<String, JavaCompilationUnit>();
-        Map parseProblems = new HashMap<String, List<Problem>>();
+        Map<String, JavaCompilationUnit> symbolTable = new LinkedHashMap<>();
+        Map<String, List<Problem>> parseProblems = new HashMap<>();
         for (SourceRoot sourceRoot : projectRoot.getSourceRoots()) {
             for (ParseResult<CompilationUnit> parseResult : sourceRoot.tryToParse()) {
                 if (parseResult.isSuccessful()) {
@@ -677,6 +678,46 @@ public class SymbolTable {
         } else {
             Log.error(parseResult.getProblems().toString());
             parseProblems.put("code", parseResult.getProblems());
+        }
+        return Pair.of(symbolTable, parseProblems);
+    }
+
+    /**
+     * Parses the given set of Java source files from the given project and constructs the symbol table.
+     * @param projectRootPath
+     * @param javaFilePaths
+     * @return
+     * @throws IOException
+     */
+    public static Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> extract(
+            Path projectRootPath,
+            List<Path> javaFilePaths
+    ) throws IOException {
+
+        // create symbol solver and parser configuration
+        SymbolSolverCollectionStrategy symbolSolverCollectionStrategy = new SymbolSolverCollectionStrategy();
+        ProjectRoot projectRoot = symbolSolverCollectionStrategy.collect(projectRootPath);
+        javaSymbolSolver = (JavaSymbolSolver)symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
+        ParserConfiguration parserConfiguration = new ParserConfiguration();
+        parserConfiguration.setSymbolResolver(javaSymbolSolver);
+
+        // create java parser with the configuration
+        JavaParser javaParser = new JavaParser(parserConfiguration);
+
+        Map symbolTable = new LinkedHashMap<String, JavaCompilationUnit>();
+        Map parseProblems = new HashMap<String, List<Problem>>();
+
+        // parse all given files and return pair of symbol table and parse problems
+        for (Path javaFilePath : javaFilePaths) {
+            ParseResult<CompilationUnit> parseResult = javaParser.parse(javaFilePath);
+            if (parseResult.isSuccessful()) {
+                CompilationUnit compilationUnit = parseResult.getResult().get();
+                symbolTable.put(compilationUnit.getStorage().get().getPath().toString(),
+                        processCompilationUnit(compilationUnit));
+            } else {
+                Log.error(parseResult.getProblems().toString());
+                parseProblems.put(javaFilePath.toString(), parseResult.getProblems());
+            }
         }
         return Pair.of(symbolTable, parseProblems);
     }

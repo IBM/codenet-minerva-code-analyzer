@@ -10,4 +10,5 @@ public class JavaCompilationUnit {
     private String comment;
     private List<String> imports;
     private Map<String, Type> typeDeclarations;
+    private boolean isModified;
 }
