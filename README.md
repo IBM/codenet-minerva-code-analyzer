@@ -91,6 +91,7 @@ Convert java binary into a comprehensive system dependency graph.
   -v, --verbose             Print logs to console.
   -h, --help                Show this help message and exit.
   -V, --version             Print version information and exit.
+  -t, --target-files        For each file user wants to perform source analysis on top of existing analysis.json
 
 ```
 
