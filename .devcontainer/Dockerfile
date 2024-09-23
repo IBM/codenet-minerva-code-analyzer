@@ -31,5 +31,4 @@ RUN curl -s "https://get.sdkman.io" | bash
 SHELL ["/bin/bash", "-c"]    
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && \
     sdk install java 17.0.12-sem && \
-    sdk use java 17.0.12-sem && \
-    sdk install gradle
+    sdk use java 17.0.12-sem

@@ -41,6 +41,7 @@
 				"ms-azuretools.vscode-docker"
 			]
 		}
-	}
-	// "postCreateCommand": ""
+	},
+	// Install the version of gradle the project uses
+	"postCreateCommand": "./gradlew"
 }
