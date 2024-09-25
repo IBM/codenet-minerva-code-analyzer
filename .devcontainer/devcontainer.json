@@ -4,8 +4,8 @@
 	"dockerFile": "Dockerfile",
 	"context": "..",
 	"remoteUser": "vscode",
-	"workspaceFolder": "/code-analyzer",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/code-analyzer,type=bind,consistency=delegated",
+	"workspaceFolder": "/codenet-minerva-code-analyzer",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/codenet-minerva-code-analyzer,type=bind,consistency=delegated",
     "runArgs": ["-h", "codenet"],
 	"customizations": {
 		"vscode": {
@@ -20,10 +20,7 @@
 				],
 				"files.exclude": {
 					"**/.git": true,
-					"**/.DS_Store": true,
-					"**/*.pyc": true,
-					"**/__pycache__": true,
-					"**/.pytest_cache": true
+					"**/.DS_Store": true
 				}
 			},
 			"extensions": [

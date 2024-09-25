@@ -20,7 +20,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     && chown -R $USERNAME:$USERNAME /home/$USERNAME
 
-WORKDIR /code-analyzer
+WORKDIR /codenet-minerva-code-analyzer
 
 USER $USERNAME
 
@@ -32,5 +32,5 @@ SHELL ["/bin/bash", "-c"]
 RUN source "$HOME/.sdkman/bin/sdkman-init.sh" && \
     sdk install java 17.0.12-sem && \
     sdk use java 17.0.12-sem && \
-    sdk install gradle
+    sdk install gradle 8.9
 
