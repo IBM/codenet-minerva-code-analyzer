@@ -17,14 +17,12 @@ import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.JarTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import com.github.javaparser.symbolsolver.utils.SymbolSolverCollectionStrategy;
 import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import com.ibm.northstar.entities.Enum;
 import com.ibm.northstar.entities.*;
 import com.ibm.northstar.utils.Log;
 import org.apache.commons.lang3.tuple.Pair;
@@ -108,10 +106,9 @@ public class SymbolTable {
             .map(typeDecl -> {
                 // get type name and initialize the type object
                 String typeName = typeDecl.getFullyQualifiedName().get().toString();
-                com.ibm.northstar.entities.Type typeNode = null;
+                com.ibm.northstar.entities.Type typeNode = new com.ibm.northstar.entities.Type();
 
                 if (typeDecl instanceof ClassOrInterfaceDeclaration) {
-                    typeNode = new ClassOrInterface();
                     ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration)typeDecl;
 
                     // Add interfaces implemented by class
@@ -127,17 +124,16 @@ public class SymbolTable {
                         .collect(Collectors.toList()));
 
                     // add booleans indicating interfaces and inner/local classes
-                    ((ClassOrInterface)typeNode).setInterface(classDecl.isInterface());
-                    ((ClassOrInterface)typeNode).setInnerClass(classDecl.isInnerClass());
-                    ((ClassOrInterface)typeNode).setLocalClass(classDecl.isLocalClassDeclaration());
+                    typeNode.setInterface(classDecl.isInterface());
+                    typeNode.setInnerClass(classDecl.isInnerClass());
+                    typeNode.setLocalClass(classDecl.isLocalClassDeclaration());
 
                     // Add extends
-                    ((ClassOrInterface)typeNode).setExtendsList(classDecl.getExtendedTypes().stream()
+                    typeNode.setExtendsList(classDecl.getExtendedTypes().stream()
                         .map(SymbolTable::resolveType)
                         .collect(Collectors.toList()));
 
                 } else if (typeDecl instanceof EnumDeclaration) {
-                    typeNode = new Enum();
                     EnumDeclaration enumDecl = (EnumDeclaration)typeDecl;
 
                     // Add interfaces implemented by enum
@@ -153,7 +149,7 @@ public class SymbolTable {
                         .collect(Collectors.toList()));
 
                     // Add enum constants
-                    ((Enum)typeNode).setEnumConstants(enumDecl.getEntries().stream()
+                    typeNode.setEnumConstants(enumDecl.getEntries().stream()
                         .map(SymbolTable::processEnumConstantDeclaration).collect(Collectors.toList()));
 
                 } else {

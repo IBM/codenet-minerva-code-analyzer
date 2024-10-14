@@ -12,6 +12,10 @@ public class Type {
     private boolean isEnumDeclaration;
     private boolean isAnnotationDeclaration;
     private boolean isRecordDeclaration;
+    private boolean isInterface;
+    private boolean isInnerClass;
+    private boolean isLocalClass;
+    private List<String> extendsList;
     private String comment;
     private List<String> implementsList;
     private List<String> modifiers;
@@ -20,4 +24,5 @@ public class Type {
     private List<String> nestedTypeDeclarations;
     private Map<String, Callable> callableDeclarations;
     private List<Field> fieldDeclarations;
+    private List<EnumConstant> enumConstants;
 }
