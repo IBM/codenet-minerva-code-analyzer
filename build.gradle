@@ -16,13 +16,6 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'org.graalvm.buildtools.native' version '0.9.28'
-    id 'net.researchgate.release' version '3.0.2'
-}
-
-release {
-    git {
-        requireBranch.set('') // This removes the branch requirement
-    }
 }
 
 repositories {
@@ -210,6 +203,50 @@ task createRelease {
         }
     }
 
+}
+
+tasks.register('bumpVersion') {
+    description = 'Bumps the version number (patch, minor, or major)'
+    group = 'Versioning'
+
+    doLast {
+        def versionFile = file('gradle.properties')
+        def versionFileText = versionFile.text
+        def versionPattern = /version\s*=\s*(\d+)\.(\d+)\.(\d+)/
+        def matcher = (versionFileText =~ versionPattern)
+
+        if (matcher.find()) {
+            def major = matcher.group(1) as int
+            def minor = matcher.group(2) as int
+            def patch = matcher.group(3) as int
+
+            def bumpType = project.hasProperty('bumpType') ? project.bumpType : 'patch'
+
+            switch (bumpType) {
+                case 'major':
+                    major++
+                    minor = 0
+                    patch = 0
+                    break
+                case 'minor':
+                    minor++
+                    patch = 0
+                    break
+                case 'patch':
+                default:
+                    patch++
+                    break
+            }
+
+            def newVersion = "${major}.${minor}.${patch}"
+            def updatedContent = versionFileText.replaceFirst(versionPattern, "version=$newVersion")
+            versionFile.text = updatedContent
+
+            println "Version bumped to $newVersion"
+        } else {
+            throw new GradleException("Version not found in gradle.properties")
+        }
+    }
 }
 
 nativeCompile.finalizedBy copyNativeExecutable
