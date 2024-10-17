@@ -11,14 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar;
+package com.ibm.cldk;
 
 import com.github.javaparser.Problem;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
-import com.ibm.northstar.entities.JavaCompilationUnit;
-import com.ibm.northstar.utils.BuildProject;
-import com.ibm.northstar.utils.Log;
+import com.ibm.cldk.entities.JavaCompilationUnit;
+import com.ibm.cldk.utils.BuildProject;
+import com.ibm.cldk.utils.Log;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,10 +38,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+class VersionProvider implements CommandLine.IVersionProvider {
+    public String[] getVersion() throws Exception {
+        String version = getClass().getPackage().getImplementationVersion();
+        return new String[]{ "codeanalyzer " + (version != null ? version : "unknown") };
+    }
+}
 /**
  * The type Code analyzer.
  */
-@Command(name = "codeanalyzer", mixinStandardHelpOptions = true, sortOptions = false, version = "codeanalyzer v1.1", description = "Convert java binary into a comprehensive system dependency graph.")
+@Command(name = "codeanalyzer", mixinStandardHelpOptions = true, sortOptions = false, versionProvider = VersionProvider.class, description = "Analyze java application.")
 public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-i", "--input"}, description = "Path to the project root directory.")
@@ -62,6 +69,7 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
+
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
 
@@ -69,7 +77,6 @@ public class CodeAnalyzer implements Runnable {
     private static boolean verbose = false;
 
     private static final String outputFileName = "analysis.json";
-
 
     public static Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)

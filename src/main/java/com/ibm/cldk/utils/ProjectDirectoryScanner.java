@@ -1,4 +1,4 @@
-package com.ibm.northstar.utils;
+package com.ibm.cldk.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;

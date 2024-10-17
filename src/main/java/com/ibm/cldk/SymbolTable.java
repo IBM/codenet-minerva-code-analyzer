@@ -1,4 +1,4 @@
-package com.ibm.northstar;
+package com.ibm.cldk;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
@@ -23,8 +23,8 @@ import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import com.ibm.northstar.entities.*;
-import com.ibm.northstar.utils.Log;
+import com.ibm.cldk.entities.*;
+import com.ibm.cldk.utils.Log;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class SymbolTable {
             .map(typeDecl -> {
                 // get type name and initialize the type object
                 String typeName = typeDecl.getFullyQualifiedName().get().toString();
-                com.ibm.northstar.entities.Type typeNode = new com.ibm.northstar.entities.Type();
+                com.ibm.cldk.entities.Type typeNode = new com.ibm.cldk.entities.Type();
 
                 if (typeDecl instanceof ClassOrInterfaceDeclaration) {
                     ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration)typeDecl;
@@ -156,7 +156,7 @@ public class SymbolTable {
                     // TODO: handle AnnotationDeclaration, RecordDeclaration
                     // set the common type attributes only
                     Log.warn("Found unsupported type declaration: "+typeDecl.toString());
-                    typeNode = new com.ibm.northstar.entities.Type();
+                    typeNode = new com.ibm.cldk.entities.Type();
                 }
 
                 /* set common attributes of types that available in type declarations:

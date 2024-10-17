@@ -18,6 +18,12 @@ plugins {
     id 'org.graalvm.buildtools.native' version '0.9.28'
 }
 
+// Get the version from the property file first
+version = new Properties().with {property ->
+    file("gradle.properties").withInputStream {property.load(it)}
+    property.getProperty("version")
+}
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -28,7 +34,7 @@ if (project.hasProperty('mainClass')) {
     mainClassName = project.getProperty('mainClass')
 } else {
     // use a default
-    mainClassName =("com.ibm.northstar.CodeAnalyzer")
+    mainClassName =("com.ibm.cldk.CodeAnalyzer")
 }
 
 sourceSets {
@@ -122,9 +128,9 @@ task fatJar(type: Jar) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
-                'Implementation-Title': 'Northstar Codeanalyzer',
+                'Implementation-Title': 'codeanalyzer',
                 'Implementation-Version': project.version,
-                'Main-Class': 'com.ibm.northstar.CodeAnalyzer'
+                'Main-Class': 'com.ibm.cldk.CodeAnalyzer'
         )
     }
 
@@ -146,7 +152,7 @@ graalvmNative {
     binaries {
         main {
             imageName = "codeanalyzer"
-            mainClass = "com.ibm.northstar.CodeAnalyzer"
+            mainClass = "com.ibm.cldk.CodeAnalyzer"
             buildArgs.add("-Ob")
             buildArgs.add("-march=compatibility")
             buildArgs.add("--no-fallback")
@@ -183,7 +189,7 @@ task createRelease {
     doLast {
         def releaseTitle = 'latest'
         def hostName = 'git@github.ibm.com'
-        def repo = 'northstar/codeanalyzer'
+        def repo = 'cldk/codeanalyzer'
 
         // Command to create release
         def delete = "gh release delete latest --cleanup-tag --yes -R ${hostName}:${repo}"//

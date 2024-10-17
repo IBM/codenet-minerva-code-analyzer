@@ -1,12 +1,8 @@
-package com.ibm.northstar.entities;
+package com.ibm.cldk.entities;
 
 import lombok.Data;
-import org.jgrapht.nio.Attribute;
-import org.jgrapht.nio.DefaultAttribute;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class ParameterInCallable {
