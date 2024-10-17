@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar.entities;
+package com.ibm.cldk.entities;
 
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;

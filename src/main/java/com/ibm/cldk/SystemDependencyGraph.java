@@ -11,15 +11,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar;
+package com.ibm.cldk;
 
-import com.ibm.northstar.entities.AbstractGraphEdge;
-import com.ibm.northstar.entities.CallEdge;
-import com.ibm.northstar.entities.Callable;
-import com.ibm.northstar.entities.SystemDepEdge;
-import com.ibm.northstar.utils.AnalysisUtils;
-import com.ibm.northstar.utils.Log;
-import com.ibm.northstar.utils.ScopeUtils;
+import com.ibm.cldk.entities.AbstractGraphEdge;
+import com.ibm.cldk.entities.CallEdge;
+import com.ibm.cldk.entities.Callable;
+import com.ibm.cldk.entities.SystemDepEdge;
+import com.ibm.cldk.utils.AnalysisUtils;
+import com.ibm.cldk.utils.Log;
+import com.ibm.cldk.utils.ScopeUtils;
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.CallSiteReference;
@@ -52,8 +52,8 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import static com.ibm.northstar.CodeAnalyzer.gson;
-import static com.ibm.northstar.utils.AnalysisUtils.*;
+import static com.ibm.cldk.CodeAnalyzer.gson;
+import static com.ibm.cldk.utils.AnalysisUtils.*;
 
 /**
  * The type Sdg 2 json.

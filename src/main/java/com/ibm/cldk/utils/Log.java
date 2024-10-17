@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar.utils;
+package com.ibm.cldk.utils;
 
 import java.time.LocalDateTime;
 

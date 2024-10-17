@@ -1,4 +1,4 @@
-package com.ibm.northstar.utils;
+package com.ibm.cldk.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ibm.northstar.utils.ProjectDirectoryScanner.classFilesStream;
+import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
 
 public class BuildProject {
 

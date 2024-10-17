@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar.utils;
+package com.ibm.cldk.utils;
 
 import com.ibm.wala.cast.java.ipa.callgraph.JavaSourceAnalysisScope;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
@@ -19,14 +19,11 @@ import com.ibm.wala.shrike.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.config.FileOfClasses;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Struct;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,7 +31,7 @@ import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
 
-import static com.ibm.northstar.utils.ProjectDirectoryScanner.jarFilesStream;
+import static com.ibm.cldk.utils.ProjectDirectoryScanner.jarFilesStream;
 
 public class ScopeUtils {
 

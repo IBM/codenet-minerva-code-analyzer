@@ -36,7 +36,10 @@ jobs:
 
       - name: Determine new tag
         id: newtag
-        run: echo "::set-output name=tag::$(date +'%Y%m%dT%H%M%S')"
+        run: |
+          VERSION=$(java -jar build/libs/codeanalyzer.jar --version | awk '{print $2}')
+          TAG="v$VERSION"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Create Git Tag
         run: |

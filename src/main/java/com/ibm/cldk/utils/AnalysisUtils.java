@@ -11,12 +11,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package com.ibm.northstar.utils;
+package com.ibm.cldk.utils;
 
-import static com.ibm.northstar.SymbolTable.declaredMethodsAndConstructors;
+import static com.ibm.cldk.SymbolTable.declaredMethodsAndConstructors;
 
-import com.ibm.northstar.entities.Callable;
-import com.ibm.northstar.entities.ParameterInCallable;
+import com.ibm.cldk.entities.Callable;
+import com.ibm.cldk.entities.ParameterInCallable;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.Entrypoint;

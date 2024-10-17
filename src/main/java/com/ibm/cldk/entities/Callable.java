@@ -1,4 +1,4 @@
-package com.ibm.northstar.entities;
+package com.ibm.cldk.entities;
 
 import lombok.Data;
 
