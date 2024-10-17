@@ -16,9 +16,14 @@ plugins {
     id 'eclipse'
     id 'application'
     id 'org.graalvm.buildtools.native' version '0.9.28'
+    id 'net.researchgate.release' version '3.0.2'
 }
 
-version = 'latest'
+release {
+    git {
+        requireBranch.set('') // This removes the branch requirement
+    }
+}
 
 repositories {
     mavenCentral()
