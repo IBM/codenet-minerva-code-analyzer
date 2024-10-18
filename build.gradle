@@ -124,7 +124,6 @@ dependencies {
 
 task fatJar(type: Jar) {
     archiveBaseName = 'codeanalyzer'
-    archiveFileName = 'codeanalyzer.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes(
