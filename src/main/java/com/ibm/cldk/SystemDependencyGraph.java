@@ -71,12 +71,13 @@ public class SystemDependencyGraph {
         JSONExporter<Pair<String, Callable>, AbstractGraphEdge> exporter = new JSONExporter<>(
                 pair -> {
                     Map <String, String> vertex = new HashMap<>();
-                    vertex.put("class_interface_declarations", pair.getLeft());
-                    vertex.put("callable", gson.toJson(pair.getRight()));
+                    vertex.put("type_declaration", pair.getLeft());
+                    vertex.put("file_path", pair.getRight().getFilePath());
+                    vertex.put("signature", pair.getRight().getSignature());
+                    vertex.put("callable_declaration", pair.getRight().getDeclaration());
                     return gson.toJson(vertex);
                 }
         );
-//        exporter.setVertexAttributeProvider(v -> v.getRight().getAttributes());
         exporter.setEdgeAttributeProvider(AbstractGraphEdge::getAttributes);
         return exporter;
     }
