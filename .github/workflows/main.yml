@@ -37,7 +37,7 @@ jobs:
       - name: Determine new tag
         id: newtag
         run: |
-          VERSION=$(java -jar build/libs/codeanalyzer.jar --version | awk '{print $2}')
+          VERSION=$(java -jar build/libs/*.jar --version | awk '{print $2}')
           TAG="v$VERSION"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
