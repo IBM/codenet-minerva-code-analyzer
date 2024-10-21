@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 class VersionProvider implements CommandLine.IVersionProvider {
     public String[] getVersion() throws Exception {
         String version = getClass().getPackage().getImplementationVersion();
-        return new String[]{ "codeanalyzer " + (version != null ? version : "unknown") };
+        return new String[]{ version != null ? version : "unknown" };
     }
 }
 /**
@@ -99,12 +99,12 @@ public class CodeAnalyzer implements Runnable {
         Log.setVerbosity(verbose);
         try {
             analyze();
-        } catch (IOException | CallGraphBuilderCancelException | ClassHierarchyException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void analyze() throws IOException, ClassHierarchyException, CallGraphBuilderCancelException {
+    private static void analyze() throws Exception {
 
         JsonObject combinedJsonObject = new JsonObject();
         Map<String, JavaCompilationUnit> symbolTable;
@@ -159,6 +159,7 @@ public class CodeAnalyzer implements Runnable {
                     symbolTable = existingSymbolTable;
                 }
             }
+
             else {
                 // construct symbol table for project, write parse problems to file in output directory if specified
                 Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
@@ -176,16 +177,14 @@ public class CodeAnalyzer implements Runnable {
                 String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, build);
                 JsonElement sdgAsJSONElement = gson.fromJson(sdgAsJSONString, JsonElement.class);
                 JsonObject sdgAsJSONObject = sdgAsJSONElement.getAsJsonObject();
+                JsonElement edges = sdgAsJSONObject.get("edges");
 
                 // We don't really need these fields, so we'll remove it.
                 sdgAsJSONObject.remove("nodes");
                 sdgAsJSONObject.remove("creator");
                 sdgAsJSONObject.remove("version");
-
-                 // Remove the 'edges' element and move the list of edges up one level
-                 JsonElement edges = sdgAsJSONObject.get("edges");
-                 combinedJsonObject.add("system_dependency_graph", edges);
-
+                // Remove the 'edges' element and move the list of edges up one level
+                combinedJsonObject.add("system_dependency_graph", edges);
             }
         }
         // Cleanup library dependencies directory
@@ -196,6 +195,17 @@ public class CodeAnalyzer implements Runnable {
         JsonElement symbolTableJSON = gson.fromJson(symbolTableJSONString, JsonElement.class);
         combinedJsonObject.add("symbol_table", symbolTableJSON);
 
+        // Add version number to the output JSON
+        try {
+            String[] versions = new VersionProvider().getVersion();
+            if (versions.length > 0) {
+                combinedJsonObject.addProperty("version", versions[0]);
+            } else {
+                combinedJsonObject.addProperty("version", "unknown");
+            }
+        } catch (Exception e) {
+            combinedJsonObject.addProperty("version", "error retrieving version");
+        }
         String consolidatedJSONString = gson.toJson(combinedJsonObject);
         emit(consolidatedJSONString);
     }
