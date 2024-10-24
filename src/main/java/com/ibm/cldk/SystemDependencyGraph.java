@@ -15,7 +15,7 @@ package com.ibm.cldk;
 
 import com.ibm.cldk.entities.AbstractGraphEdge;
 import com.ibm.cldk.entities.CallEdge;
-import com.ibm.cldk.entities.Callable;
+import com.ibm.cldk.entities.CallableVertex;
 import com.ibm.cldk.entities.SystemDepEdge;
 import com.ibm.cldk.utils.AnalysisUtils;
 import com.ibm.cldk.utils.Log;
@@ -40,20 +40,60 @@ import com.ibm.wala.util.collections.HashMapFactory;
 import com.ibm.wala.util.graph.Graph;
 import com.ibm.wala.util.graph.GraphSlicer;
 import com.ibm.wala.util.graph.traverse.DFS;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.nio.json.JSONExporter;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringWriter;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-import static com.ibm.cldk.CodeAnalyzer.gson;
-import static com.ibm.cldk.utils.AnalysisUtils.*;
+import static com.ibm.cldk.utils.AnalysisUtils.createAndPutNewCallableInSymbolTable;
+import static com.ibm.cldk.utils.AnalysisUtils.getCallableFromSymbolTable;
+
+
+@Data
+abstract class Dependency {
+    public CallableVertex source;
+    public CallableVertex target;
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+class SDGDependency extends Dependency {
+    public String sourceKind;
+    public String destinationKind;
+    public String type;
+    public String weight;
+
+    public SDGDependency(CallableVertex source, CallableVertex target, SystemDepEdge edge) {
+        super.source = source;
+        super.target = target;
+        this.sourceKind = edge.getSourceKind();
+        this.destinationKind = edge.getDestinationKind();
+        this.type = edge.getType();
+        this.weight = String.valueOf(edge.getWeight());
+    }
+}
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+class CallDependency extends Dependency {
+    public String type;
+    public String weight;
+
+    public CallDependency(CallableVertex source, CallableVertex target, AbstractGraphEdge edge) {
+        this.source = source;
+        this.target = target;
+        this.type = edge.toString();
+        this.weight = String.valueOf(edge.getWeight());
+    }
+}
 
 /**
  * The type Sdg 2 json.
@@ -66,19 +106,10 @@ public class SystemDependencyGraph {
      * @return the graph exporter
      */
 
-
-    private static JSONExporter<Pair<String, Callable>, AbstractGraphEdge> getGraphExporter() {
-        JSONExporter<Pair<String, Callable>, AbstractGraphEdge> exporter = new JSONExporter<>(
-                pair -> {
-                    Map <String, String> vertex = new HashMap<>();
-                    vertex.put("type_declaration", pair.getLeft());
-                    vertex.put("file_path", pair.getRight().getFilePath());
-                    vertex.put("signature", pair.getRight().getSignature());
-                    vertex.put("callable_declaration", pair.getRight().getDeclaration());
-                    return gson.toJson(vertex);
-                }
-        );
+    private static JSONExporter<CallableVertex, AbstractGraphEdge> getGraphExporter() {
+        JSONExporter<CallableVertex, AbstractGraphEdge> exporter = new JSONExporter<>();
         exporter.setEdgeAttributeProvider(AbstractGraphEdge::getAttributes);
+        exporter.setVertexAttributeProvider(CallableVertex::getAttributes);
         return exporter;
     }
 
@@ -91,12 +122,12 @@ public class SystemDependencyGraph {
      * @param edgeLabels
      * @return
      */
-    private static org.jgrapht.Graph<Pair<String, Callable>, AbstractGraphEdge> buildGraph(
+    private static org.jgrapht.Graph<CallableVertex, AbstractGraphEdge> buildGraph(
             Supplier<Iterator<Statement>> entryPoints,
             Graph<Statement> sdg, CallGraph callGraph,
             BiFunction<Statement, Statement, String> edgeLabels) {
 
-        org.jgrapht.Graph<Pair<String, Callable>, AbstractGraphEdge> graph = new DefaultDirectedGraph<>(
+        org.jgrapht.Graph<CallableVertex, AbstractGraphEdge> graph = new DefaultDirectedGraph<>(
                 AbstractGraphEdge.class);
 
         // We'll use forward and backward search on the DFS to identify which CFG nodes
@@ -131,21 +162,22 @@ public class SystemDependencyGraph {
                             && !p.getNode().getMethod().equals(s.getNode().getMethod())) {
 
                         // Add the source nodes to the graph as vertices
-                        Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getNode().getMethod()));
-                        graph.addVertex(source);
-
+                        Map<String, String> source = Optional.ofNullable(getCallableFromSymbolTable(p.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getNode().getMethod()));
                         // Add the target nodes to the graph as vertices
-                        Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(s.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(s.getNode().getMethod()));
-                        graph.addVertex(target);
+                        Map<String, String> target = Optional.ofNullable(getCallableFromSymbolTable(s.getNode().getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(s.getNode().getMethod()));
 
-                        String edgeType = edgeLabels.apply(p, s);
-                        SystemDepEdge graphEdge = new SystemDepEdge(p, s, edgeType);
-                        SystemDepEdge cgEdge = (SystemDepEdge) graph.getEdge(source, target);
-                        if (source.getRight() != null && target.getRight() != null) {
+                        if (source != null && target != null) {
+                            CallableVertex source_vertex = new CallableVertex(source);
+                            CallableVertex target_vertex = new CallableVertex(target);
+                            graph.addVertex(source_vertex);
+                            graph.addVertex(target_vertex);
+                            String edgeType = edgeLabels.apply(p, s);
+                            SystemDepEdge graphEdge = new SystemDepEdge(p, s, edgeType);
+                            SystemDepEdge cgEdge = (SystemDepEdge) graph.getEdge(source_vertex, target_vertex);
                             if (cgEdge == null || !cgEdge.equals(graphEdge)) {
                                 graph.addEdge(
-                                        source,
-                                        target,
+                                        source_vertex,
+                                        target_vertex,
                                         graphEdge);
                             } else {
                                 graphEdge.incrementWeight();
@@ -164,21 +196,22 @@ public class SystemDependencyGraph {
                                 .forEach(o -> {
 
                                     // Add the source nodes to the graph as vertices
-                                    Pair<String, Callable> source = Optional.ofNullable(getCallableFromSymbolTable(p.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getMethod()));
-                                    graph.addVertex(source);
+                                    Map<String, String> source = Optional.ofNullable(getCallableFromSymbolTable(p.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(p.getMethod()));
+                                    CallableVertex source_vertex = new CallableVertex(source);
 
                                     // Add the target nodes to the graph as vertices
-                                    Pair<String, Callable> target = Optional.ofNullable(getCallableFromSymbolTable(o.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(o.getMethod()));
-                                    graph.addVertex(target);
+                                    Map<String, String> target = Optional.ofNullable(getCallableFromSymbolTable(o.getMethod())).orElseGet(() -> createAndPutNewCallableInSymbolTable(o.getMethod()));
+                                    CallableVertex target_vertex = new CallableVertex(target);
 
-                                    if (!source.equals(target) && source.getRight() != null && target.getRight() != null) {
-
+                                    if (!source.equals(target) && target != null) {
                                         // Get the edge between the source and the target
-                                        AbstractGraphEdge cgEdge = graph.getEdge(source, target);
+                                        graph.addVertex(source_vertex);
+                                        graph.addVertex(target_vertex);
+                                        AbstractGraphEdge cgEdge = graph.getEdge(source_vertex, target_vertex);
                                         if (cgEdge instanceof CallEdge) {
                                             ((CallEdge) cgEdge).incrementWeight();
                                         } else {
-                                            graph.addEdge(source, target, new CallEdge());
+                                            graph.addEdge(source_vertex, target_vertex, new CallEdge());
                                         }
                                     }
                                 });
@@ -193,7 +226,7 @@ public class SystemDependencyGraph {
      *
      * @param input        the input
      * @param dependencies the dependencies
-     * @param build The build options
+     * @param build        The build options
      * @return A List of triples containing the source, destination, and edge type
      * @throws IOException                     the io exception
      * @throws ClassHierarchyException         the class hierarchy exception
@@ -201,7 +234,7 @@ public class SystemDependencyGraph {
      * @throws CallGraphBuilderCancelException the call graph builder cancel
      *                                         exception
      */
-    public static String construct(
+    public static List<Dependency> construct(
             String input, String dependencies, String build)
             throws IOException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException {
 
@@ -244,12 +277,7 @@ public class SystemDependencyGraph {
                 + Math.ceil((double) (System.currentTimeMillis() - start_time) / 1000) + " seconds.");
 
         // set cyclomatic complexity for callables in the symbol table
-        callGraph.forEach(cgNode -> {
-            Callable callable = getCallableFromSymbolTable(cgNode.getMethod()).getRight();
-            if (callable != null) {
-                callable.setCyclomaticComplexity(getCyclomaticComplexity(cgNode.getIR()));
-            }
-        });
+        AnalysisUtils.setCyclomaticComplexity(callGraph);
 
         // Build SDG graph
         Log.info("Building System Dependency Graph.");
@@ -267,22 +295,31 @@ public class SystemDependencyGraph {
                         .getDeclaringClass()
                         .getClassLoader()
                         .getReference()
-                        .equals(ClassLoaderReference.Application)));
+                        .equals(ClassLoaderReference.Application))
+        );
 
         // A supplier to get entries
         Supplier<Iterator<Statement>> sdgEntryPointsSupplier = () -> callGraph.getEntrypointNodes().stream()
                 .map(n -> (Statement) new MethodEntryStatement(n)).iterator();
 
-        org.jgrapht.Graph<Pair<String, Callable>, AbstractGraphEdge> sdgGraph = buildGraph(
+        org.jgrapht.Graph<CallableVertex, AbstractGraphEdge> sdgGraph = buildGraph(
                 sdgEntryPointsSupplier,
                 prunedGraph, callGraph,
-                (p, s) -> String.valueOf(sdg.getEdgeLabels(p, s).iterator().next()));
+                (p, s) -> String.valueOf(sdg.getEdgeLabels(p, s).iterator().next())
+        );
 
-        JSONExporter<Pair<String, Callable>, AbstractGraphEdge> graphExporter = getGraphExporter();
+        List<Dependency> edges = sdgGraph.edgeSet().stream()
+                .map(abstractGraphEdge -> {
+                    CallableVertex source = sdgGraph.getEdgeSource(abstractGraphEdge);
+                    CallableVertex target = sdgGraph.getEdgeTarget(abstractGraphEdge);
+                    if (abstractGraphEdge instanceof CallEdge) {
+                        return new CallDependency(source, target, abstractGraphEdge);
+                    } else {
+                        return new SDGDependency(source, target, (SystemDepEdge) abstractGraphEdge);
+                    }
+                })
+                .collect(Collectors.toList());
 
-        StringWriter sdgWriter = new StringWriter();
-        graphExporter.exportGraph(sdgGraph, sdgWriter);
-
-        return sdgWriter.toString();
+        return edges;
     }
 }

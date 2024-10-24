@@ -117,4 +117,13 @@ public class SystemDepEdge extends AbstractGraphEdge {
         map.put("weight", DefaultAttribute.createAttribute(String.valueOf(getWeight())));
         return map;
     }
+
+    public Map<String, String> getAttributesMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("source_kind", getSourceKind());
+        map.put("type", getType());
+        map.put("destination_kind", getDestinationKind());
+        map.put("weight", String.valueOf(getWeight()));
+        return map;
+    }
 }
