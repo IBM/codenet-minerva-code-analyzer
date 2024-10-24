@@ -194,7 +194,7 @@ public class SymbolTable {
                 typeNode.setCallableDeclarations(typeDecl.findAll(CallableDeclaration.class).stream()
                     .filter(c -> c.getParentNode().isPresent() && c.getParentNode().get() == typeDecl)
                     .map(meth -> {
-                        Pair<String, Callable> callableDeclaration = processCallableDeclaration(meth, fieldNames, typeName);
+                        Pair<String, Callable> callableDeclaration = processCallableDeclaration(meth, fieldNames, typeName, parseResult.getStorage().map(s -> s.getPath().toString()).orElse("<in-memory>"));
                         declaredMethodsAndConstructors.put(typeName, callableDeclaration.getLeft(), callableDeclaration.getRight());
                         return callableDeclaration;
                     }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
@@ -249,8 +249,11 @@ public class SymbolTable {
      */
     @SuppressWarnings("unchecked")
     private static Pair<String, Callable> processCallableDeclaration(CallableDeclaration callableDecl,
-                                                                     List<String> classFields, String typeName) {
+                                                                     List<String> classFields, String typeName, String filePath) {
         Callable callableNode = new Callable();
+
+        // Set file path
+        callableNode.setFilePath(filePath);
 
         // add callable signature
         callableNode.setSignature(callableDecl.getSignature().asString());

@@ -19,6 +19,7 @@ import com.ibm.cldk.entities.Callable;
 import com.ibm.cldk.entities.ParameterInCallable;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IMethod;
+import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
@@ -42,7 +43,7 @@ public class AnalysisUtils {
     /**
      * The constant classAttr.
      */
-    public static Pair<String, Callable> createAndPutNewCallableInSymbolTable(IMethod method) {
+    public static Map<String, String> createAndPutNewCallableInSymbolTable(IMethod method) {
         // Get the class name, with a . representation.
         String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
 
@@ -55,11 +56,13 @@ public class AnalysisUtils {
         String methodSignature = String.join("", methodName, "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
 
         Callable newCallable = new Callable();
+        newCallable.setFilePath("");
         newCallable.setImplicit(true);
         newCallable.setConstructor(methodName.contains("<init>"));
         newCallable.setComment("");
         newCallable.setModifiers(Stream.of(method.isPublic() ? "public" : null, method.isProtected() ? "protected" : null, method.isPrivate() ? "private" : null, method.isAbstract() ? "abstract" : null, method.isStatic() ? "static" : null, method.isFinal() ? "final" : null, method.isSynchronized() ? "synchronized" : null, method.isNative() ? "native" : null, method.isSynthetic() ? "synthetic" : null, method.isBridge() ? "bridge" : null).filter(Objects::nonNull).collect(Collectors.toList()));
         newCallable.setCode("");
+        newCallable.setSignature(methodSignature);
         newCallable.setDeclaration(methodSignature);
         newCallable.setEndLine(-1);
         newCallable.setStartLine(-1);
@@ -76,7 +79,12 @@ public class AnalysisUtils {
 
         declaredMethodsAndConstructors.put(declaringClassSignature, methodSignature, newCallable);
 
-        return Pair.of(declaringClassSignature, newCallable);
+        return Map.ofEntries(
+                Map.entry("typeDeclaration", declaringClassSignature),
+                Map.entry("filePath", ""),
+                Map.entry("signature", newCallable.getSignature()),
+                Map.entry("callableDeclaration", newCallable.getDeclaration())
+        );
     }
 
     /**
@@ -92,8 +100,24 @@ public class AnalysisUtils {
         return branchCount + 1;
     }
 
-    public static Pair<String, Callable> getCallableFromSymbolTable(IMethod method) {
+    public static void setCyclomaticComplexity(CallGraph callGraph) {
+        callGraph.forEach(
+                cgNode -> {
+                    if (cgNode.getMethod() != null) {
+                        IMethod method = cgNode.getMethod();
+                        String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
+                        List<String> arguments = Arrays.stream(Type.getMethodType(method.getDescriptor().toString()).getArgumentTypes()).map(Type::getClassName).collect(Collectors.toList());
+                        String methodSignature = String.join("", method.getName().toString(), "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
+                        Callable callable = declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature);
+                        if (callable != null) {
+                            callable.setCyclomaticComplexity(getCyclomaticComplexity(cgNode.getIR()));
+                        }
+                }
+                }
+        );
+    }
 
+    public static Map<String, String> getCallableFromSymbolTable(IMethod method) {
         // Get the class name, with a . representation.
         String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
 
@@ -102,8 +126,17 @@ public class AnalysisUtils {
 
         // Get the method signature.
         String methodSignature = String.join("", method.getName().toString(), "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
+        Callable callable = declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature);
 
-        return Pair.of(declaringClassSignature, declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature));
+        if (callable == null)
+            return null;
+        else
+            return Map.ofEntries(
+                    Map.entry("typeDeclaration", declaringClassSignature),
+                    Map.entry("filePath", callable.getFilePath()),
+                    Map.entry("signature", callable.getSignature()),
+                    Map.entry("callableDeclaration", callable.getDeclaration())
+            );
     }
 
     /**

@@ -66,4 +66,11 @@ public class CallEdge extends AbstractGraphEdge {
         map.put("weight", DefaultAttribute.createAttribute(String.valueOf(getWeight())));
         return map;
     }
+
+    public Map<String, String> getAttributesMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put("type", toString());
+        map.put("weight", String.valueOf(getWeight()));
+        return map;
+    }
 }

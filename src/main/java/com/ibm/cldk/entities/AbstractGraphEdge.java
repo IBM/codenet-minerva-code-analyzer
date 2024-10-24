@@ -18,21 +18,34 @@ import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.shrike.shrikeCT.InvalidClassFileException;
 import com.ibm.wala.ssa.IR;
 import com.ibm.wala.ssa.SSAInstruction;
+import lombok.Getter;
 import org.jgrapht.nio.Attribute;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import static com.ibm.cldk.CodeAnalyzer.gson;
 
 /**
  * The type Abstract graph edge.
  */
+@Getter
 public abstract class AbstractGraphEdge implements Serializable {
     /**
      * The Context.
+     * -- GETTER --
+     *  Gets context.
+     *
+     * @return the context
+
      */
     public final String context;
     /**
      * The Weight.
+     * -- GETTER --
+     *  Gets weight.
+     *
+     * @return the weight
+
      */
     public Integer weight = 1;
 
@@ -60,30 +73,12 @@ public abstract class AbstractGraphEdge implements Serializable {
     }
 
     /**
-     * Gets context.
-     *
-     * @return the context
-     */
-    public String getContext() {
-        return this.context;
-    }
-
-    /**
      * Gets id.
      *
      * @return the id
      */
     public Integer getId() {
         return this.hashCode();
-    }
-
-    /**
-     * Gets weight.
-     *
-     * @return the weight
-     */
-    public Integer getWeight() {
-        return this.weight;
     }
 
     /**
@@ -112,10 +107,17 @@ public abstract class AbstractGraphEdge implements Serializable {
         return pos;
     }
 
+    @Override
+    public String toString() {
+        return gson.toJson(this);
+    }
+
     /**
      * Gets attributes.
      *
      * @return the attributes
      */
     public abstract Map<String, Attribute> getAttributes();
+
+    public abstract Map<String, String> getAttributesMap();
 }
