@@ -78,11 +78,16 @@ public class AnalysisUtils {
         newCallable.setAnnotations(method.getAnnotations().stream().map(annotation -> annotation.toString().replace("[", "(").replace("]", ")").replace("Annotation type ", "@")).collect(Collectors.toList()));
 
         declaredMethodsAndConstructors.put(declaringClassSignature, methodSignature, newCallable);
-
+        String signature = newCallable.getSignature();
+        if (signature.contains("<init>")) {
+            signature = signature.replace("<init>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
+        } else if (signature.contains("<clinit>")) {
+            signature = signature.replace("<clinit>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
+        }
         return Map.ofEntries(
                 Map.entry("typeDeclaration", declaringClassSignature),
-                Map.entry("filePath", ""),
-                Map.entry("signature", newCallable.getSignature()),
+                Map.entry("filePath", "<<implicit>>"),
+                Map.entry("signature", signature),
                 Map.entry("callableDeclaration", newCallable.getDeclaration())
         );
     }
@@ -130,13 +135,21 @@ public class AnalysisUtils {
 
         if (callable == null)
             return null;
-        else
+        else{
+            String signature = callable.getSignature();
+            if (signature.contains("<init>")) {
+                signature = signature.replace("<init>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
+                System.out.println("signature: " + signature);
+            } else if (signature.contains("<clinit>")) {
+                signature = signature.replace("<clinit>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
+            }
             return Map.ofEntries(
                     Map.entry("typeDeclaration", declaringClassSignature),
                     Map.entry("filePath", callable.getFilePath()),
-                    Map.entry("signature", callable.getSignature()),
-                    Map.entry("callableDeclaration", callable.getDeclaration())
+                    Map.entry("signature", signature),
+                    Map.entry("callableDeclaration", callable.getSignature())
             );
+        }
     }
 
     /**
