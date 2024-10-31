@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -69,11 +70,13 @@ public class ScopeUtils {
       Log.error("JAVA_HOME is not set.");
       throw new RuntimeException("JAVA_HOME is not set.");
     }
+    String[] stdlibs = new String[0];
     
-    String[] stdlibs = Files.walk(Paths.get(System.getenv("JAVA_HOME"), "jmods"))
-        .filter(path -> path.toString().endsWith(".jmod"))
+    try (Stream<Path> stream = Files.walk(Paths.get(System.getenv("JAVA_HOME"), "jmods"))) {
+        stdlibs = stream.filter(path -> path.toString().endsWith(".jmod"))
         .map(path -> path.toAbsolutePath().toString())
         .toArray(String[]::new);
+    } catch(IOException e) {}
 
     for (String stdlib : stdlibs) {
       scope.addToScope(ClassLoaderReference.Primordial, new JarFile(stdlib));
