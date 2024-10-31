@@ -139,7 +139,6 @@ public class AnalysisUtils {
             String signature = callable.getSignature();
             if (signature.contains("<init>")) {
                 signature = signature.replace("<init>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
-                System.out.println("signature: " + signature);
             } else if (signature.contains("<clinit>")) {
                 signature = signature.replace("<clinit>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
             }
