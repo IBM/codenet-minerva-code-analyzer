@@ -3,7 +3,7 @@ name: Codeanalyzer CI
 on:
   push:
     branches:
-      - main
+      - GA
       
 permissions:
   contents: write 
