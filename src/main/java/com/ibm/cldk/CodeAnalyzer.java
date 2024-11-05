@@ -69,6 +69,9 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
+    @Option(names = {"--no-copy-dependencies"}, description = "Do copy dependencies to a temporary directory.")
+    private static boolean noCopyDeps = false;
+
 
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
@@ -119,10 +122,15 @@ public class CodeAnalyzer implements Runnable {
         else {
             // download library dependencies of project for type resolution
             String dependencies = null;
-            if (BuildProject.downloadLibraryDependencies(input)) {
-                dependencies = String.valueOf(BuildProject.libDownloadPath);
+
+            if (!noCopyDeps) {
+                if (BuildProject.downloadLibraryDependencies(input)) {
+                    dependencies = String.valueOf(BuildProject.libDownloadPath);
+                } else {
+                    Log.warn("Failed to download library dependencies of project");
+                }
             } else {
-                Log.warn("Failed to download library dependencies of project");
+                Log.warn("--no-copy-dependencies is activated, skipping library dependencies download");
             }
             boolean analysisFileExists = output != null && Files.exists(Paths.get(output + File.separator + outputFileName));
 

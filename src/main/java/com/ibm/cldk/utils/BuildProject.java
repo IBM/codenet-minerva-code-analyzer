@@ -16,7 +16,9 @@ public class BuildProject {
 
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
-    private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn";
+    private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows")
+            ? (new File("mvnw.cmd").exists() ? "mvnw.cmd" : "mvn.cmd")
+            : (new File("mvnw").exists() ? "mvnw" : "mvn");
     private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
     public static Path  tempInitScript;
     static {

@@ -86,10 +86,16 @@ public class AnalysisUtils {
      * @return int Cyclomatic complexity for method/constructor
      */
     public static int getCyclomaticComplexity(IR ir) {
-        int branchCount = (int)Arrays.stream(ir.getInstructions())
-            .filter(inst -> inst instanceof SSAConditionalBranchInstruction)
-            .count();
-        return branchCount + 1;
+
+        try {
+            int branchCount = (int)Arrays.stream(ir.getInstructions())
+                    .filter(inst -> inst instanceof SSAConditionalBranchInstruction)
+                    .count();
+            return branchCount + 1;
+        } catch (NullPointerException nullPointerException) {
+            Log.error("Null pointer exception in getCyclomaticComplexity");
+            throw new RuntimeException("Could not get cyclomatic complexity.");
+        }
     }
 
     public static Pair<String, Callable> getCallableFromSymbolTable(IMethod method) {

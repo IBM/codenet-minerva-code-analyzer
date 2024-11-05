@@ -75,6 +75,12 @@ public class ScopeUtils {
         .map(path -> path.toAbsolutePath().toString())
         .toArray(String[]::new);
 
+    // Check if stdlibs is empty and throw an exception if true
+    if (stdlibs.length == 0) {
+      Log.error("jmods directory not found or no .jmod files present");
+      throw new RuntimeException("jmods directory not found or no .jmod files present");
+    }
+
     for (String stdlib : stdlibs) {
       scope.addToScope(ClassLoaderReference.Primordial, new JarFile(stdlib));
     }
@@ -106,7 +112,7 @@ public class ScopeUtils {
 
     List<Path> applicationClassFiles = BuildProject.buildProjectAndStreamClassFiles(projectPath, build);
     Log.debug("Application class files: " + String.valueOf(applicationClassFiles.size()));
-    if (applicationClassFiles == null) {
+    if (applicationClassFiles.isEmpty()) {
       Log.error("No application classes found.");
       throw new RuntimeException("No application classes found.");
     }
