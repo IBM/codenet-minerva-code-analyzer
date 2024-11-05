@@ -53,5 +53,6 @@ jobs:
         with:
           files: build/libs/*.jar
           tag_name: ${{ steps.newtag.outputs.tag }}
+          prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
