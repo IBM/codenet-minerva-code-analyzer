@@ -71,8 +71,7 @@ public class CodeAnalyzer implements Runnable {
 
     @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml file of the project.")
     private static String projectRootPom;
-
-
+    
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
 
