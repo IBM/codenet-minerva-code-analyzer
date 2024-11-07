@@ -155,8 +155,9 @@ public class BuildProject {
      * @param projectPath Path to the project under analysis
      * @return true if dependency download succeeds; false otherwise
      */
-    public static boolean downloadLibraryDependencies(String projectPath) throws IOException {
+    public static boolean downloadLibraryDependencies(String projectPath, String projectRootPom) throws IOException {
         // created download dir if it does not exist
+        String projectRoot = projectRootPom != null ? projectRootPom : projectPath;
         libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
         if (!Files.exists(libDownloadPath)) {
             try {
@@ -166,20 +167,20 @@ public class BuildProject {
                 return false;
             }
         }
-        File pomFile = new File(projectPath, "pom.xml");
+        File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
             String[] mavenCommand = {
                     MAVEN_CMD, "--no-transfer-progress", "-f",
-                    Paths.get(projectPath, "pom.xml").toString(),
+                    Paths.get(projectRoot, "pom.xml").toString(),
                     "dependency:copy-dependencies",
                     "-DoutputDirectory=" + libDownloadPath.toString()
             };
             return buildWithTool(mavenCommand);
-        } else if (new File(projectPath, "build.gradle").exists() || new File(projectPath, "build.gradle.kts").exists()) {
+        } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
-            String[] gradleCommand = {projectPath + File.separator + GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir="+libDownloadPath.toString()};
+            String[] gradleCommand = {projectRoot + File.separator + GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir="+libDownloadPath.toString()};
             System.out.println(Arrays.toString(gradleCommand));
             return buildWithTool(gradleCommand);
         }
