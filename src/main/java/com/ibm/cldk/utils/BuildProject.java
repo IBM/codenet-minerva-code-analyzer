@@ -1,5 +1,7 @@
 package com.ibm.cldk.utils;
 
+import com.ibm.cldk.CodeAnalyzer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +12,25 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
 
+import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
+import static com.ibm.cldk.CodeAnalyzer.projectRootPom;
 public class BuildProject {
 
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
-    private static final String MAVEN_CMD = System.getProperty("os.name").toLowerCase().contains("windows")
-            ? (new File("mvnw.cmd").exists() ? "mvnw.cmd" : "mvn.cmd")
-            : (new File("mvnw").exists() ? "mvnw" : "mvn");
+    private static final String MAVEN_CMD = BuildProject.getMavenCommand();
+    private static String getMavenCommand() {
+        Boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
+        String mvnCommand;
+        if (isWindows) {
+            mvnCommand = new File(projectRootPom, "mvnw.bat").exists() ? String.valueOf(new File(projectRootPom, "mvnw.bat")) : "mvn.bat";
+        } else {
+            mvnCommand = new File(projectRootPom, "mvnw").exists() ? String.valueOf(new File(projectRootPom, "mvnw")) : "mvn";
+        }
+        return mvnCommand;
+    }
+
     private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
     public static Path  tempInitScript;
     static {
@@ -28,6 +40,7 @@ public class BuildProject {
             throw new RuntimeException(e);
         }
     }
+
     private static final String GRADLE_DEPENDENCIES_TASK = "allprojects { afterEvaluate { project -> task downloadDependencies(type: Copy) {\n" +
             "        def configs = project.configurations.findAll { it.canBeResolved }\n\n" +
             "        dependsOn configs\n" +
