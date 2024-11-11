@@ -70,7 +70,7 @@ public class CodeAnalyzer implements Runnable {
     private static boolean noBuild = false;
 
     @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml file of the project.")
-    private static String projectRootPom;
+    public static String projectRootPom;
 
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
@@ -116,9 +116,7 @@ public class CodeAnalyzer implements Runnable {
             Log.debug("Single file analysis.");
             Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult = SymbolTable.extractSingle(sourceAnalysis);
             symbolTable = symbolTableExtractionResult.getLeft();
-        }
-
-        else {
+        } else {
             // download library dependencies of project for type resolution
             String dependencies = null;
             if (BuildProject.downloadLibraryDependencies(input, projectRootPom)) {
