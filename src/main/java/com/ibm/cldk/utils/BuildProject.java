@@ -24,7 +24,7 @@ public class BuildProject {
         Boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         String mvnCommand;
         if (isWindows) {
-            mvnCommand = new File(projectRootPom, "mvnw.bat").exists() ? String.valueOf(new File(projectRootPom, "mvnw.bat")) : "mvn.bat";
+            mvnCommand = new File(projectRootPom, "mvnw.cmd").exists() ? String.valueOf(new File(projectRootPom, "mvnw.cmd")) : "mvn.cmd";
         } else {
             mvnCommand = new File(projectRootPom, "mvnw").exists() ? String.valueOf(new File(projectRootPom, "mvnw")) : "mvn";
         }
