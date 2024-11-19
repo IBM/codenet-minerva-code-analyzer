@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -158,7 +159,7 @@ public class BuildProject {
      * @return true if the streaming was successful, false otherwise.
      */
     public static List<Path> buildProjectAndStreamClassFiles(String projectPath, String build) throws IOException {
-        return buildProject(projectPath, build) ? classFilesStream(projectPath) : null;
+        return buildProject(projectPath, build) ? classFilesStream(projectPath) : new ArrayList<>();
     }
 
     /**
