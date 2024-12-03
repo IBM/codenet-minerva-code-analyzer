@@ -67,7 +67,7 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
-    @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml file of the project.")
+    @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml/build.gradle file of the project.")
     public static String projectRootPom;
 
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
@@ -108,6 +108,7 @@ public class CodeAnalyzer implements Runnable {
 
         JsonObject combinedJsonObject = new JsonObject();
         Map<String, JavaCompilationUnit> symbolTable;
+        projectRootPom = projectRootPom == null ? input : projectRootPom;
         // First of all if, sourceAnalysis is provided, we will analyze the source code instead of the project.
         if (sourceAnalysis != null) {
             // Construct symbol table for source code
