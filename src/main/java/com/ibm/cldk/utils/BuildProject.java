@@ -21,6 +21,13 @@ public class BuildProject {
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
     private static final String MAVEN_CMD = BuildProject.getMavenCommand();
+    private static final String GRADLE_CMD = BuildProject.getGradleCmd();
+
+    /**
+     * Gets the maven command to be used for building the project.
+     *
+     * @return the maven command
+     */
     private static String getMavenCommand() {
         Boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         String mvnCommand;
@@ -32,7 +39,30 @@ public class BuildProject {
         return mvnCommand;
     }
 
-    private static final String GRADLE_CMD = System.getProperty("os.name").toLowerCase().contains("windows") ? "gradlew.bat" : "gradlew";
+    /**
+     * Gets the gradle command to be used for building the project.
+     *
+     * @return the gradle command
+     */
+    private static String getGradleCmd() {
+        String GRADLE_CMD;
+        String osName = System.getProperty("os.name").toLowerCase();
+        boolean isWindows = osName.contains("windows");
+        String gradleWrapper = isWindows ? "gradlew.bat" : "gradlew";
+        String gradle = isWindows ? "gradle.bat" : "gradle";
+
+        String gradleWrapperExists = new File(projectRootPom, gradleWrapper).exists() ? "true" : "false";
+
+        if (new File(projectRootPom, gradleWrapper).exists()) {
+            GRADLE_CMD = gradleWrapper;
+        } else if (commandExists(gradle)) {
+            GRADLE_CMD = gradle;
+        } else {
+            throw new IllegalStateException("Could not file a valid gradle command. I did not find " + gradleWrapper + " or " + gradle + " in the project directory or in the system PATH.");
+        }
+        return GRADLE_CMD;
+    }
+
     public static Path  tempInitScript;
     static {
         try {
@@ -59,6 +89,16 @@ public class BuildProject {
             "    }\n" +
             "    }\n" +
             "}";
+
+    private static boolean commandExists(String command) {
+        try {
+            Process process = new ProcessBuilder(command, "--version").start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (IOException | InterruptedException exceptions) {
+            return false;
+        }
+    }
 
     private static boolean buildWithTool(String[] buildCommand) {
         Log.info("Building the project using " + buildCommand[0] + ".");
@@ -126,8 +166,13 @@ public class BuildProject {
 
     public static boolean gradleBuild(String projectPath) {
         // Adjust Gradle command as needed
-        String gradleWrapper = projectPath + File.separator + GRADLE_CMD;
-        String[] gradleCommand = {gradleWrapper, "clean", "compileJava", "-p", projectPath};
+        String[] gradleCommand;
+        if (GRADLE_CMD.equals("gradlew") || GRADLE_CMD.equals("gradlew.bat")) {
+            gradleCommand = new String[]{projectPath + File.separator + GRADLE_CMD, "clean", "compileJava", "-p", projectPath};
+        }
+        else {
+            gradleCommand = new String[]{GRADLE_CMD, "clean", "compileJava", "-p", projectPath};
+        }
         return buildWithTool(gradleCommand);
     }
 
@@ -194,7 +239,14 @@ public class BuildProject {
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
-            String[] gradleCommand = {projectRoot + File.separator + GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir="+libDownloadPath.toString()};
+            String[] gradleCommand;
+            if (GRADLE_CMD.equals("gradlew") || GRADLE_CMD.equals("gradlew.bat")) {
+                gradleCommand = new String[]{projectRoot + File.separator + GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir=" + libDownloadPath.toString()};
+            }
+            else {
+                gradleCommand = new String[]{GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir=" + libDownloadPath.toString()};
+            }
+
             System.out.println(Arrays.toString(gradleCommand));
             return buildWithTool(gradleCommand);
         }
