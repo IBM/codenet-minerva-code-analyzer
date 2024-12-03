@@ -19,8 +19,6 @@ import com.google.gson.*;
 import com.ibm.cldk.entities.JavaCompilationUnit;
 import com.ibm.cldk.utils.BuildProject;
 import com.ibm.cldk.utils.Log;
-import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
-import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import org.apache.commons.lang3.tuple.Pair;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -40,7 +38,7 @@ import java.util.stream.Collectors;
 
 
 class VersionProvider implements CommandLine.IVersionProvider {
-    public String[] getVersion() throws Exception {
+    public String[] getVersion() {
         String version = getClass().getPackage().getImplementationVersion();
         return new String[]{ version != null ? version : "unknown" };
     }
