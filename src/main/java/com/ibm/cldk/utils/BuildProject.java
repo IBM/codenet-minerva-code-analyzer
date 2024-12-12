@@ -16,8 +16,8 @@ import java.util.List;
 
 import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
 import static com.ibm.cldk.CodeAnalyzer.projectRootPom;
-public class BuildProject {
 
+public class BuildProject {
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
     private static final String MAVEN_CMD = BuildProject.getMavenCommand();
@@ -55,10 +55,8 @@ public class BuildProject {
 
         if (new File(projectRootPom, gradleWrapper).exists()) {
             GRADLE_CMD = gradleWrapper;
-        } else if (commandExists(gradle)) {
-            GRADLE_CMD = gradle;
         } else {
-            throw new IllegalStateException("Could not file a valid gradle command. I did not find " + gradleWrapper + " or " + gradle + " in the project directory or in the system PATH.");
+            GRADLE_CMD = gradle;
         }
         return GRADLE_CMD;
     }
@@ -229,6 +227,9 @@ public class BuildProject {
         File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
+            if (!commandExists(MAVEN_CMD))
+                throw new IllegalStateException("Could not find a valid maven command. I did not find " + MAVEN_CMD + " in the project directory or in the system PATH.");
+
             String[] mavenCommand = {
                     MAVEN_CMD, "--no-transfer-progress", "-f",
                     Paths.get(projectRoot, "pom.xml").toString(),
@@ -237,6 +238,10 @@ public class BuildProject {
             };
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
+            Log.info("Found build.gradle or build.gradle.kts in the project directory. Using gradle to download dependencies.");
+            if (!commandExists(GRADLE_CMD))
+                throw new IllegalStateException("Could not find a valid Gradle command. I did not find " + GRADLE_CMD + " in the project directory or in the system PATH.");
+
             Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
             String[] gradleCommand;
@@ -246,8 +251,6 @@ public class BuildProject {
             else {
                 gradleCommand = new String[]{GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir=" + libDownloadPath.toString()};
             }
-
-            System.out.println(Arrays.toString(gradleCommand));
             return buildWithTool(gradleCommand);
         }
         return false;
