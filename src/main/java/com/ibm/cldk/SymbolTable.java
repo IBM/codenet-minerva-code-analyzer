@@ -324,8 +324,7 @@ public class SymbolTable {
                 .reduce(0, Integer::sum);
         int conditionalExprCount = callableDeclaration.findAll(ConditionalExpr.class).size();
         int catchClauseCount = callableDeclaration.findAll(CatchClause.class).size();
-        int cyclomaticComplexity = ifStmtCount + loopStmtCount + switchCaseCount + conditionalExprCount + catchClauseCount + 1;
-        return cyclomaticComplexity;
+        return ifStmtCount + loopStmtCount + switchCaseCount + conditionalExprCount + catchClauseCount + 1;
     }
 
     /**
