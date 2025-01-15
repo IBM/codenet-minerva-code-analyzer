@@ -91,28 +91,9 @@ public class BuildProject {
     private static boolean commandExists(String command) {
         try {
             Process process = new ProcessBuilder().directory(new File(projectRootPom)).command(command, "--version").start();
-
-            // Read the output stream
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
-            );
-            String line;
-            while ((line = reader.readLine()) != null) {
-                Log.info(line);
-            }
-
-            // Read the error stream
-            BufferedReader errorReader = new BufferedReader(
-                    new InputStreamReader(process.getErrorStream())
-            );
-            while ((line = errorReader.readLine()) != null) {
-                Log.info(line);
-            }
-
             int exitCode = process.waitFor();
             return exitCode == 0;
         } catch (IOException | InterruptedException exceptions) {
-            exceptions.printStackTrace();
             return false;
         }
     }
