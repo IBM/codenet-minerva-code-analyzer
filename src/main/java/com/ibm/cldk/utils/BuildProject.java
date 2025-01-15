@@ -228,7 +228,7 @@ public class BuildProject {
         if (pomFile.exists()) {
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
             if (!commandExists(MAVEN_CMD))
-                throw new IllegalStateException("Could not find a valid maven command. I did not find " + MAVEN_CMD + " in the project directory or in the system PATH.");
+                throw new IllegalStateException("Could not find a valid maven command. Could not find " + MAVEN_CMD + " in the project directory or in the system PATH.");
 
             String[] mavenCommand = {
                     MAVEN_CMD, "--no-transfer-progress", "-f",
@@ -240,7 +240,7 @@ public class BuildProject {
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             Log.info("Found build.gradle or build.gradle.kts in the project directory. Using gradle to download dependencies.");
             if (!commandExists(GRADLE_CMD))
-                throw new IllegalStateException("Could not find a valid Gradle command. I did not find " + GRADLE_CMD + " in the project directory or in the system PATH.");
+                throw new IllegalStateException("Could not find a valid Gradle command. Could not find " + GRADLE_CMD + " in the project directory or in the system PATH.");
 
             Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
