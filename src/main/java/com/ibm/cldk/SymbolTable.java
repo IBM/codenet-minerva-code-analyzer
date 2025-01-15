@@ -273,7 +273,9 @@ public class SymbolTable {
 
         // add the complete declaration string, including modifiers, throws, and
         // parameter names
-        callableNode.setDeclaration(callableDecl.getDeclarationAsString(true, true, true).strip());
+        callableNode.setDeclaration(callableDecl
+                .getDeclarationAsString(true, true, true)
+                .strip().replaceAll("//.*\n", ""));
 
         // add information about callable parameters: for each parameter, type, name,
         // annotations,
