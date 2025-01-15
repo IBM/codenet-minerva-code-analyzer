@@ -54,7 +54,7 @@ public class BuildProject {
         String gradleWrapperExists = new File(projectRootPom, gradleWrapper).exists() ? "true" : "false";
 
         if (new File(projectRootPom, gradleWrapper).exists()) {
-            GRADLE_CMD = gradleWrapper;
+            GRADLE_CMD = String.valueOf(new File(projectRootPom, gradleWrapper));
         } else {
             GRADLE_CMD = gradle;
         }
@@ -112,6 +112,7 @@ public class BuildProject {
             int exitCode = process.waitFor();
             return exitCode == 0;
         } catch (IOException | InterruptedException exceptions) {
+            exceptions.printStackTrace();
             return false;
         }
     }
