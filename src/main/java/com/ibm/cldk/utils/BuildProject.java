@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,13 +89,38 @@ public class BuildProject {
             "    }\n" +
             "}";
 
-    private static boolean commandExists(String command) {
+    private static AbstractMap.SimpleEntry<Boolean, String> commandExists(String command) {
+        StringBuilder output = new StringBuilder();
         try {
             Process process = new ProcessBuilder().directory(new File(projectRootPom)).command(command, "--version").start();
+            // Read the output stream
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream())
+            );
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+            // Read the error stream
+            BufferedReader errorReader = new BufferedReader(
+                    new InputStreamReader(process.getErrorStream())
+            );
+            while ((line = errorReader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+
+
             int exitCode = process.waitFor();
-            return exitCode == 0;
+            return new AbstractMap.SimpleEntry<>(
+                    exitCode == 0,
+                    output.toString().trim()
+            );
         } catch (IOException | InterruptedException exceptions) {
-            return false;
+            return new AbstractMap.SimpleEntry<>(
+                    false,
+                    exceptions.getMessage()
+            );
         }
     }
 
@@ -227,8 +253,9 @@ public class BuildProject {
         File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
-            if (!commandExists(MAVEN_CMD))
-                throw new IllegalStateException("Could not find a valid maven command. Could not find " + MAVEN_CMD + " in the project directory or in the system PATH.");
+            AbstractMap.SimpleEntry<Boolean, String> mavenCheck = commandExists(MAVEN_CMD);
+            if (!mavenCheck.getKey())
+                throw new IllegalStateException("Unable to execute Maven command. Attempt failed with message\n" + mavenCheck.getValue());
 
             String[] mavenCommand = {
                     MAVEN_CMD, "--no-transfer-progress", "-f",
@@ -239,8 +266,9 @@ public class BuildProject {
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             Log.info("Found build.gradle or build.gradle.kts in the project directory. Using gradle to download dependencies.");
-            if (!commandExists(GRADLE_CMD))
-                throw new IllegalStateException("Could not find a valid Gradle command. Could not find " + GRADLE_CMD + " in the project directory or in the system PATH.");
+            AbstractMap.SimpleEntry<Boolean, String> gradleCheck = commandExists(GRADLE_CMD);
+            if (!gradleCheck.getKey())
+                throw new IllegalStateException("Could not execute Gradle command. Attempt failed with message\n" + gradleCheck.getValue());
 
             Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
