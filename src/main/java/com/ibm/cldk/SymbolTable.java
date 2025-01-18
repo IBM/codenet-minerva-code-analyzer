@@ -10,7 +10,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
-import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -273,7 +273,9 @@ public class SymbolTable {
 
         // add the complete declaration string, including modifiers, throws, and
         // parameter names
-        callableNode.setDeclaration(callableDecl.getDeclarationAsString(true, true, true).strip());
+        callableNode.setDeclaration(callableDecl
+                .getDeclarationAsString(true, true, true)
+                .strip().replaceAll("//.*\n", ""));
 
         // add information about callable parameters: for each parameter, type, name,
         // annotations,
@@ -301,9 +303,30 @@ public class SymbolTable {
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
         callableNode.setCallSites(getCallSites(body));
         callableNode.setVariableDeclarations(getVariableDeclarations(body));
+        callableNode.setCyclomaticComplexity(getCyclomaticComplexity(callableDecl));
 
         String callableSignature = (callableDecl instanceof MethodDeclaration) ? callableDecl.getSignature().asString() : callableDecl.getSignature().asString().replace(callableDecl.getSignature().getName(), "<init>");
         return Pair.of(callableSignature, callableNode);
+    }
+
+    /**
+     * Computes cyclomatic complexity for the given callable.
+     *
+     * @param callableDeclaration Callable to compute cyclomatic complexity for
+     * @return cyclomatic complexity
+     */
+    private static int getCyclomaticComplexity(CallableDeclaration callableDeclaration) {
+        int ifStmtCount = callableDeclaration.findAll(IfStmt.class).size();
+        int loopStmtCount = callableDeclaration.findAll(DoStmt.class).size() +
+            callableDeclaration.findAll(ForStmt.class).size() +
+                callableDeclaration.findAll(ForEachStmt.class).size() +
+                callableDeclaration.findAll(WhileStmt.class).size();
+        int switchCaseCount = callableDeclaration.findAll(SwitchStmt.class).stream()
+                .map(stmt -> stmt.getEntries().size())
+                .reduce(0, Integer::sum);
+        int conditionalExprCount = callableDeclaration.findAll(ConditionalExpr.class).size();
+        int catchClauseCount = callableDeclaration.findAll(CatchClause.class).size();
+        return ifStmtCount + loopStmtCount + switchCaseCount + conditionalExprCount + catchClauseCount + 1;
     }
 
     /**

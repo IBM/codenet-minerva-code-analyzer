@@ -23,6 +23,7 @@ import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ssa.IR;
+import com.ibm.wala.ssa.ISSABasicBlock;
 import com.ibm.wala.ssa.SSAConditionalBranchInstruction;
 import com.ibm.wala.ssa.SSASwitchInstruction;
 import com.ibm.wala.types.ClassLoaderReference;
@@ -96,7 +97,11 @@ public class AnalysisUtils {
         int switchBranchCount = Arrays.stream(ir.getInstructions())
                 .filter(inst -> inst instanceof SSASwitchInstruction)
                 .map(inst -> ((SSASwitchInstruction) inst).getCasesAndLabels().length).reduce(0, Integer::sum);
-        return conditionalBranchCount + switchBranchCount + 1;
+        Iterable<ISSABasicBlock> iterableBasicBlocks = ir::getBlocks;
+        int catchBlockCount = (int) StreamSupport.stream(iterableBasicBlocks.spliterator(), false)
+                .filter(ISSABasicBlock::isCatchBlock)
+                .count();
+        return conditionalBranchCount + switchBranchCount + catchBlockCount + 1;
     }
 
     public static Pair<String, Callable> getCallableFromSymbolTable(IMethod method) {
