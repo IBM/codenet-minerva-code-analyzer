@@ -118,11 +118,15 @@ public class CodeAnalyzer implements Runnable {
         } else {
             // download library dependencies of project for type resolution
             String dependencies = null;
-            if (BuildProject.downloadLibraryDependencies(input, projectRootPom)) {
+            try {if (BuildProject.downloadLibraryDependencies(input, projectRootPom)) {
                 dependencies = String.valueOf(BuildProject.libDownloadPath);
             } else {
                 Log.warn("Failed to download library dependencies of project");
             }
+            } catch (IllegalStateException illegalStateException) {
+                Log.warn("Failed to download library dependencies of project");
+            }
+
             boolean analysisFileExists = output != null && Files.exists(Paths.get(output + File.separator + outputFileName));
 
             // if target files are specified, compute symbol table information for the given files
