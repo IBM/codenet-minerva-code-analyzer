@@ -1,0 +1,27 @@
+apiVersion: liberty.websphere.ibm.com/v1
+kind: WebSphereLibertyApplication
+metadata:
+    name: erww-lite
+    annotations:
+      argocd.argoproj.io/sync-wave: "5"
+spec:
+  license:
+    accept: true
+  applicationImage: docker-na-public.artifactory.swg-devops.com/hyc-wassvt-team-image-registry-docker-local/erww-lite:latest
+  createKnativeService: false
+  expose: true
+  manageTLS: false
+  replicas: 1
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 80
+  pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 9080
+  env:
+    - name: DB2HOST
+      value: 'erww-db2'
+    - name: WLP_LOGGING_CONSOLE_FORMAT
+      value: 'simple'

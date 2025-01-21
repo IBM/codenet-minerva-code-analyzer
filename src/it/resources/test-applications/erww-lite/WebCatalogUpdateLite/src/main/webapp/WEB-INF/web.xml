@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+	<display-name>WebCatalogUpdateLite</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	 <persistence-unit-ref>
+		<description> Persistence unit for WebCatalogUpdateLite	</description>
+		<persistence-unit-ref-name>
+			persistence/WebCatalogUpdateLite
+		</persistence-unit-ref-name>
+		<persistence-unit-name>
+			WebCatalogUpdateLite
+		</persistence-unit-name>
+	</persistence-unit-ref>
+	<security-constraint>
+		<display-name>CompanySecurityConstraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>CompanyWebResource</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>PUT</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>TRACE</http-method>
+			<http-method>POST</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>OPTIONS</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>Authorized CompanyRole</description>
+			<role-name>CompanyRole</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<login-config id="LoginConfig_1">
+		<auth-method>FORM</auth-method>
+		<form-login-config id="FormLoginConfig_1">
+			<form-login-page>/Login.jsp</form-login-page>
+			<form-error-page>/LoginError.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+	<security-role>
+		<role-name>CompanyRole</role-name>
+	</security-role>
+</web-app>

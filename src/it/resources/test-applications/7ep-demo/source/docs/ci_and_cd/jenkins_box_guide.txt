@@ -1,0 +1,500 @@
+Console-only Jenkins, SonarQube, Git repo
+-----------------------------------------
+
+You need a few things to get started.
+
+Download the Centos install DVD iso:
+http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-1810.iso
+
+Download the VirtualBox software:
+https://www.virtualbox.org/wiki/Downloads
+
+Go ahead and install VirtualBox using its installer.  The default
+settings will suffice.
+
+These instructions were tested using VirtualBox 6.
+
+Prerequisite: Modify the networking configuration.
+Follow ON THE HOST BOX in virtualbox_networking.txt
+
+1. Open VirtualBox.  Click on New.  Name it "jenkinsbox".
+
+Make sure to choose Mac osX 64 bit for the operating system.  It's not a Mac, but for
+some reason this makes mouse integration work beautifully.
+
+Click Next.
+
+2. Give it 4096 megabytes of ram.  Click Next.
+
+3. Keep clicking next until it gives you a choice for hard-drive size.  Set it
+   to 12 gigabytes.  Click Next.
+
+Click "settings" for the new Centos_Jenkins_machine box, do the following:
+  Click on Storage and on the icon for the empty disc drive, and
+  on the icon on the right, click and you should see an option to:
+  "Choose Virtual Optical Disk File...".  Click that and choose the iso file
+  for Centos you downloaded previously.
+  
+in the network tab, for adapter 1 choose Host-only adapter, and for
+adapter 2 choose NAT.
+
+  Click Ok.
+
+Start it up.
+
+Choose "install Centos 7" instead of "test this media and
+install centos7".
+
+Choose English for the languages.
+
+Under system, click on "installation destination" and then click Done
+on the page it opens up.  (it defaults properly)
+
+Click on the network & Host name icon.
+
+This is an ***important*** section.  Take it slow.
+
+First, change the Host name to jenkinsbox.
+
+Then, toggle the enp0s8 network adapter to ON.  That's the NAT network, so it
+should just automatically work.
+
+But let's make sure it's configured properly.  Click on Configure for it,
+and Under the General tab, check the box next to "Automatically connect
+to this network when it is available".  Then save it.
+
+Select the enp0s17 network adapter.  This one we have to manually configure.  Click the
+[Configure...] button in the bottom right.
+
+Under the General tab, check the box next to "Automatically connect to this network when it is available"
+
+Click on the IPV4 Settings tab, and change the method from automatic to manual.
+
+Click the [Add] button.  Enter the following data:
+Address:          Netmask:           Gateway:
+192.168.56.101    255.255.255.0      192.168.56.1
+
+DNS Servers: 192.168.56.1
+
+Click on the checkbox next to "Require IPV4 addressing for this connection to complete"
+
+Click Save.
+
+toggle this adapter from off to on.  If done correctly, it should very quickly indicate "Connected"
+with some data similar to this:
+Hardware address: 08:00:27:09:16:BC
+Speed 1000 Mb/s
+IP Address 192.168.56.101
+Subnet Mask 255.255.255.0
+Default Route 192.168.56.1
+DNS 192.168.56.1
+
+
+Phew, done!  Click Done in the top left.
+
+Leave the software selection at "minimal install"
+
+Click on the "Begin Installation" button in the bottom right.
+
+While it is installing, you will see options to set the root password
+and create a user.  We're not too concerned about security, since this
+box is just for educational purposes.  However, it won't let you
+complete installation until you create a user.  Make a user for
+yourself.  See the following...
+
+CREATE USER DURING INSTALL
+--------------------------
+Click on "User Creation"
+
+Full Name: Coveros User
+User name: cuser
+
+Enable it as an administrator user (check the
+box) and make it not require a password (uncheck that box).
+
+Click Done.
+
+Wait for the install to finish...
+
+Finally, it finishes, and you can click the button labeled "reboot".  Do so.
+
+Once it finishes rebooting, you will see a console window waiting for
+you to enter your username.  It should look similar to this:
+
+---------------------------------------------------
+
+CentOS Linux 7 (Core)
+Kernel 3.10.0-957.el7.x86_64 on an x86_64
+
+jenkinsbox login: _
+
+---------------------------------------------------
+
+First, log in as cuser.  You didn't set a password, so
+you shouldn't need to enter a password for it.  It's an admin user, so
+you can just run sudo <whatever> to act as root.
+
+DISABLE FIREWALL
+----------------
+
+First, let's turn off the firewall and SELinux (its security system).
+It's a pain in the rear, and remember, this is for educational
+purposes, so security is *not* a concern.  Ease of use is.  
+
+$ #turn off the firewall and disable it
+$ sudo systemctl stop firewalld
+$ sudo systemctl disable firewalld
+
+DISABLE SELINUX
+---------------
+
+To disable SELinux, open /etc/selinux/config and set SELINUX mode to
+disabled.  You can do that with an editor, or you can run this
+command:
+
+sudo sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+
+ENABLE SSH WITH NO PASSWORD
+---------------------------
+
+Let's also change the settings on sshd (the ssh daemon) so it will
+allow us to log in without a password.
+
+sudo sed -i 's/#PermitEmptyPasswords no/PermitEmptyPasswords yes/' /etc/ssh/sshd_config
+
+DISABLE STRICT HOST KEY CHECKING
+--------------------------------
+
+change the setting in ssh_config to not ask about host keys.  This needs to be done
+because many of the conversations between our boxes will use ssh, and will halt
+and ask the user if the host isn't current trusted.  Problem with that is
+everything is automated, there isn't anyone to answer yes.  This should fix that.
+
+sudo sed -i 's/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/' /etc/ssh/ssh_config
+
+
+now, reboot.
+
+$ sudo reboot
+
+You should be able to ssh into your centos box by running ssh against the url "jenkinsbox".
+
+(if not, there may have been a mistake made when configuring the network settings.  Networking
+is a real pain.)
+
+I am using Putty, because I am on a Windows machine, but you can
+use any ssh client.
+
+Putty can be downloaded from: https://the.earth.li/~sgtatham/putty/latest/w32/putty.exe
+
+From here on out, all commands should be run from ssh.
+
+INSTALL JAVA
+------------
+
+$ sudo yum install java-11-openjdk-devel
+
+INSTALL GIT
+-----------
+
+$ sudo yum -y install git
+
+INSTALLING JENKINS
+------------------
+
+Jenkins is our tool for running continuous integration.
+
+$ curl --silent --location http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo | sudo tee /etc/yum.repos.d/jenkins.repo
+$ sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+$ sudo yum install -y jenkins
+$ sudo systemctl start jenkins
+$ sudo systemctl enable jenkins
+
+(after this is done, when you are notified to update the Jenkins program, just run:
+
+$ sudo yum update jenkins
+
+then restart the server:
+
+$ sudo systemctl restart jenkins
+
+In your browser, go to Jenkins at this URL: http://jenkinsbox:8080/
+
+Once Jenkins boots up, you will need the password for the new Jenkins, here:
+
+$ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Copy that password and use it when prompted.  Follow the prompts, install Jenkins.
+Choose "Install Suggested Plugins"
+
+I created an admin with the following characteristics:
+username: admin
+password: admin
+email: admin@test.com
+
+Click Save and Continue.
+
+Click Save and Finish.
+Click Start using Jenkins
+
+Install the Sidebar-Link plugin.  Go to:
+
+http://jenkinsbox:8080/pluginManager/available
+
+and search for "sidebar".  Choose Sidebar Link and Install without restart.
+
+MAKE A GIT REPO
+---------------
+
+Now that Jenkins is up and running, let's make this same box
+our Git repo, so that Git can easily notify Jenkins when it
+receives a push.
+
+Back on the ssh command line...
+
+First, go to your home directory:
+
+$ cd
+
+Create a directory to store the repo:
+
+$ mkdir demo
+$ cd demo
+
+Make a "bare" git repo:
+
+$ git init --bare
+
+Back in the directory where you have been working with Demo, (on the other
+machine) run these commands:
+
+the following will remove the Github origin
+$ git remote remove origin
+
+this will add your new repository location as "origin":
+$ git remote add origin ssh://cuser@jenkinsbox/home/cuser/demo
+
+this will push all your branches to that repo
+$ git push --set-upstream --all origin
+
+Now, back on the jenkinsbox command line...
+
+make our home directory accessible by the Jenkins user:
+$ chmod 775 /home/cuser
+
+Now, we want to have the ability to notify Jenkins whenever we push
+to our new repo.  Jenkins has a capability of running builds whenever
+a certain endpoint is hit.  But, like all things, it's not that easy because
+of security considerations.  Here's the breakdown:
+
+CONFIGURE PIPELINE TO RUN AT GIT RECEIVE
+----------------------------------------
+
+Download the command-line-interface (CLI) tool from Jenkins:
+
+curl http://localhost:8080/jnlpJars/jenkins-cli.jar > ~/jenkins-cli.jar
+
+Now, create the following file, at ~/demo/hooks/post-receive
+
+------------------------ FILE START
+#!/bin/sh
+
+exec java -jar ~/jenkins-cli.jar -s http://localhost:8080/ -auth admin:admin build demo
+------------------------ FILE END
+
+make that file executable:
+
+$ chmod 775 ~/demo/hooks/post-receive
+
+And now we'll try running it.  Back in the browser, in Jenkins, create a new job.  Give it
+the name "Demo" and make it a "pipeline" job and click OK.
+
+Then scroll down and click save.
+
+You should find yourself on the Pipeline page for the "demo" project.  Back in the command
+line, run this to kick off a build in Jenkins:
+
+$ ~/demo/hooks/post-receive
+
+You should observe a new build appear in the webpage in Jenkins.  If so, you have configured
+it properly.  Whenever you push a branch, it will now run Jenkins.  That's pretty close to perfect.
+
+Now let's modify our pipeline so it does some actual work.
+
+- In Jenkins, on the pipeline page for Demo, click on Configure.
+- Check the box for "discard old builds",
+    Strategy: log rotation
+    Max # of builds to keep: 5
+- Check the box labeled "Do not allow concurrent builds".  (We don't want race conditions
+    in our pipeline, and we don't want excessive memory usage on this demo machine)
+- Check the box for "Sidebar links". Add a link.  Enter this:
+
+  Link URL: http://jenkinsbox/reports/bdd/cucumber-html-reports/overview-features.html
+  Link Text: Cucumber report.
+
+  Click Add Link.
+
+  Link URL: http://jenkinsbox:9000/
+  Link Text: SonarQube
+
+  Click Add Link.
+
+  Link URL: http://jenkinsbox/reports/dependency-check-report.html
+  Link Text: Dependency check report
+
+  Click Add Link.
+
+  Link URL: http://jenkinsbox/reports/zap_report.html
+  Link Text: Zap security report
+
+- Under Pipeline, click on the dropdown and select Pipeline script from SCM.
+- on the dropdown next to SCM, select Git.
+- fill in these values:
+     In Repositories:
+     Repository URL: /home/cuser/demo
+     In Branches to Build:
+     Branch specifier: refs/heads/master
+     In Script Path: jenkins/Jenkinsfile
+
+     Click save
+
+We're not quite done yet, we need to install some other parts of our system
+before this will all work.  Now that our Jenkins pipeline is running, and
+we have a Git repo, and we have a database running, let's throw in another application - SonarQube!
+
+INSTALL SONARQUBE
+-----------------
+
+download it to your home directory:
+
+$ curl https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.0.zip > ~/sonarqube-8.0.zip
+
+install the unzip command:
+
+$ sudo yum install -y unzip
+
+make a new directory and unzip it to there
+(importantly, don't do this as root.  It will fail):
+
+$ mkdir ~/sonarqube
+$ sudo unzip ~/sonarqube-8.0.zip -d ~/sonarqube/
+
+move the directory to opt:
+
+$ sudo mv ~/sonarqube/sonarqube-8.0 /opt/sonarqube
+
+create a sonarqube user:
+
+$ sudo adduser sonarqube
+
+change the ownership of the sonarqube directory to sonarqube's user:
+
+$ sudo chown -R sonarqube:sonarqube /opt/sonarqube
+
+Create the file /etc/systemd/system/sonar.service with this content:
+
+------------------------------- FILE START
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=sonarqube
+Group=sonarqube
+PermissionsStartOnly=true
+ExecStart=/bin/nohup /bin/java -Xms32m -Xmx32m -Djava.net.preferIPv4Stack=true -jar /opt/sonarqube/lib/sonar-application-8.0.jar
+StandardOutput=syslog
+LimitNOFILE=65536
+LimitNPROC=8192
+TimeoutStartSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+------------------------------- FILE END
+
+Start Sonarqube and register it to start at boot:
+
+$ sudo systemctl start sonar
+$ sudo systemctl enable sonar
+
+You can view the logs for Sonarqube running at /var/log/messages.  It will take
+a few minutes, but watch to see if Sonarqube is up and running.
+
+(wait... and.. )
+
+go to http://jenkinsbox:9000/about and check if you see the Sonarqube dashboard.
+
+If that is up and running, let's go back to Jenkins and install a
+plugin so we can run SonarQube on our code from there.  Go to:
+
+http://jenkinsbox:8080/pluginManager/available
+
+and search for Sonarqube in the top right.  You should see "SonarQube scanner"
+as an option.  Check that on, then Install without restart.
+
+
+INSTALL WEB SERVER
+------------------
+
+create and edit a new file at /etc/yum.repos.d/bintray-tatsushid-h2o-rpm.repo
+
+-------------------- FILE START
+#bintray-tatsushid-h2o-rpm - packages by tatsushid from Bintray
+[bintray-tatsushid-h2o-rpm]
+name=bintray-tatsushid-h2o-rpm
+baseurl=https://dl.bintray.com/tatsushid/h2o-rpm/centos/$releasever/$basearch/
+gpgcheck=0
+repo_gpgcheck=0
+enabled=1
+--------------------- FILE ENDS
+
+install it:
+$ sudo yum install -y h2o
+
+Once the installation finishes successfully, you can see a
+configuration file at /etc/h2o/h2o.conf
+
+Edit that file, make it as follows.
+
+("file.dirlisting: ON" means that if you go to the URL
+without specifying a page, it will show you the contents of the directory.)
+
+-------------------------------------- FILE START
+user: cuser
+file.dirlisting: ON
+hosts:
+  "localhost:80":
+    listen:
+      port: 80
+      host: 0.0.0.0
+    paths:
+   paths:
+      "/reports":
+        file.dir: /var/lib/jenkins/workspace/demo/build/reports/
+access-log: /var/log/h2o/access.log
+error-log: /var/log/h2o/error.log
+pid-file: /var/run/h2o/h2o.pid
+-------------------------------------- FILE END
+
+The value in file.dir is meant to point to the place where we are storing the
+output of our Cucumber report generation.  This way, you can view the status of
+your BDD tests.
+
+To start h2o:
+
+$ sudo systemctl enable h2o.service
+$ sudo systemctl start h2o.service
+
+CUSTOMIZE HOSTS FILE
+--------------------
+
+Edit /etc/hosts and add a new entry to point to uitestbox:
+
+192.168.56.102 uitestbox
+
+
+CONGRATULATIONS!!!!  You're done with building the Jenkins box.  Now go over to the
+document to build the ui_test_box.

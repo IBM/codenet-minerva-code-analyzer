@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="IBM WebSphere Studio">
+
+<TITLE>Payment Input Form</TITLE>
+
+<!--Styles-->
+<!--Styles-->
+<STYLE type="text/css">
+<!--
+BODY
+{
+background-color: #f8f7cd;
+}
+H1 {
+	text-align: center !IMPORTANT;
+}
+
+TH {
+	text-align: left !IMPORTANT;
+	vertical-align: top !IMPORTANT;
+}
+
+TD {
+	text-align: left !IMPORTANT;
+	vertical-align: top !IMPORTANT;
+}
+
+TH.result {
+	background-color: #999999 !IMPORTANT;
+}
+
+TD.result {
+	background-color: #cccccc;
+	vertical-align: top !IMPORTANT;
+}
+-->
+</STYLE>
+
+
+</HEAD>
+
+<BODY>
+<!--Java Script-->
+<SCRIPT language="JavaScript" type="text/javascript">
+<!--
+	function submitForm(){
+		document.myForm.submit()
+	}
+//-->
+</SCRIPT>
+
+<!--Banner-->
+<H1>Payment Input Form</H1>
+<BR>
+<!--Form-->
+<FORM name="myForm" method="POST" action="PaySessionServlet">
+<INPUT TYPE="SUBMIT" NAME="command" VALUE="AutoGeneration">
+<INPUT TYPE="SUBMIT" NAME="command" VALUE="Manual">
+	
+<BR><BR>
+
+
+
+
+
+<BR>
+
+<H3>* Indicates Required Fields
+<BR>** CustomerId or Customer Last Name required</H3>
+
+<!--Input Fields-->
+<TABLE border="8" bgcolor="#cccccc" bordercolor="#FFCC99">
+	<TBODY>
+		<TR>
+			<TH>warehouseId (e.g. 1)*</TH>
+			<TD><INPUT name='warehouseId' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>districtId (e.g. 1)*</TH>
+			<TD><INPUT name='districtId' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>customerId (e.g. 1)** 
+			<BR>(when customerLastName is supplied, customerId must be 0)</TH>
+			<TD><INPUT name='customerId' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>customerWarehouseId (e.g. 1)*</TH>
+			<TD><INPUT name='customerWarehouseId' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>customerDistrictId (e.g. 1)*</TH>
+			<TD><INPUT name='customerDistrictId' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>historyAmount (e.g. 19.81)*</TH>
+			<TD><INPUT name='historyAmount' type='text' VALUE="0"></TD>
+		</TR>
+		<TR>
+			<TH>historyDate (yyyy-mm-dd hh:mm:sss)* <BR>
+			    Example:  2003-02-02 10:10:00.123</TH>
+			<TD><INPUT name='historyDate' type='text' value=''></TD>
+		</TR>
+		<TR>
+			<TH>customerLastName (e.g. BARBARBAR)**
+			</TH>
+			<TD><INPUT name='customerLastName' type='text' value=''></TD>
+		</TR>
+	</TBODY>
+</TABLE>
+
+<!--Hidden Fields--></FORM>
+</BODY>
+</HTML>

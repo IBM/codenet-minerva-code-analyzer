@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<constraint-mappings version="1.1"
+	xmlns="http://jboss.org/xml/ns/javax/validation/mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping http://jboss.org/xml/ns/javax/validation/mapping/validation-mapping-1.1.xsd ">
+	<bean class="erwwbase.cdi.input.output.pojos.OrderInput">
+		<getter name="inCustomerWarehouseId">
+			<valid></valid>
+			<constraint annotation="jakarta.validation.constraints.NotNull">
+				<message>The warehouseId must not be null.</message>
+			</constraint>
+			<constraint annotation="jakarta.validation.constraints.Min">
+				<message>The warehouseId needs to have a minimum value of 1.</message>
+				<element name="value">1</element>
+			</constraint>
+		</getter>
+		<getter name="inCustomerDistrictId">
+			<valid></valid>
+			<constraint annotation="jakarta.validation.constraints.NotNull">
+				<message>The districtId must not be null.</message>
+			</constraint>
+			<constraint annotation="jakarta.validation.constraints.Min">
+				<message>The districtId needs to have a minimum value of 1.</message>
+				<element name="value">1</element>
+			</constraint>
+		</getter>
+		<getter name="inCustomerId">
+			<valid></valid>
+			<constraint annotation="jakarta.validation.constraints.NotNull">
+				<message>The customerId must not be null.</message>
+			</constraint>
+			<constraint annotation="jakarta.validation.constraints.Min">
+				<message>The customerId needs to have a minimum value of 0.</message>
+				<element name="value">0</element>
+			</constraint>
+		</getter>
+		<getter name="inCustomerLastName">
+			<valid></valid>
+			<constraint annotation="jakarta.validation.constraints.Size">
+				<message>The maximum size of a customer's last name is 15 characters.</message>
+				<element name="max">15</element>
+			</constraint>
+		</getter>
+		<getter name="inByLastName">
+			<valid></valid>
+			<constraint annotation="jakarta.validation.constraints.NotNull">
+				<message>The customer's last name must not be null.</message>
+			</constraint>
+		</getter>
+	</bean>
+</constraint-mappings>

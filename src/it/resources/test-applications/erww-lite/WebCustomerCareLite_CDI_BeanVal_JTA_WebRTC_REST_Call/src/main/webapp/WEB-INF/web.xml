@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+	<display-name>WebCustomerCareLite_CDI_BeanVal_JTA_WebRTC</display-name>
+	<welcome-file-list>
+		<welcome-file>CustomerCareInputForm.xhtml</welcome-file>
+	</welcome-file-list>
+	<error-page>
+    	<exception-type>jakarta.validation.ConstraintViolationException</exception-type >
+    	<location>/OrderTrackingInputErrorForm.jsp</location>
+	</error-page>
+	<error-page>
+    	<exception-type>irwwbase.UserException</exception-type >
+    	<location>/OrderTrackingError.jsp</location>
+	</error-page>
+	<error-page>
+    	<exception-type>jakarta.servlet.ServletException</exception-type >
+    	<location>/OrderTrackingError.jsp</location>
+	</error-page>	
+	
+	<security-role>
+  		<description>Customer level authorization</description>
+  		<role-name>CustomerRole</role-name>
+  	</security-role>
+  	  	
+  	<security-constraint>
+  		<display-name>CustomerCareSecurityConstraint</display-name>
+  		<web-resource-collection>
+  			<web-resource-name>WebCustomerCareResource</web-resource-name>
+  			<description>WebCustomerCareLite URL</description>
+  			<url-pattern>/CustomerCareInputForm.html</url-pattern>
+  		</web-resource-collection> 
+  		<auth-constraint>
+  			<description>Customer level authorization</description>
+  			<role-name>CustomerRole</role-name>
+  		</auth-constraint>			
+  		<user-data-constraint>
+  			<transport-guarantee>NONE</transport-guarantee>
+  		</user-data-constraint>
+  	</security-constraint>	
+ 		
+  	<login-config>
+  		<auth-method>FORM</auth-method>
+  		<realm-name>BasicRealm</realm-name>
+  		<form-login-config>
+  			<form-login-page>/CustomerCareLogin.jsp</form-login-page>
+  			<form-error-page>/CustomerCareError.jsp</form-error-page>
+  		</form-login-config>
+  	</login-config>
+	
+</web-app>

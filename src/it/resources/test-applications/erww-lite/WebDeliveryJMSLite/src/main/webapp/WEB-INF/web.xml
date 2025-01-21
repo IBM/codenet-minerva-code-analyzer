@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+	<display-name>WebDeliveryJMSLite</display-name>
+	<servlet>
+		<description>
+		</description>
+		<display-name>
+		DEController</display-name>
+		<servlet-name>DEJSController</servlet-name>
+		<servlet-class>
+		delivery.jms.lite.DEJSController</servlet-class>
+		<init-param>
+			<description>
+			</description>
+			<param-name>AutoGeneration</param-name>
+			<param-value>/DEAGResultsForm.jsp</param-value>
+		</init-param>
+		<init-param>
+			<description>
+			</description>
+			<param-name>Manual</param-name>
+			<param-value>/DEResultsForm.jsp</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DEJSController</servlet-name>
+		<url-pattern>/DEJSController</url-pattern>
+	</servlet-mapping>
+	<security-role>
+  		<description>Company level authorization</description>
+  		<role-name>CompanyRole</role-name>
+  	</security-role>
+  	  	
+  	<security-constraint>
+  		<display-name>DeliverySecurityConstraint</display-name>
+  		<web-resource-collection>
+  			<web-resource-name>WebDeliveryResource</web-resource-name>
+  			<description>WebDeliveryLite URLs</description>
+  			<url-pattern>/DEInputForm.jsp</url-pattern>
+  		</web-resource-collection> 
+  		<auth-constraint>
+  			<description>Company level authorization</description>
+  			<role-name>CompanyRole</role-name>
+  		</auth-constraint>			
+  		<user-data-constraint>
+  			<transport-guarantee>NONE</transport-guarantee>
+  		</user-data-constraint>
+  	</security-constraint>	
+  	<security-constraint>
+  		<display-name>DeliverySecuritySSLConstraint</display-name>
+  		<web-resource-collection>
+  			<web-resource-name>
+  				WebDeliveryResourceSSL
+  			</web-resource-name>
+  			<url-pattern>/DEInputFormSSL.jsp</url-pattern>
+   		</web-resource-collection>
+  		<auth-constraint>
+  			<role-name>CompanyRole</role-name>
+  		</auth-constraint> 		  		
+  		<user-data-constraint>
+  			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+  		</user-data-constraint>
+  	</security-constraint>
+  		
+  	<login-config>
+  		<auth-method>FORM</auth-method>
+  		<realm-name>BasicRealm</realm-name>
+  		<form-login-config>
+  			<form-login-page>/DELogin.jsp</form-login-page>
+  			<form-error-page>/DEError.jsp</form-error-page>
+  		</form-login-config>
+  	</login-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<resource-ref id="ResourceRef_1103631754954">
+		<description>
+		</description>
+		<res-ref-name>jms/DeliveryRequestQueue</res-ref-name>
+		<res-type>jakarta.jms.Queue</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	<resource-ref id="ResourceRef_1103631818185">
+		<description>
+		</description>
+		<res-ref-name>jms/DeliveryQueueCF</res-ref-name>
+		<res-type>jakarta.jms.QueueConnectionFactory</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	<resource-ref id="ResourceRef_1103631818195">
+		<description>
+		</description>
+		<res-ref-name>jms/DeliveryTopicCF</res-ref-name>
+		<res-type>jakarta.jms.TopicConnectionFactory</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	<resource-ref id="ResourceRef_1103631841949">
+		<description>
+		</description>
+		<res-ref-name>jms/DeliveryLogTopic</res-ref-name>
+		<res-type>jakarta.jms.Topic</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	
+  	<env-entry>
+ 	    <env-entry-name>com.ibm.websphere.security.SyncToOSThread</env-entry-name>
+ 	    <env-entry-type>java.lang.Boolean</env-entry-type>
+ 	    <env-entry-value>true</env-entry-value>
+	</env-entry> 
+</web-app>

@@ -1,0 +1,15 @@
+<ejb-jar-bnd
+xmlns="http://websphere.ibm.com/xml/ns/javaee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://websphere.ibm.com/xml/ns/javaee http://websphere.ibm.com/xml/ns/javaee/ibm-ejb-jar-bnd_1_0.xsd"
+version="1.0">
+
+<message-driven name="NewOrderMDBBean">
+        <jca-adapter activation-spec-binding-name="jms/NewOrderActivationSpec" destination-binding-name="jms/NewOrderRequestQ" />
+   	    <message-destination-ref name="jms/NewOrderLogTopic" binding-name="jms/NewOrderLogTopic"/>   
+        <resource-ref name="jms/NewOrderCF" binding-name="jms/NewOrderCF">
+    	      <authentication-alias name="JMSConnectionAlias"/>          	      
+	    </resource-ref>	
+</message-driven>
+
+</ejb-jar-bnd>

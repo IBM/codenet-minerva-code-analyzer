@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+    version="2.0">
+	<managed-bean>
+		<managed-bean-name>pc_NewOrderApplicationDesignChart</managed-bean-name>
+		<managed-bean-class>pagecode.NewOrderApplicationDesignChart</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>pc_NewOrderLogin</managed-bean-name>
+		<managed-bean-class>pagecode.NewOrderLogin</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>pc_NewOrderResults</managed-bean-name>
+		<managed-bean-class>pagecode.NewOrderResults</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>pc_NewOrderApplicationMockDesignChart</managed-bean-name>
+		<managed-bean-class>pagecode.NewOrderApplicationMockDesignChart</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>pc_NewOrderInput</managed-bean-name>
+		<managed-bean-class>pagecode.NewOrderInput</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>pc_SpecialOfferInput</managed-bean-name>
+		<managed-bean-class>pagecode.SpecialOfferInput</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<navigation-rule>
+    	<from-view-id>/NewOrderInput.xhtml</from-view-id>
+    		<navigation-case>
+        		<from-outcome>success_ApplicationDesignChart</from-outcome>
+        		<to-view-id>/NewOrderApplicationDesignChart.xhtml</to-view-id>
+    		</navigation-case>
+    		<navigation-case>
+        		<from-outcome>success_MockApplicationDesignChart</from-outcome>
+        		<to-view-id>/NewOrderMockApplicationDesignChart.xhtml</to-view-id>
+    		</navigation-case>
+    		<navigation-case>
+        		<from-outcome>SUCCESSFUL</from-outcome>
+        		<to-view-id>/NewOrderResults.xhtml</to-view-id>
+    		</navigation-case>    		<navigation-case>
+        		<from-outcome>FAILED</from-outcome>
+        		<to-view-id>/NewOrderResults.xhtml</to-view-id>
+    		</navigation-case>
+  	</navigation-rule>
+</faces-config>

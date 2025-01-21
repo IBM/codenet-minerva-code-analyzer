@@ -1,0 +1,2 @@
+mocktelnethandler=org.apache.dubbo.config.mock.MockTelnetHandler
+

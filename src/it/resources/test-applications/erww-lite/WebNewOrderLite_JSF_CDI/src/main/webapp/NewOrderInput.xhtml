@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- jsf:pagecode language="java" location="/src/pagecode/NewOrderInput.java" --><!-- /jsf:pagecode -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">	
+	
+<h:head>
+	<title>NewOrder Input(JSF/CDI Version)</title>
+	<meta http-equiv="Content-Type"
+		content="application/xhtml+xml; charset=UTF-8" />
+			<link rel="stylesheet" type="text/css" title="Style"
+		href="theme/stylesheet.css" />
+	<style>		
+		h2 {background-color: #fbfbe6;}
+	</style>		
+</h:head>
+	
+<h:body style="background-color: #fbfbe6; border-color: #fbfbe6">
+	<ui:composition style="background-color: #fbfbe6; border-color: #fbfbe6">
+		<h:form id="AppDesignChartAutoGenerationForm" styleClass="form" style="background-color: #fbfbe6" >
+			<h2>NewOrder Input (JSF/CDI Version)</h2>
+			<h:panelGrid id="ApplicationDesignGrid" styleClass="panelGrid"
+				style="background-color: #dddddd; border-color: #ffd9c6; padding: 1%; border-width: medium; border-style: double"
+				bgcolor="#fbfbe6">	
+				<h:panelGroup id="TopGroup" styleClass="panelGroup"
+					style="sheight: 23px; background-color: #deded8; border-color: #ffd9c6; padding: 0%; border-width: thin; border-style: solid">	
+						<h:commandButton type="submit" value="Application Design Chart 1"
+						id="AppDesignChartButton1" styleClass="commandButton" action="#{applicationDesignChartBean.actionNewOrderCDI1}" 
+						style="font-style: normal; background-color: #dddddd; border-color: #ffdbca">
+					</h:commandButton>
+					<h:commandButton type="submit" value="Application Design Chart 2"				
+						id="AppDesignChartButton2" styleClass="commandButton" action="#{applicationDesignChartBean.actionNewOrderCDI2}" 
+						style="font-style: normal; background-color: #dddddd; border-color: #ffdbca">
+					</h:commandButton>
+					<h:commandButton type="submit" value="Application Design Chart 3"				
+						id="AppDesignChartButton3" styleClass="commandButton" action="#{applicationDesignChartBean.actionNewOrderCDI3}" 
+						style="font-style: normal; background-color: #dddddd; border-color: #ffdbca">
+					</h:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+			<!-- Remove deprecated faces tag
+			<f:verbatim><hr/><hr/></f:verbatim> 
+			-->
+			<hr/><hr/>
+		    <h2>AutoGeneration</h2>
+			<h:panelGrid id="AutoGenGrid" styleClass="panelGrid"
+				style="background-color: #dddddd; border-color: #ffd9c6; padding: 1%; border-width: medium; border-style: double"
+				bgcolor="#fbfbe6">	
+				<h:panelGroup id="MiddleGroup" styleClass="panelGroup"
+					style="sheight: 23px; background-color: #fbfbe6; border-color: #ffd9c6; padding: 0%; border-width: thin; border-style: solid">
+					<h:commandButton type="submit" value="AutoGeneration" id="AutoGenButton" 
+						styleClass="commandButton" action="#{newOrderBean.autoGenerationPath}" 
+						style="background-color: #fbfbe6 border-color: #ffdbca">
+					</h:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:form>
+		<!--  Remove deprecated Faces tag
+		<f:verbatim><hr/></f:verbatim> -->
+		<hr/>
+		<h:form id="ManualForm" styleClass="form" style="background-color: #fbfbe6">
+		<h2>Manual</h2>
+			<h:panelGroup id="BottomGroup" styleClass="panelGroup"
+				style="sheight: 23px; background-color: #fbfbe6; border-color: #ffd9c6; padding: 0%; border-width: thin; border-style: solid">
+				<h:commandButton type="submit" value="Manual" id="ManualButton"
+					styleClass="commandButton" action="#{newOrderBean.manualPath}"  
+					style="background-color: #dddddd border-color: #ffdbca">
+				</h:commandButton>
+			</h:panelGroup>
+			<br /><br />
+			<h:panelGrid id="NewOrderInputGrid" styleClass="panelGrid"
+				style="background-color: #dddddd; border-color: #ffd9c6; padding: 1%; border-width: medium; border-style: double"
+				bgcolor="#fbfbe6">
+				<h:panelGroup id="customerGroup" styleClass="panelGroup">
+					<h:outputText id="customerId" styleClass="outputText"
+						value="CustomerId (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="inCustomerId" styleClass="inputText"
+						value="#{newOrderBean.inCustomerId}" 
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="inCustomerId" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="districtGroup" styleClass="panelGroup">
+					<h:outputText id="districtId" styleClass="outputText"
+						value="DistrictId (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="inDistrictId" styleClass="inputText"
+						value="#{newOrderBean.inDistrictId}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="inDistrictId" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="warehouseGroup" styleClass="panelGroup">
+					<h:outputText id="warehouseId" styleClass="outputText"
+						value="WarehouseId (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="inWarehouseId" styleClass="inputText"
+						value="#{newOrderBean.inWarehouseId}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="inWarehouseId" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemId1Group" styleClass="panelGroup">
+					<h:outputText id="itemId1Output" styleClass="outputText"
+						value="itemId1 (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId1" styleClass="inputText"
+						value="#{newOrderBean.itemId1}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId1" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity1Group" styleClass="panelGroup">
+					<h:outputText id="quantity1Output" styleClass="outputText"
+						value="quantity1 (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity1" styleClass="inputText"
+						value="#{newOrderBean.quantity1}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity1" style="color:red" />
+				</h:panelGroup>
+
+				<h:panelGroup id="itemSupplyWarehouseId1Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId1Output" styleClass="outputText"
+						value="itemSupplyWarehouseId1 (i.e. 1): "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId1" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId1}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId1" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId2Group" styleClass="panelGroup">
+					<h:outputText id="itemId2Output" styleClass="outputText"
+						value="itemId2: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId2" styleClass="inputText"
+						value="#{newOrderBean.itemId2}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId2" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity2Group" styleClass="panelGroup">
+					<h:outputText id="quantity2Output" styleClass="outputText"
+						value="quantity2: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity2" styleClass="inputText"
+						value="#{newOrderBean.quantity2}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity2" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId2Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId2Output" styleClass="outputText"
+						value="itemSupplyWarehouseId2: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId2" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId2}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId2" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId3Group" styleClass="panelGroup">
+					<h:outputText id="itemId3Output" styleClass="outputText"
+						value="itemId3: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId3" styleClass="inputText"
+						value="#{newOrderBean.itemId3}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId3" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity3Group" styleClass="panelGroup">
+					<h:outputText id="quantity3Output" styleClass="outputText"
+						value="quantity3: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity3" styleClass="inputText"
+						value="#{newOrderBean.quantity3}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity3" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId3Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId3Output" styleClass="outputText"
+						value="itemSupplyWarehouseId3: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId3" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId3}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId3" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId4Group" styleClass="panelGroup">
+					<h:outputText id="itemId4Output" styleClass="outputText"
+						value="itemId4: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId4" styleClass="inputText"
+						value="#{newOrderBean.itemId4}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId4" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity4Group" styleClass="panelGroup">
+					<h:outputText id="quantity4Output" styleClass="outputText"
+						value="quantity4: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity4" styleClass="inputText"
+						value="#{newOrderBean.quantity4}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity4" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId4Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId4Output" styleClass="outputText"
+						value="itemSupplyWarehouseId4: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId4" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId4}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId4" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId5Group" styleClass="panelGroup">
+					<h:outputText id="itemId5Output" styleClass="outputText"
+						value="itemId5: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId5" styleClass="inputText"
+						value="#{newOrderBean.itemId5}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId5" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity5Group" styleClass="panelGroup">
+					<h:outputText id="quantity5Output" styleClass="outputText"
+						value="quantity5: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity5" styleClass="inputText"
+						value="#{newOrderBean.quantity5}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity5" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId5Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId5Output" styleClass="outputText"
+						value="itemSupplyWarehouseId5: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId5" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId5}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId5" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId6Group" styleClass="panelGroup">
+					<h:outputText id="itemId6Output" styleClass="outputText"
+						value="itemId6: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId6" styleClass="inputText"
+						value="#{newOrderBean.itemId6}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId6" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity6Group" styleClass="panelGroup">
+					<h:outputText id="quantity6Output" styleClass="outputText"
+						value="quantity6: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity6" styleClass="inputText"
+						value="#{newOrderBean.quantity6}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity6" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId6Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId6Output" styleClass="outputText"
+						value="itemSupplyWarehouseId6: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId6" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId6}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId6" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId7Group" styleClass="panelGroup">
+					<h:outputText id="itemId7Output" styleClass="outputText"
+						value="itemId7: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId7" styleClass="inputText"
+						value="#{newOrderBean.itemId7}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId7" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity7Group" styleClass="panelGroup">
+					<h:outputText id="quantity7Output" styleClass="outputText"
+						value="quantity7: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity7" styleClass="inputText"
+						value="#{newOrderBean.quantity7}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity7" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId7Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId7Output" styleClass="outputText"
+						value="itemSupplyWarehouseId7: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId7" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId7}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId7" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId8Group" styleClass="panelGroup">
+					<h:outputText id="itemId8Output" styleClass="outputText"
+						value="itemId8: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId8" styleClass="inputText"
+						value="#{newOrderBean.itemId8}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId8" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity8Group" styleClass="panelGroup">
+					<h:outputText id="quantity8Output" styleClass="outputText"
+						value="quantity8: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity8" styleClass="inputText"
+						value="#{newOrderBean.quantity8}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity8" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId8Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId8Output" styleClass="outputText"
+						value="itemSupplyWarehouseId8: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId8" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId8}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId8" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId9Group" styleClass="panelGroup">
+					<h:outputText id="itemId9Output" styleClass="outputText"
+						value="itemId9: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId9" styleClass="inputText"
+						value="#{newOrderBean.itemId9}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId9" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity9Group" styleClass="panelGroup">
+					<h:outputText id="quantity9Output" styleClass="outputText"
+						value="quantity9: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity9" styleClass="inputText"
+						value="#{newOrderBean.quantity9}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity9" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId9Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId9Output" styleClass="outputText"
+						value="itemSupplyWarehouseId9: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId9" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId9}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId9" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemId10Group" styleClass="panelGroup">
+					<h:outputText id="itemId10Output" styleClass="outputText"
+						value="itemId10: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId10" styleClass="inputText"
+						value="#{newOrderBean.itemId10}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId10" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity10Group" styleClass="panelGroup">
+					<h:outputText id="quantity10Output" styleClass="outputText"
+						value="quantity10: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity10" styleClass="inputText"
+						value="#{newOrderBean.quantity10}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity10" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId10Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId10Output" styleClass="outputText"
+						value="itemSupplyWarehouseId10: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId10" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId10}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId10" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId11Group" styleClass="panelGroup">
+					<h:outputText id="itemId11Output" styleClass="outputText"
+						value="itemId11: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId11" styleClass="inputText"
+						value="#{newOrderBean.itemId11}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId11" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity11Group" styleClass="panelGroup">
+					<h:outputText id="quantity11Output" styleClass="outputText"
+						value="quantity11: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity11" styleClass="inputText"
+						value="#{newOrderBean.quantity11}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity11" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId11Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId11Output" styleClass="outputText"
+						value="itemSupplyWarehouseId11: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId11" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId11}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId11" style="color:red" />
+				</h:panelGroup>			
+				<h:panelGroup id="itemId12Group" styleClass="panelGroup">
+					<h:outputText id="itemId12Output" styleClass="outputText"
+						value="itemId12: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId12" styleClass="inputText"
+						value="#{newOrderBean.itemId12}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId12" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity12Group" styleClass="panelGroup">
+					<h:outputText id="quantity12Output" styleClass="outputText"
+						value="quantity12: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity12" styleClass="inputText"
+						value="#{newOrderBean.quantity12}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity12" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId12Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId12Output" styleClass="outputText"
+						value="itemSupplyWarehouseId12: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId12" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId12}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId12" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemId13Group" styleClass="panelGroup">
+					<h:outputText id="itemId13Output" styleClass="outputText"
+						value="itemId13: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId13" styleClass="inputText"
+						value="#{newOrderBean.itemId13}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId13" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity13Group" styleClass="panelGroup">
+					<h:outputText id="quantity13Output" styleClass="outputText"
+						value="quantity13: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity13" styleClass="inputText"
+						value="#{newOrderBean.quantity13}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity13" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId13Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId13Output" styleClass="outputText"
+						value="itemSupplyWarehouseId13: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId13" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId13}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId13" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemId14Group" styleClass="panelGroup">
+					<h:outputText id="itemId14Output" styleClass="outputText"
+						value="itemId14: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId14" styleClass="inputText"
+						value="#{newOrderBean.itemId14}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId14" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity14Group" styleClass="panelGroup">
+					<h:outputText id="quantity14Output" styleClass="outputText"
+						value="quantity14: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity14" styleClass="inputText"
+						value="#{newOrderBean.quantity14}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity14" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId14Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId14Output" styleClass="outputText"
+						value="itemSupplyWarehouseId14: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId14" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId14}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId14" style="color:red" />
+				</h:panelGroup>	
+				<h:panelGroup id="itemId15Group" styleClass="panelGroup">
+					<h:outputText id="itemId15Output" styleClass="outputText"
+						value="itemId15: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemId15" styleClass="inputText"
+						value="#{newOrderBean.itemId15}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemId15" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="quantity15Group" styleClass="panelGroup">
+					<h:outputText id="quantity15Output" styleClass="outputText"
+						value="quantity15: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="quantity15" styleClass="inputText"
+						value="#{newOrderBean.quantity15}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="quantity15" style="color:red" />
+				</h:panelGroup>
+				<h:panelGroup id="itemSupplyWarehouseId15Group" styleClass="panelGroup">
+					<h:outputText id="itemSupplyWarehouseId15Output" styleClass="outputText"
+						value="itemSupplyWarehouseId15: "
+						style="font-style: normal; background-color: transparent; font-variant: normal; font-weight: 900">
+					</h:outputText>
+					<h:inputText id="itemSupplyWarehouseId15" styleClass="inputText"
+						value="#{newOrderBean.itemSupplyWarehouseId15}"
+						validator="#{newOrderBean.newOrderValidatorBean.validate}" />
+					<h:message for="itemSupplyWarehouseId15" style="color:red" />
+				</h:panelGroup>			
+			</h:panelGrid>
+		</h:form>
+		<!-- Remove deprecated Faces tag 
+		<f:verbatim><hr/><hr/></f:verbatim> -->
+		<hr/><hr/>
+	</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702" xmlns:sp13="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200802" xmlns:tns="http://ws.lite.neworder/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NewOrderImplService" targetNamespace="http://ws.lite.neworder/">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="http://ws.lite.neworder/" schemaLocation="NewOrderImplService_schema1.xsd"/>
+    </xsd:schema>
+  </types>
+  <message name="createNewOrder">
+    <part element="tns:createNewOrder" name="parameters"/>
+  </message>
+  <message name="createNewOrderResponse">
+    <part element="tns:createNewOrderResponse" name="parameters"/>
+  </message>
+  <message name="SystemException">
+    <part element="tns:SystemException" name="fault"/>
+  </message>
+  <message name="Exception">
+    <part element="tns:Exception" name="fault"/>
+  </message>
+  <portType name="NewOrderImplDelegate">
+    <operation name="createNewOrder">
+      <input message="tns:createNewOrder" wsam:Action="http://ws.lite.neworder/NewOrderImplDelegate/createNewOrderRequest"/>
+      <output message="tns:createNewOrderResponse" wsam:Action="http://ws.lite.neworder/NewOrderImplDelegate/createNewOrderResponse"/>
+      <fault message="tns:SystemException" name="SystemException" wsam:Action="http://ws.lite.neworder/NewOrderImplDelegate/createNewOrder/Fault/SystemException"/>
+      <fault message="tns:Exception" name="Exception" wsam:Action="http://ws.lite.neworder/NewOrderImplDelegate/createNewOrder/Fault/Exception"/>
+    </operation>
+  </portType>
+  <binding name="NewOrderImplPortBinding" type="tns:NewOrderImplDelegate">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsp:PolicyReference URI="#WebServicesSecurityPolicy_NewOrder"/>
+    <operation name="createNewOrder">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="SystemException">
+        <soap:fault name="SystemException" use="literal"/>
+      </fault>
+      <fault name="Exception">
+        <soap:fault name="Exception" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="NewOrderImplService">
+    <port binding="tns:NewOrderImplPortBinding" name="NewOrderImplPort">
+      <soap:address location="http://localhost:9080/WebNewOrderLite_WS/NewOrderImplService"/>
+    </port>
+  </service>
+	<wsp:Policy wsu:Id="WebServicesSecurityPolicy_NewOrder">
+		<sp:SupportingTokens>
+			<wsp:Policy>
+				<sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient">
+					<wsp:Policy>
+						<sp13:Created/>
+						<sp13:Nonce/>
+						<sp:WssUsernameToken11/>
+					</wsp:Policy>
+				</sp:UsernameToken>
+			</wsp:Policy>
+		</sp:SupportingTokens>
+	</wsp:Policy>
+</definitions>

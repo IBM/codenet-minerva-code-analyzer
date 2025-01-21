@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="IBM Software Development Platform">
+<TITLE>Price Change Input Form</TITLE>
+
+<!--Styles-->
+<!--Styles-->
+<STYLE type="text/css">
+<!--
+BODY
+{
+background-color: #f8f7cd;
+}
+H1 {
+	text-align: center !IMPORTANT;
+}
+H2 {
+	color: #993333 !important;
+	text-align: left !important;
+}
+TH {
+	text-align: left !IMPORTANT;
+	vertical-align: top !IMPORTANT;
+}
+
+TD {
+	text-align: left !IMPORTANT;
+	vertical-align: top !IMPORTANT;
+}
+
+TH.result {
+	background-color: #999999 !IMPORTANT;
+}
+
+TD.result {
+	background-color: #cccccc;
+	vertical-align: top !IMPORTANT;
+}
+-->
+</STYLE>
+
+</HEAD>
+
+<BODY>
+<!--Java Script-->
+<SCRIPT language="JavaScript" type="text/javascript">
+<!--
+	function submitForm(){
+		document.myForm.submit()
+	}
+//-->
+</SCRIPT>
+
+<!--Banner-->
+<H1>Price Change Input Form</H1>
+
+<!--Form-->
+<FORM name="myForm" method="POST" action="PriceChangeServlet">
+<INPUT TYPE="SUBMIT" NAME="command" VALUE="AutoGeneration">
+<INPUT TYPE="SUBMIT" NAME="command" VALUE="Manual">
+<A href="javascript:submitForm()"></A>
+
+<H3> Select Servlet or EJB Based Business logic:</H3>
+<SELECT name="ejb">
+    <OPTION value="false">Servlet</OPTION>
+    <OPTION value="true" selected>EJB</OPTION>
+</SELECT>
+<BR>
+<BR>
+<SELECT name="useBmt">
+    <OPTION value="false" selected>CMT</OPTION>
+    <OPTION value="true">BMT</OPTION>
+</SELECT>
+<BR>
+<h3>* Indicates Required Fields</h3>
+<!--Input Fields-->
+<TABLE border="8" bgcolor="#cccccc" bordercolor="#FFCC99">
+	<TBODY>
+		<TR>
+			<TH>itemId (e.g. 1)*</TH>
+			<TD><INPUT name='itemId' type='text' value=0></TD>
+		</TR>
+		<TR>
+			<TH>price (e.g. 22.25)*</TH>
+			<TD><INPUT name='price' type='text' value=0></TD>
+		</TR>		
+	</TBODY>
+</TABLE>
+
+<h4>EJB Path Only:</h4>
+<h4>If the new price is under $100, then the user in the AllAuthenticatedUsersRole can change the price.</h4>
+<h4>If the new price is $100 or greater, then the user needs to be in the PRICECHANGER role.</h4>
+
+<!--Hidden Fields--></FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-bnd 
+	xmlns="http://websphere.ibm.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://websphere.ibm.com/xml/ns/javaee http://websphere.ibm.com/xml/ns/javaee/ibm-web-bnd_1_2.xsd"
+	version="1.2">
+
+	<virtual-host name="default_host" />
+	<resource-ref name="jms/MonitorQ1.1" binding-name="jms/MonitorQ1.1"/>
+	<resource-ref name="jms/MonitorQueueCF1.1" binding-name="jms/MonitorQueueCF1.1">
+	  <authentication-alias name="JMSConnectionAlias"/>  
+	</resource-ref>
+</web-bnd>

@@ -1,0 +1,62 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0.0",			
+		"title": "ERWW-Lite Configuration Variables APIs",
+		"description": "Servlet based API",
+		"termsOfService": "",
+		"contact":{
+		   "name": "ERWW-Lite Support Representative",
+		   "email": "erww@us.ibm.com",
+		   "url": "http://host:port/WebCentralLite/"
+		},
+		"license":{
+		  "name":"ERWW-Lite License",
+		  "url":"http://appdeveloper:9080/WebCentralLite/"
+		}
+
+	},
+	"tags": [{
+		"name": "ERWW-Lite: getPath",
+		"description": "ERWW-Lite: GET path"
+		}
+	],  
+    "basePath": "/WebConfigurationVariablesLite_REST_APIs",
+	"paths":{
+		"/configurationVariable":{
+			"get":{
+				"tags":["ERWW-Lite"],
+				"description": "ERWW-Lite: gets all of the WebRTC configuration variables from server.xml",
+				"responses":{
+					"200":{
+						"description": "Success"
+					},
+					"404": {
+                        "description": "Configuration Variables not found"
+                    }
+				}
+			}
+		},
+		"/configurationVariable/{id}":{
+			"get":{
+				"tags":["ERWW-Lite"],
+				"description": "ERWW-Lite: gets one of the WebRTC configuration variables from server.xml where id = mqttHost, mqttPort or rtcommTopicPath",
+				"responses":{
+					"200":{
+						"description": "Success"
+					},
+					"404": {
+                        "description": "Configuration Variable not found"
+                    }
+				},
+				"parameters":[{
+					"name": "id",
+					"in": "path",
+					"type": "string",
+					"description": "Configuration Variable Name parameter 'id' for GET operation",
+					"required": true	
+				}]
+			}
+		}
+	}
+}

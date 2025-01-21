@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html style="background-color: #f8f7cd">
+<head>
+<title>ReenterInputDataNullForm</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+	<h2 style="color: black; position: relative; text-align: center">ERWW-Lite Delete Image Input Form</h2>
+	<h3 style="color: black; position: relative; text-align: center">Servlet 3.1 Non-Blocking I/O (light weight version)</h3>
+	<hr>
+	<h2 style="color: red; position: relative; text-align: left">ImageId or Image file is null.  Please enter an Image Id and/or Image file. </h2>
+	<hr>
+	<h3 style="color: black; position: relative; text-align: left">Please enter the string value that the Image Ids contain that you want to delete.</h3>
+	<form enctype="multipart/form-data" method="post" action="ImageDeleteServlet">
+		<label for="imageIdsContainValue1" style="font-family: Arial">String value that the ImageIds contain: </label>
+		<input type="text" name="imageIdsContainValue1" id="imageIdsContainValue1" value="image">
+		<br/>
+		<br/><input type="submit" value="Submit"><br/>
+	    <hr>
+	</form>
+</html>

@@ -1,0 +1,16 @@
+{
+	"opMetadatList": [
+		{
+			"name" : "increaseMaxLimit",
+			"description": "Increase the max limit before raising alerts",
+			"type": "void",
+			"impact": 10
+		},
+		{
+			"name" : "resetMaxLimit",
+			"description": "Reset the max limit before raising alerts to the default value",
+			"type": "void",
+			"impact": 10
+		}
+	]
+}

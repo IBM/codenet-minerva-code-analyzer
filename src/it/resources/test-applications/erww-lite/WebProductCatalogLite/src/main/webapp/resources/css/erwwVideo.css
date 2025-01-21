@@ -1,0 +1,81 @@
+html {
+  	height: 100%;
+}
+
+body {
+  	height: 100%;
+  	width: 100%;
+  	border-radius: 10px;
+  	background-color: #ccc;
+  	font-family: HelveticaNeue-Light, Arial, sans-serif;
+}
+
+.sectionContainer {
+  	position: relative;  
+  	border-radius: 10px;
+	width: 100%;
+	height: 100%;
+	margin-left: 0;
+	margin-right: 0; 
+	border-style: solid;
+	border-color: lightgrey;
+	background: #FFFFEB;
+}
+
+.controls  {
+	position: relative;
+	border-radius: 10px;
+    padding-left: 25px;
+    width: 100%;
+    height: 50px;
+    z-index: 5;
+    background-color: #659FDA;
+    border-style: none;
+    color: white;
+}
+
+.presenceContainer {
+	position: absolute;
+	border-radius: 10px;
+  	border-style: solid;
+  	border-color: lightgrey;
+  	background: #FFFFEB;
+ 	top:190px;
+ 	right:5%;
+ 	height:60%;
+    width: 20%;
+    overflow: scroll;
+}
+
+.remoteView {
+  	position: relative;
+  	border-radius: 10px;
+  	max-height: 100%;
+  	width: 100%;
+  	z-index: 1;
+}
+ 
+#selfViewContainer {
+  	position:relative;
+  	border-radius: 10px;
+  	top: 0;
+  	left: 80%;
+  	width: 20%;
+  	height:20%;
+  	padding:0px;
+  	z-index: 5;
+}
+
+.selfView {
+  	width: 100%;
+  	height: 100%;
+}
+
+.hidden {
+  	display: none
+}
+
+.show {
+  	display: block
+} 
+

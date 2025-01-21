@@ -54,6 +54,12 @@ sourceSets {
             srcDirs= ["src/test/resources"]
         }
     }
+    integrationTest {
+        java { srcDir file('src/it/java') }
+        resources { srcDir file('src/it/resources') }
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
 }
 
 // Remove that nagging bin folder vscode seems to generate every single time
@@ -119,7 +125,25 @@ dependencies {
     implementation('org.jgrapht:jgrapht-ext:1.5.2')
     implementation('com.github.javaparser:javaparser-symbol-solver-core:3.25.9')
 
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    // TestContainers
+    testImplementation 'org.testcontainers:testcontainers:1.19.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
+
+    // JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'  // for @ParameterizedTest
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+
+    // SLF4J - for TestContainers logging
+    testImplementation 'org.slf4j:slf4j-api:2.0.9'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.9'
+
+}
+
+test {
+    useJUnitPlatform()
+    // Optional: Enable TestContainers reuse to speed up tests
+    systemProperty 'testcontainers.reuse.enable', 'true'
 }
 
 task fatJar(type: Jar) {

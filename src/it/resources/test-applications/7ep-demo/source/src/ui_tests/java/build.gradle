@@ -1,0 +1,72 @@
+plugins {
+    // https://blog.gradle.org/java-toolchains
+    // java toolchains - a gradle 6.7 feature - allows us to
+    // specify an exact version of the JDK to use when compiling,
+    // and will pull it down if not found on the user's machine.
+    id "java-library"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+
+    // junit, for running unit tests
+    testImplementation 'junit:junit:4.12'
+
+    // Selenium - used for testing commonly-used browsers
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+
+    // a logging framework, so it becomes easily possible to see what is happening
+    // in our code in realtime.
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.1'
+
+    // The following gives us the ability to use slf4j api calls.
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.12.1'
+
+    // following is used to make API calls during our tests.
+    // see https://hc.apache.org/httpcomponents-client-4.5.x/fluent-hc/dependency-info.html
+    implementation 'org.apache.httpcomponents:fluent-hc:4.5.12'
+
+    // HtmlUnit is a browser that is controlled directly by Java.  It has no UI, and
+    // runs really, *really* fast.
+    // https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit
+    implementation group: 'net.sourceforge.htmlunit', name: 'htmlunit', version: '2.39.1'
+
+    // https://search.maven.org/artifact/io.github.bonigarcia/webdrivermanager/4.4.3/jar
+    testImplementation("io.github.bonigarcia:webdrivermanager:4.4.3")
+
+}
+
+// more info on test logging: https://discuss.gradle.org/t/whats-upcoming-in-gradle-1-1-test-logging/7741
+test {
+    maxParallelForks = 1; // Will not do parallel execution
+
+    testLogging {
+        exceptionFormat "full" // default is "short"
+        // uncomment the following to see the unit test progress in the output
+        //events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+
+        // set to false to disable detailed failure logs
+        showExceptions true
+
+        // enable to see standard out and error streams inline with the test results
+        showStandardStreams true
+    }
+
+    // Fail the 'test' task on the first test failure
+    failFast = true
+
+}

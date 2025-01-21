@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.lite.neworder/" targetNamespace="http://ws.lite.neworder/" version="1.0">
+
+  <xs:element name="Exception" type="tns:Exception"/>
+
+  <xs:element name="SystemException" type="tns:SystemException"/>
+
+  <xs:element name="createNewOrder" type="tns:createNewOrder"/>
+
+  <xs:element name="createNewOrderResponse" type="tns:createNewOrderResponse"/>
+
+  <xs:complexType name="createNewOrder">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="input" type="tns:newOrderInputInfo"/>
+      <xs:element minOccurs="0" name="output" type="tns:newOrderOutputInfo"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="newOrderInputInfo">
+    <xs:sequence>
+      <xs:element name="distributedEJBs" type="xs:boolean"/>
+      <xs:element name="entityType" type="xs:short"/>
+      <xs:element name="inCustomerId" type="xs:short"/>
+      <xs:element name="inDistrictId" type="xs:short"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="inItemList" nillable="true" type="tns:newOrderSingleItemInInfo"/>
+      <xs:element minOccurs="0" name="inOrderEntryDate" type="xs:dateTime"/>
+      <xs:element name="inWareHouseId" type="xs:short"/>
+      <xs:element name="numberOfItems" type="xs:int"/>
+      <xs:element name="originatorIsJavaClient" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="newOrderSingleItemInInfo">
+    <xs:sequence>
+      <xs:element name="inItemId" type="xs:int"/>
+      <xs:element name="inItemQuantity" type="xs:int"/>
+      <xs:element name="inItemSupplyWarehouseId" type="xs:short"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="newOrderOutputInfo">
+    <xs:sequence>
+      <xs:element name="entityType" type="xs:short"/>
+      <xs:element minOccurs="0" name="outCustomerCredit" type="xs:string"/>
+      <xs:element name="outCustomerDiscount" type="xs:double"/>
+      <xs:element name="outCustomerId" type="xs:short"/>
+      <xs:element minOccurs="0" name="outCustomerLastName" type="xs:string"/>
+      <xs:element name="outDistrictId" type="xs:short"/>
+      <xs:element name="outDistrictTax" type="xs:double"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="outItemList" nillable="true" type="tns:newOrderSingleItemOutInfo"/>
+      <xs:element minOccurs="0" name="outMsg" type="xs:string"/>
+      <xs:element minOccurs="0" name="outOrderEntryDate" type="xs:dateTime"/>
+      <xs:element name="outOrderId" type="xs:int"/>
+      <xs:element name="outOrderItemCount" type="xs:int"/>
+      <xs:element name="outTotal" type="xs:double"/>
+      <xs:element name="outWarehouseId" type="xs:short"/>
+      <xs:element name="outWarehouseTax" type="xs:double"/>
+      <xs:element minOccurs="0" name="stcnum" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="newOrderSingleItemOutInfo">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="outBrandGeneric" type="xs:string"/>
+      <xs:element name="outItemId" type="xs:int"/>
+      <xs:element minOccurs="0" name="outItemName" type="xs:string"/>
+      <xs:element name="outItemPrice" type="xs:double"/>
+      <xs:element name="outItemQuantity" type="xs:int"/>
+      <xs:element name="outItemSupplyWarehouseId" type="xs:short"/>
+      <xs:element name="outItemTotal" type="xs:double"/>
+      <xs:element name="outStockQuantity" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="createNewOrderResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:newOrderOutputInfo"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Exception">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SystemException">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

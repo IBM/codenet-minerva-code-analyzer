@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config>
+  <servlet>
+    <servlet-name>WeatherServlet</servlet-name>
+    <servlet-class>com.acme.modres.WeatherServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>AvailabilityCheckerServlet</servlet-name>
+    <servlet-class>com.acme.modres.AvailabilityCheckerServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <servlet-class>com.acme.modres.WelcomeServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>UpperServlet</servlet-name>
+    <servlet-class>com.acme.modres.UpperServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WeatherServlet</servlet-name>
+    <url-pattern>/weather</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AvailabilityCheckerServlet</servlet-name>
+    <url-pattern>/availability</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>WelcomeServlet</servlet-name>
+    <url-pattern>/welcome</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UpperServlet</servlet-name>
+    <url-pattern>/upper</url-pattern>
+  </servlet-mapping>
+  <filter>
+	<filter-name>FirstFilter</filter-name>
+	<filter-class>com.acme.modres.FirstFilter</filter-class>
+  </filter>
+  <filter-mapping>
+	<filter-name>FirstFilter</filter-name>
+	<url-pattern>/welcome</url-pattern>
+  </filter-mapping>
+  <filter>
+	<filter-name>SecondFilter</filter-name>
+	<filter-class>com.acme.modres.SecondFilter</filter-class>
+  </filter>
+  <filter-mapping>
+	<filter-name>SecondFilter</filter-name>
+	<url-pattern>/welcome</url-pattern>
+  </filter-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+
+  <!-- FOR DEMO SEUP REASONS, APLICAITON SECURITY IS TURNED OFF, UNCOMMENT SECURITY CONSTRAINTS WHEN APP SECURITY IS TURNED ON -->
+  <!-- <security-constraint>
+    <display-name>allAppResources</display-name>
+    <web-resource-collection>
+        <web-resource-name>loginresources</web-resource-name>
+        <url-pattern>/images/*</url-pattern>
+    </web-resource-collection>
+  </security-constraint>
+
+  <security-constraint>
+    <display-name>allAppResources</display-name>
+    <web-resource-collection>
+        <web-resource-name>allAppResources</web-resource-name>
+        <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+        <role-name>users</role-name>
+    </auth-constraint>
+</security-constraint> -->
+
+<login-config>
+    <auth-method>FORM</auth-method>
+    <realm-name>Form Authentication Realm</realm-name>
+    <form-login-config>
+        <form-login-page>/login.jsp</form-login-page>
+        <form-error-page>/login.jsp</form-error-page>
+    </form-login-config>
+</login-config>
+
+<security-role>
+    <role-name>users</role-name>
+</security-role>
+
+</web-app>

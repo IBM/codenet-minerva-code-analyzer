@@ -1,0 +1,1 @@
+This directory contains a migration bundle created by [IBM Transformation Advisor](https://www.ibm.com/products/cloud-pak-for-applications/transformation-advisor). It contains an analysis of the application and artifacts that accellerate modernization to Liberty and cloud migration.

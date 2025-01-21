@@ -1,0 +1,32 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: argocd-role
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: argocd-rolebinding
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+subjects:
+- kind: ServiceAccount
+  name: argocd-argocd-application-controller
+  namespace: openshift-gitops
+roleRef:
+  kind: Role 
+  name: argocd-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: mysvcacct
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"

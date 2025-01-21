@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application-bnd xmlns="http://websphere.ibm.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://websphere.ibm.com/xml/ns/javaee http://websphere.ibm.com/xml/ns/javaee/ibm-application-bnd_1_1.xsd"
+	version="1.1">
+
+	<security-role name="AdministratorRole">
+		<user name="persona21" />
+		<user name="user21" />
+	</security-role>
+
+	<security-role name="CompanyRole">
+		<user name="persona11" />
+		<user name="user1" />
+		<user name="user11" />
+		<user name="wsadmin" />
+		<group name="g11-20" />
+		<group name="group11" />
+	</security-role>
+
+	<security-role name="RunAsCompanyRole">
+		<run-as userid="user11" password="{xor}LyosOi1ubg==" />
+	</security-role>
+
+	<security-role name="CustomerRole">
+		<user name="persona1" />
+		<user name="user1" />
+	</security-role>
+
+	<security-role name="InvalidRole">
+		<user name="InvalidUser" />
+	</security-role>
+
+	<security-role name="RunAsAdministratorRole">
+		<run-as userid="user21" password="{xor}LyosOi1tbg==" />
+	</security-role>
+
+	<security-role name="AllAuthenticatedUsersRole">
+		<special-subject type="ALL_AUTHENTICATED_USERS" />
+	</security-role>
+
+	<security-role name="PRICECHANGER">
+		<user name="user1" />
+	</security-role>
+</application-bnd>

@@ -1,0 +1,101 @@
+  swagger: "2.0"
+  info: 
+    version: "1.0.0"
+    title: "ERWW-Lite Customer Rest APIs"
+    description: "Servlet based API"
+    termsOfService: ""
+    contact: 
+      name: "ERWW-Lite Support Representative"
+      email: "erww@us.ibm.com"
+      url: "http://host:port/WebCentralLite/"
+    license: 
+      name: "ERWW-Lite License"
+      url: "http://appdeveloper:9080/WebCentralLite/"
+  tags: 
+    - 
+      name: "ERWW-Lite: postPath"
+      description: "ERWW-Lite: POST path"
+  paths: 
+    /customer/: 
+      get: 
+        tags: 
+          - "ERWW-Lite"
+        description: "ERWW-Lite GET operation to update a Customer instance"
+        responses: 
+          200: 
+            description: "Success"
+          404: 
+            description: "Error"
+        parameters: 
+          - 
+            name: "warehouseId"
+            in: "query"
+            type: "string"
+            description: "Enter the warehouseId for GET operation"
+            required: true
+          - 
+            name: "districtId"
+            in: "query"
+            type: "string"
+            description: "Enter the districtId for GET operation"
+            required: true
+          - 
+            name: "customerId"
+            in: "query"
+            type: "string"
+            description: "Enter the customerId for GET operation"
+            required: true
+        consumes: 
+          - "application/json"
+        produces: 
+          - "application/json"
+      post: 
+        tags: 
+          - "ERWW-Lite"
+        description: "ERWW-Lite POST operation to update a Customer instance"
+        responses: 
+          200: 
+            description: "ERWW-Lite HTTP response code: update a Customer instance"
+          404: 
+            description: "Error"
+        parameters: 
+          - 
+            name: "warehouseId"
+            in: "query"
+            type: "string"
+            description: "Enter the warehouseId for POST operation"
+            required: true
+          - 
+            name: "districtId"
+            in: "query"
+            type: "string"
+            description: "Enter the districtId for POST operation"
+            required: true
+          - 
+            name: "customerId"
+            in: "query"
+            type: "string"
+            description: "Enter the customerId for POST operation"
+            required: true
+          - 
+            name: "Customer Credit Information"
+            in: "body"
+            description: "Enter the Customer Credit information for POST operation"
+            required: true
+            schema: 
+              $ref: "#/definitions/CustomerCredit"
+        consumes: 
+          - "application/json"
+        produces: 
+          - "application/json"
+  definitions: 
+    CustomerCredit: 
+      type: "object"
+      description: "Customer Credit Object"
+      properties: 
+        customerCredit: 
+          type: "string"
+          example: "GC"
+        customerCreditLimit: 
+          type: "number"
+          example: "1000.00"

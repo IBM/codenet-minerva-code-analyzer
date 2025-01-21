@@ -1,0 +1,1 @@
+mockthreadpool=org.apache.dubbo.config.mock.MockThreadPool

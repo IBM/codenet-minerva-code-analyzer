@@ -1,0 +1,71 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: jmeter-stress
+  annotations:
+    argocd.argoproj.io/sync-wave: '6'
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jmeter-stress
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: jmeter-stress
+    spec:
+      initContainers:
+      - name: delay-jmeter
+        image: docker-na-public.artifactory.swg-devops.com/hyc-wassvt-team-image-registry-docker-local/jmeterstress/jmeter
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo Jmeter sleeping for 180s before starting stress run && sleep 350']
+      containers:
+        - name: jmeter-stress
+          image: >-
+            docker-na-public.artifactory.swg-devops.com/hyc-wassvt-team-image-registry-docker-local/jmeterstress/jmeter
+          args:
+            - '-script'
+            - Liberty/Erww_ee7
+            - '-host'
+            - $(HOST)
+            - '-port'
+            - '80'
+            - '-protocol'
+            - http
+            - '-duration'
+            - '86400'
+            - '-threads'
+            - '10'
+            - '-auth'
+            - Basic dXNlcjE6c2VjdXJpdHk=
+            - '-report'
+            - 'true'
+            - '-customArgs'
+            - '-JPORT-SSL=9444'
+          env:
+            - name: KEEP_RUNNING_TO_GET_LOGS
+              value: 'true'
+            - name: JVM_ARGS
+              value: '-Dnashorn.args=--no-deprecation-warning'
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: jmeter-route
+                  key: app-route
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

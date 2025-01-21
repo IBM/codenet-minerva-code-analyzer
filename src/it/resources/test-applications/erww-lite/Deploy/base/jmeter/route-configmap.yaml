@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: erww-jmeter-config
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  template:
+    spec:
+      containers:
+        - name: config
+          image: quay.io/openshift/origin-cli:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "200Mi"
+              cpu: "150m"
+            limits:
+              memory: "400Mi"
+              cpu: "400m"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eo pipefail
+              set -x
+              result=0
+              route=$(oc get route erww-lite -o jsonpath='{.spec.host}')
+              oc create configmap jmeter-route --from-literal=app-route=$route --dry-run=client -o json|oc apply -f -
+      restartPolicy: Never
+      serviceAccountName:  runneracct

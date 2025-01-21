@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+  <display-name>PriceChangeSessionEJBLite</display-name>
+  
+  <enterprise-beans>
+        <session>
+            <ejb-name>PriceChangeSessionBMTBean</ejb-name>
+            <ejb-class>pricechangesession.PriceChangeSessionBMTBean</ejb-class>
+            <session-type>Stateless</session-type>
+			<resource-ref>
+				<description></description>
+				<res-ref-name>jdbc/ERWWDataSourceWithPwd</res-ref-name>
+				<res-type>javax.sql.DataSource</res-type>
+				<res-auth>Container</res-auth>
+				<res-sharing-scope>Shareable</res-sharing-scope>
+			</resource-ref>
+        </session>
+     </enterprise-beans>
+ </ejb-jar>

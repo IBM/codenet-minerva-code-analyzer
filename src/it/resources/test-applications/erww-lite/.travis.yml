@@ -1,0 +1,50 @@
+services: docker
+
+jdk:
+- openjdk11
+
+git:
+  submodules: false
+
+before_install:
+- git config --global url.https://$GITHUB_TOKEN@github.ibm.com/was-svt/sharedApps.insteadOf git@github.ibm.com:was-svt/sharedApps.git
+- git submodule update --init --recursive
+- docker login $CONT_REGISTRY -u $REG_USER -p $REG_PASSWORD
+# - git clone git@github.ibm.com:was-svt/Acmeair-Main-Service.git
+
+# - sudo apt-get -y install maven
+
+script:
+#- cd Acmeair-Main-Service/
+- HYCSVT="$CONT_REGISTRY/hyc-wassvt-team-image-registry-docker-local"
+- echo "$REG_USER" > /tmp/.user
+- echo "$REG_PASSWORD" > /tmp/.token
+- docker login $CONT_REGISTRY -u $(cat /tmp/.user) -p $(cat /tmp/.token)
+- export DOCKER_BUILDKIT=1
+- export BUILDKIT_PROGRESS=plain
+- mvn clean package
+
+
+# Pass variables from travis to create docker image from any base image and custom tag it 
+- docker build -t erww-lite -f Dockerfile --secret id=token,src=/tmp/.token --secret id=user,src=/tmp/.user --build-arg FULL_IMAGE=false  --build-arg BASE_IMAGE=$BASE_IMAGE .
+- docker tag erww-lite $HYCSVT/erww-lite/erww-lite:$IMAGE_TAG
+- docker push  $HYCSVT/erww-lite/erww-lite:$IMAGE_TAG
+
+
+# Build and tag application based on WebnSphere Liberty with latest java versions
+- docker build -t erww-lite -f Dockerfile --secret id=token,src=/tmp/.token --secret id=user,src=/tmp/.user --build-arg FULL_IMAGE=true  --build-arg BASE_IMAGE="icr.io/appcafe/websphere-liberty:full-java17-openj9-ubi" .
+- docker tag erww-lite $HYCSVT/erww-lite/erww-lite:wl-jdk8-java17
+- docker push  $HYCSVT/erww-lite/erww-lite:wl-jdk8-java17
+
+# Build and tag application based on Open Liberty with different java versions
+- docker build -t erww-lite -f Dockerfile --secret id=token,src=/tmp/.token --secret id=user,src=/tmp/.user --build-arg FULL_IMAGE=false  --build-arg BASE_IMAGE="icr.io/appcafe/open-liberty:kernel-slim-java8-openj9-ubi" .
+- docker tag erww-lite $HYCSVT/erww-lite/erww-lite:ol-jdk8-java8
+- docker push  $HYCSVT/erww-lite/erww-lite:ol-jdk8-java8
+
+- docker build -t erww-lite -f Dockerfile --secret id=token,src=/tmp/.token --secret id=user,src=/tmp/.user --build-arg FULL_IMAGE=false  --build-arg BASE_IMAGE="icr.io/appcafe/open-liberty:kernel-slim-java11-openj9-ubi" .
+- docker tag erww-lite $HYCSVT/erww-lite/erww-lite:ol-jdk8-java11
+- docker push  $HYCSVT/erww-lite/erww-lite:ol-jdk8-java11
+
+- docker build -t erww-lite -f Dockerfile --secret id=token,src=/tmp/.token --secret id=user,src=/tmp/.user --build-arg FULL_IMAGE=false  --build-arg BASE_IMAGE="icr.io/appcafe/open-liberty:kernel-slim-java17-openj9-ubi" .
+- docker tag erww-lite $HYCSVT/erww-lite/erww-lite:ol-jdk8-java17
+- docker push  $HYCSVT/erww-lite/erww-lite:ol-jdk8-java17

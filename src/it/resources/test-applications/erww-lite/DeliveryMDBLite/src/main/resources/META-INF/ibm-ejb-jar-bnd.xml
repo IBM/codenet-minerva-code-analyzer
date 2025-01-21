@@ -1,0 +1,19 @@
+<ejb-jar-bnd
+xmlns="http://websphere.ibm.com/xml/ns/javaee"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://websphere.ibm.com/xml/ns/javaee http://websphere.ibm.com/xml/ns/javaee/ibm-ejb-jar-bnd_1_0.xsd"
+version="1.0">
+
+
+<message-driven name="DeliveryMDBBean">
+        <jca-adapter activation-spec-binding-name="jms/DeliveryActivationSpec" destination-binding-name="jms/DeliveryRequestQ" />
+	    <message-destination-ref name="jms/DeliveryLogTopic" binding-name="jms/DeliveryLogTopic"/>   
+        <resource-ref name="jms/DeliveryQueueCF" binding-name="jms/DeliveryQueueCF">
+    	      <authentication-alias name="JMSConnectionAlias"/>          	      
+	    </resource-ref>	
+	    <resource-ref name="jms/DeliveryTopicCF" binding-name="jms/DeliveryTopicCF">
+    	      <authentication-alias name="JMSConnectionAlias"/>          	      
+	    </resource-ref>	
+</message-driven>
+
+</ejb-jar-bnd>

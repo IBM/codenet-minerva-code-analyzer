@@ -1,0 +1,32 @@
+Zap proxy for UI tests
+----------------------
+
+It's an excellent idea to have a security scanning proxy to run your UI and API tests through.  What will
+happen is that the scanner will inspect everything about each request and response, and will then
+be able to notify you of any issues it sees during the run.
+
+(This assumed you have configured Zap to listen on port 9888)
+
+In environment.py, add this import:
+
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+
+and replace __open_browser with this:
+
+def __open_browser(context):
+    PROXY = "localhost:9888"
+
+    proxy = Proxy()
+    proxy.proxy_type = ProxyType.MANUAL
+    proxy.http_proxy = PROXY
+    proxy.socks_proxy = PROXY
+    proxy.ssl_proxy = PROXY
+
+    capabilities = webdriver.DesiredCapabilities.CHROME
+    proxy.add_to_capabilities(capabilities)
+
+    context.driver = webdriver.Chrome(desired_capabilities=capabilities)
+
+Now, run Zap.
+
+Finally, run the tests.  It will run them through that proxy and you will get a report of what it sees.

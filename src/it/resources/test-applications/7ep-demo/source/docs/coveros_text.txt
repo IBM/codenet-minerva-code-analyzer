@@ -1,0 +1,34 @@
+                                 .ccccccccc..                                  Interesting links when the system is up:
+                        .cccccccccc                                            ----------------------------------------
+                  cCCCCCCCC                                                    http://localhost:8080/demo - the main application
+             .CCCCCCCCCCc                                                      http://localhost:8080/demo/console - the database viewer
+         .cCCCCCCCCCC/                                                               (use URL of jdbc:h2:mem:training and no user or password)
+      /CCCCCCCCCCC/                                                            http://localhost:8080/demo/monitoring - monitoring of the server
+    /CCCCCCCCCCCC/
+   /CCCCCCCCCCCC/        .dCCCCb. .dOOOOb. dP   .dP .dEEEEb. RRdRRRb. .dOOOOb. .dSSSSb.
+  /CCCCCCCCCCCC/         CC'  `"" OO'  `OO VV   dV' EEoooodC RR'  `RR OO'  `OO YSooooo.
+ |CCCCCCCCCCCCC|         CC.  ... OO.  .OO VV .VV'  EE.  ... RR       OO.  .OO       SS
+ |CCCCCCCCCCCCC|         `CCCCCP' `OOOOOP' VVVVP'   `EEEEEP' dR       `OOOOOP' `SSSSSP
+ .CCCCCCCCCCCCC\
+  \CCCCCCCCCCCCCC\                           ____  _____ __  __  ___
+   \CCCCCCCCCCCCCC\                         |  _ \| ____|  \/  |/ _ \          Summary of relevant Gradle commands
+    \CCCCCCCCCCCCCCc\                       | | | |  _| | |\/| | | | |         ------------------------------------
+       \CCCCCCCCCCCCCCc                     | |_| | |___| |  | | |_| |
+          .CCCCCCCCCCCCCCCc                 |____/|_____|_|  |_|\___/          gradlew apprun         - Runs the application
+             *\CCCCCCCCCCCCCCCC\c                                              gradlew check          - Runs all tests solely using Java
+                  ^\CCCCCCCCCCCCCCCCccc                                        gradlew runAllTests    - Runs the whole set of tests**
+                        ^^^*CCCCCCCCCCCCCCCCCCCCCCCCCCcc..                     gradlew clean          - Cleans build products and installs pre-push hook.
+                                   ^^^^^^^^^^^^^^^^^                           gradlew runBehaveTests - Runs the UI tests**
+                                                                               gradlew runApiTests    - Runs the API tests**
+                                                                               gradlew selenified     - Runs some Selenified tests**
+                                                                               gradlew pitest         - Runs mutation testing (see http://pitest.org/)
+                                                                               gradlew sonarqube      - Runs static analysis using SonarQube.
+                                                                                                        (SonarQube must be running on localhost:9000)
+
+gradlew generateCucumberReport   - Runs cucumber and creates a nice-looking HTML report.
+gradlew dependencyCheckAnalyze   - Analyzes security reports for the dependencies of this project.
+gradlew integrate                - Runs the database integration tests.
+gradlew startH2Console           - Starts a console to examine the H2 database file.
+gradlew <task 1>... taskTree     - A utility that will show the task tree for a particular task.
+
+** Requires the app to be running (usually in another terminal) and all optional dependencies installed.

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>WebStockLevelLite</display-name>
+	<listener>
+		<description>SLRequestAttributeListener</description>
+		<display-name>SLRequestAttributeListener</display-name>
+		<listener-class>stock.query.SLRequestAttributeListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<description>
+		</description>
+		<display-name>StockQueryServlet</display-name>
+		<servlet-name>StockQueryServlet</servlet-name>
+		<servlet-class>stock.query.StockQueryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StockQueryServlet</servlet-name>
+		<url-pattern>/StockQueryServlet</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<persistence-unit-ref>
+		<persistence-unit-ref-name>StockQuery/entitymanagerfactory</persistence-unit-ref-name>
+		<persistence-unit-name>StockQuery</persistence-unit-name>
+	</persistence-unit-ref>
+	<resource-ref>
+		<description>
+		</description>
+		<res-ref-name>jdbc/ERWWDataSourceWithJaasAlias</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+</web-app>

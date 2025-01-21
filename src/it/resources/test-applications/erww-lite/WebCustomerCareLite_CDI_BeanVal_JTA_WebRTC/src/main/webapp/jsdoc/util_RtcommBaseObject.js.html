@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>lib.rtcomm.clientjs Source: util/RtcommBaseObject.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cerulean.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">lib.rtcomm.clientjs</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.html">rtcomm</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.EndpointProvider.html">rtcomm.EndpointProvider</a></li><li><a href="module-rtcomm.MqttEndpoint.html">rtcomm.MqttEndpoint</a></li><li><a href="module-rtcomm.PresenceMonitor.html">rtcomm.PresenceMonitor</a></li><li><a href="module-rtcomm.PresenceMonitor.PresenceNode.html">rtcomm.PresenceMonitor.PresenceNode</a></li><li><a href="module-rtcomm.RtcommEndpoint.html">rtcomm.RtcommEndpoint</a></li><li><a href="module-rtcomm.RtcommEndpoint.Chat.html">rtcomm.RtcommEndpoint.Chat</a></li><li><a href="module-rtcomm.RtcommEndpoint.PhoneRTCConnection.html">rtcomm.RtcommEndpoint.PhoneRTCConnection</a></li><li><a href="module-rtcomm.RtcommEndpoint.WebRTCConnection.html">rtcomm.RtcommEndpoint.WebRTCConnection</a></li><li><a href="module-rtcomm.util.RtcommBaseObject.html">rtcomm.util.RtcommBaseObject</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.EndpointProvider.html#event:newendpoint">rtcomm.EndpointProvider#event:newendpoint</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:presence_updated">rtcomm.EndpointProvider#event:presence_updated</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:queueupdate">rtcomm.EndpointProvider#event:queueupdate</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:reset">rtcomm.EndpointProvider#event:reset</a></li><li><a href="module-rtcomm.PresenceMonitor.html#event:updated">rtcomm.PresenceMonitor#event:updated</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:connected">rtcomm.RtcommEndpoint#chat:connected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:disconnected">rtcomm.RtcommEndpoint#chat:disconnected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:message">rtcomm.RtcommEndpoint#chat:message</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:destroyed">rtcomm.RtcommEndpoint#event:destroyed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:onetimemessage">rtcomm.RtcommEndpoint#event:onetimemessage</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:alerting">rtcomm.RtcommEndpoint#session:alerting</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:failed">rtcomm.RtcommEndpoint#session:failed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:queued">rtcomm.RtcommEndpoint#session:queued</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:refer">rtcomm.RtcommEndpoint#session:refer</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:ringing">rtcomm.RtcommEndpoint#session:ringing</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:started">rtcomm.RtcommEndpoint#session:started</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:stopped">rtcomm.RtcommEndpoint#session:stopped</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:connected">rtcomm.RtcommEndpoint#webrtc:connected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:disconnected">rtcomm.RtcommEndpoint#webrtc:disconnected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:failed">rtcomm.RtcommEndpoint#webrtc:failed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:remotemuted">rtcomm.RtcommEndpoint#webrtc:remotemuted</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#applyConfig">applyConfig</a></li><li><a href="global.html#generateRandomBytes">generateRandomBytes</a></li><li><a href="global.html#validateConfig">validateConfig</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+    		<h1 class="page-title">Source: util/RtcommBaseObject.js</h1>
+			
+
+		<h1 class="page-title">Source: util/RtcommBaseObject.js</h1>
+    
+<section>
+	<article>
+		<pre
+			class="sunlight-highlight-javascript linenums">/*
+ * Copyright 2014 IBM Corp.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/ 
+/** Base Rtcomm class that provides event functionality 
+ * @class
+ * @memberof module:rtcomm.util
+ */
+var RtcommBaseObject = {
+    /** @lends module:rtcomm.util.RtcommBaseObject.prototype */
+    /*
+     * Properties
+
+    objName : 'Base',
+    id : 'unknown',
+    config: {},
+    dependencies: {},
+    ready: false,
+    state: 'unknown',
+    states: {},
+    events: {},  
+     */
+    /*
+     * Methods
+     */
+    setState : function(value, object) {
+      if (typeof this.state !== 'undefined') {
+        if (this.state !== value) {
+          this.state = value;
+          this.emit(value,object);
+        } else {
+          l('DEBUG') &amp;&amp; console.log(this + '.setState():  State already set, ignoring '+value );
+        }
+      } else {
+        this.emit(value,object);
+      }
+    },
+    listEvents : function() {
+
+      console.log('******* ' + this+' Configured events ***********');
+      /*jslint forin: true */
+      for(var event in this.events) {
+          if (this.events.hasOwnProperty(event)) {
+            console.log('******* ['+event+'] has '+this.events[event].length+' listeners registered');
+          } 
+          
+        }
+    },  
+    clearEventListeners : function() {
+      for(var event in this.events) {
+          if (this.events.hasOwnProperty(event)) {
+            this.events[event] = [];
+          } 
+      }
+    },
+    createEvent: function(event) {
+      if (this.hasOwnProperty('events')){
+        this.events[event] = []; 
+      } else {
+        throw new Error('createEvent() requires an events property to store the events');
+      }
+    },  
+    removeEvent: function(event) {
+      if (event in this.events) {
+        delete this.events[event];
+      }   
+    },  
+
+    hasEventListener: function(event){
+     return (event in this.events) &amp;&amp; (this.events[event].length > 0);
+    },
+    /** Establish a listener for an event */
+    on : function(event,callback) {
+      //console.log('on -- this.events is: '+ JSON.stringify(this.events));
+      // This function requires an events object on whatever object is attached to. and event needs to be defined there.
+      if (this.events) {
+        if(typeof event === 'object') {
+          // this is an object of events: 
+          for (var key in event) { 
+            if (event.hasOwnProperty(key)) {
+              if (this.events[key] &amp;&amp; Array.isArray(this.events[key])) {
+                 l('EVENT', this) &amp;&amp; console.log(this+' Adding a listener callback for event['+key+']');
+                 l('TRACE', this) &amp;&amp; console.log(this+' Callback for event['+key+'] is', event[key]);
+                 this.events[key].push(event[key]);
+              }
+            }
+          }
+        } else { 
+          if (this.events[event] &amp;&amp; Array.isArray(this.events[event])) {
+            l('EVENT', this) &amp;&amp; console.log(this+' Adding a listener callback for event['+event+']');
+            l('TRACE', this) &amp;&amp; console.log(this+' Callback for event['+event+'] is', callback);
+            this.events[event].push(callback);
+          }
+        }
+      } else {
+        throw new Error("on() requires an events property listing the events. this.events["+event+"] = [];");
+      }
+    },
+    /** attach a callback to ALL events */
+    bubble : function(callback) {
+      if (this.events) {
+        for(var event in this.events) {
+          if (this.events.hasOwnProperty(event) ) {
+            this.events[event].push(callback);
+          }
+        }
+      }
+    },
+    // Clear callbacks for a particular event.
+    off : function(event) {
+      if (this.events &amp;&amp; this.events[event]) {
+        l('EVENT', this) &amp;&amp; console.log(this+' Removing listeners for event['+event+']');
+        this.events[event] = [];
+      }
+    },
+    /** emit an event from the object */
+    emit : function(event, object) {
+      var event_object = object || {};
+      var self = this;
+      // We have an event format specified, normalize the event before emitting.
+      if (this._Event &amp;&amp; typeof this._Event === 'function') { 
+        event_object = this._Event(event, event_object);
+      }
+      // event_object.name = (event_object.name) ? event_object.name : event;
+      if (this.events &amp;&amp; this.events[event] ) {
+     //   console.log('>>>>>>>> Firing event '+event);
+        l('EVENT', this) &amp;&amp; console.log(this+".emit()  for event["+event+"]", self.events[event].length);
+        // Save the event
+        if (typeof self.lastEvent !== 'undefined') {
+          self.lastEvent = event;
+        };
+         // Event exists, call all callbacks
+        self.events[event].forEach(function(callback) {
+            if (typeof callback === 'function') {
+              l('EVENT', self) &amp;&amp; console.log(self+".emit()  executing callback for event["+event+"]");
+              try {
+                callback(event_object);
+              } catch(e) {
+                var m = 'Event['+event+'] callback failed with message: '+e.message;
+                throw new Error(m);
+              }
+            } else {
+              l('EVENT', self) &amp;&amp; console.log(self+' Emitting, but no callback for event['+event+']');
+            }   
+        });
+      } else {
+        throw new Error('emit() requires an events property listing the events. this.events['+event+'] = [];');
+      }
+    },
+    extend: function(props) {
+      var prop, obj;
+      obj = Object.create(this);
+      for (prop in props) {
+        if (props.hasOwnProperty(prop)) {
+          obj[prop] = props[prop];
+        }
+      }
+      return obj;
+    },
+    // Test Function
+    _l: function(level){
+      if (typeof l === 'function') {
+        return l(level,this);
+      } else {
+        return 'unknown';  
+      }
+    },
+    toString: function() {
+      var name =  (this._ &amp;&amp; this._.objName)? this._.objName : this.objName || this.name || 'Unknown';
+      var id =  (this._ &amp;&amp; this._.id)? this._.id: this.id || 'Unknown';
+      return name + '['+id+']';
+    }
+};
+
+exports.RtcommBaseObject = RtcommBaseObject;
+</pre>
+	</article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Copyright © 2014-2015 IBM Corp.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+	on Tue Sep 15th 2015 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

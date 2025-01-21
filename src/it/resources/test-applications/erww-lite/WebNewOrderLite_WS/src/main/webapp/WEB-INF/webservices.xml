@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webservices xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/javaee_web_services_1_3.xsd" version="1.3">
+	<webservice-description>
+		<webservice-description-name>NewOrderImplService</webservice-description-name>
+		<wsdl-file>WEB-INF/wsdl/NewOrderImplService.wsdl</wsdl-file>
+		<port-component>
+			<port-component-name>NewOrderImplDelegate</port-component-name>
+			<wsdl-service xmlns:pfx="http://ws.lite.neworder/">
+			pfx:NewOrderImplService</wsdl-service>
+			<wsdl-port xmlns:pfx="http://ws.lite.neworder/">
+			pfx:NewOrderImplPort</wsdl-port>
+			<enable-mtom>false</enable-mtom>
+			<service-impl-bean>
+				<servlet-link>
+				neworder.lite.ws.NewOrderImplDelegate</servlet-link>
+			</service-impl-bean>
+		</port-component>
+	</webservice-description>
+</webservices>

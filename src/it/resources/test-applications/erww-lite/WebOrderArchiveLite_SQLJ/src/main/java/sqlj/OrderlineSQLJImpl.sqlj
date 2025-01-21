@@ -1,0 +1,76 @@
+package sqlj;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
+#sql context OrderlineCtx;
+#sql iterator OrderlineIter(short OL_NUMBER);
+public class OrderlineSQLJImpl extends OrderlineSQLJ
+{
+    private OrderSQLJ order;
+
+    private short olNumber;
+
+    public OrderlineSQLJImpl(DataSource ds) {
+        super(ds);
+    }
+
+    @Override
+    public List<OrderlineSQLJ> findOrderLinesWithSpecificOrderId(int orderId, short districtId, short warehouseId) throws SQLException {
+        Connection con = ds.getConnection();
+        OrderlineCtx ctx = new OrderlineCtx(con);
+        try {
+        	OrderlineIter iter;
+        	#sql [ctx] iter = { SELECT OL_NUMBER FROM CBIVP.ORDERLINE
+                    WHERE OL_O_ID=:orderId
+                    AND OL_D_ID=:districtId
+                    AND OL_W_ID=:warehouseId
+        	};
+            OrderSQLJ order = OrderSQLJ.newInstance(ds).find(districtId, orderId, warehouseId);
+            List<OrderlineSQLJ> results = new ArrayList<OrderlineSQLJ>();
+            while (iter.next()) {
+                OrderlineSQLJImpl oLine = new OrderlineSQLJImpl(ds);
+                oLine.olNumber = iter.OL_NUMBER();
+                oLine.order = order;
+                results.add(oLine);
+            }
+            iter.close();
+            return results;
+        } finally {
+        	ctx.close();
+        }
+    }
+
+    @Override
+    public void remove(OrderlineSQLJ oline) throws SQLException {
+        // SQL query: DELETE FROM ORDERLINE WHERE OL_D_ID=1 AND OL_W_ID=1 AND OL_O_ID=1 AND OL_NUMBER=1
+        OrderlineSQLJImpl ol = (OrderlineSQLJImpl) oline;
+        Connection con = ds.getConnection();
+        OrderlineCtx ctx = new OrderlineCtx(con);
+        try {
+        	int orderID = ol.order.OrderId;
+        	short districtID = ol.order.DistrictId;
+        	short warehouseID = ol.order.WarehouseId;
+        	int olNumber = ol.getOlNumber();
+        	#sql [ctx] { DELETE FROM CBIVP.ORDERLINE 
+        		WHERE OL_O_ID=:orderID 
+        		AND OL_D_ID=:districtID 
+        		AND OL_W_ID=:warehouseID 
+        		AND OL_NUMBER=:olNumber
+        	};
+        } finally {
+        	ctx.close();
+        }
+    }
+
+    @Override
+    public int getOlNumber() {
+        return olNumber;
+    }
+
+}

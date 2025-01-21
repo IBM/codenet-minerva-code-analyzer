@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>WebCatalogVideo Input Form</title>
+<meta charset="UTF-8">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="resources/css/erwwVideo.css" rel="stylesheet"/>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<style>
+	body {background-color: lightgrey}
+	aside {float: left;  width: 23%;}
+  
+  	#content > section a.selected {
+    	display: block;
+    }
+   	#content > section {
+    	display: none;
+    	width: 50%;
+    	margin: 0 auto;
+   	}	
+   	#content > section:target {
+    	display: block;
+	}
+</style> 
+</head>
+
+<body>
+
+    <nav style="background-color: #FFFFEB; border-style:solid; border-color: lightgrey;">
+    	<a href="#top">
+	    	<img src="resources/ERWW_Logo_Border_Yellow.jpg" width="200" height="79" align="left" border="none"/>
+		</a>
+		<h1 style="font-size:180%; font-family:'times new roman'; align:center" >WebCatalogVideo Input Form</h1>
+		<a href="#top">
+	    	<img src="resources/Background_Yellow.jpg" width="6" height="30" align="left" border="none"/>
+		</a>
+		<h1 style="font-size:120%; font-family:'times new roman'; align:left" >Servlet 3.1 Upgrade Request</h1>
+	</nav>
+	
+	<nav style="background-color: #666666; border-style:solid; border-color: lightgrey;">
+		<a href="../../WebCentralLite/index.jsp" style="font-size:150%; color:white" ><span class="white">| Home</span></a>
+	</nav>
+	
+	<h3>Catalog Video: Upload and View a Video of a Product</h3>
+	<table>
+		<tr>
+       		<td>Enter Product Video Name:</td>
+       		<td><input id="productVideo1Name" type="text" size="10"/></td> 
+   		</tr>   		
+   		<tr>
+       		<td>Select a Product Video to Upload:</td>
+       		<td><input id="productVideo1" type=file name="productVideo1" style="position: relative"/></td> 
+       		<td><input id="postCatalogVideo" type="button" value="Submit" onclick="postCatalogVideo()"/></td> 	
+   		</tr>
+	</table>
+	<hr>  
+	<div id="videoControlContainer">
+    		<video id="remoteView" title="remoteView" poster='resources/video_camera_big.png' class="remoteView" autoplay ></video>
+    		<h4 style="float:left; padding-left:10px; padding-right:10px" >Right click on the video to show controls</h4>		
+    </div>
+    <div id='statusMessageVideo' class="pull-right logo" style="font-size: 24px; padding-right: 30px">
+			<!-- Status Message will appear here -->
+    </div>	
+
+<script src="js/erwwVideo.js"></script>
+	
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+	<display-name>WebLogOffLite</display-name>
+	<servlet>
+		<description>ERWW LogOff</description>
+		<display-name>LogOffController</display-name>
+		<servlet-name>LogOffController</servlet-name>
+		<servlet-class>logoff.LogOffController</servlet-class>
+	    <init-param>
+			<description>LogOff</description>
+			<param-name>LogOff</param-name>
+			<param-value>/LogOffResultsForm.jsp</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>LogOffController1</display-name>
+		<servlet-name>LogOffController1</servlet-name>
+		<servlet-class>logoff.LogOffController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogOffController</servlet-name>
+		<url-pattern>/LogOffController</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>LogOffController1</servlet-name>
+		<url-pattern>/LogOffController1</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>
+

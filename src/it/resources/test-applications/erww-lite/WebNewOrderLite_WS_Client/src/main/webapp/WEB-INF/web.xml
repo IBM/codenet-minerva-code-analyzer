@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>WebNewOrderLite_WS_Client</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	<service-ref>
+		<service-ref-name>service/NewOrderImplService</service-ref-name>
+		<service-interface>neworder.lite.ws.NewOrderImplService</service-interface>
+		<wsdl-file>WEB-INF/wsdl/NewOrderImplService.wsdl</wsdl-file>
+		<service-qname xmlns:pfx="http://ws.lite.neworder/">pfx:NewOrderImplService</service-qname>
+		<port-component-ref>
+			<service-endpoint-interface>neworder.lite.ws.NewOrderImplDelegate</service-endpoint-interface>
+			<enable-mtom>false</enable-mtom>
+		</port-component-ref>
+	</service-ref>
+</web-app>

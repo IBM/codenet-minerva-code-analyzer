@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: erww-db2
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+  labels:
+    app: erww-db2
+spec:
+  ports:
+    - name: 50000-tcp
+      protocol: TCP
+      port: 50000
+      targetPort: 50000
+  selector:
+    app: erww-db2
+    deployment: erww-db2
+  type: ClusterIP
+  sessionAffinity: None

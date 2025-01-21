@@ -1,0 +1,3305 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>lib.rtcomm.clientjs Modules</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.cerulean.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">lib.rtcomm.clientjs</a>
+	</div>
+	<div class="navbar-collapse">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.html">rtcomm</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.EndpointProvider.html">rtcomm.EndpointProvider</a></li><li><a href="module-rtcomm.MqttEndpoint.html">rtcomm.MqttEndpoint</a></li><li><a href="module-rtcomm.PresenceMonitor.html">rtcomm.PresenceMonitor</a></li><li><a href="module-rtcomm.PresenceMonitor.PresenceNode.html">rtcomm.PresenceMonitor.PresenceNode</a></li><li><a href="module-rtcomm.RtcommEndpoint.html">rtcomm.RtcommEndpoint</a></li><li><a href="module-rtcomm.RtcommEndpoint.Chat.html">rtcomm.RtcommEndpoint.Chat</a></li><li><a href="module-rtcomm.RtcommEndpoint.PhoneRTCConnection.html">rtcomm.RtcommEndpoint.PhoneRTCConnection</a></li><li><a href="module-rtcomm.RtcommEndpoint.WebRTCConnection.html">rtcomm.RtcommEndpoint.WebRTCConnection</a></li><li><a href="module-rtcomm.util.RtcommBaseObject.html">rtcomm.util.RtcommBaseObject</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-rtcomm.EndpointProvider.html#event:newendpoint">rtcomm.EndpointProvider#event:newendpoint</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:presence_updated">rtcomm.EndpointProvider#event:presence_updated</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:queueupdate">rtcomm.EndpointProvider#event:queueupdate</a></li><li><a href="module-rtcomm.EndpointProvider.html#event:reset">rtcomm.EndpointProvider#event:reset</a></li><li><a href="module-rtcomm.PresenceMonitor.html#event:updated">rtcomm.PresenceMonitor#event:updated</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:connected">rtcomm.RtcommEndpoint#chat:connected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:disconnected">rtcomm.RtcommEndpoint#chat:disconnected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:chat:message">rtcomm.RtcommEndpoint#chat:message</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:destroyed">rtcomm.RtcommEndpoint#event:destroyed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:onetimemessage">rtcomm.RtcommEndpoint#event:onetimemessage</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:alerting">rtcomm.RtcommEndpoint#session:alerting</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:failed">rtcomm.RtcommEndpoint#session:failed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:queued">rtcomm.RtcommEndpoint#session:queued</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:refer">rtcomm.RtcommEndpoint#session:refer</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:ringing">rtcomm.RtcommEndpoint#session:ringing</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:started">rtcomm.RtcommEndpoint#session:started</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:session:stopped">rtcomm.RtcommEndpoint#session:stopped</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:connected">rtcomm.RtcommEndpoint#webrtc:connected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:disconnected">rtcomm.RtcommEndpoint#webrtc:disconnected</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:failed">rtcomm.RtcommEndpoint#webrtc:failed</a></li><li><a href="module-rtcomm.RtcommEndpoint.html#event:webrtc:remotemuted">rtcomm.RtcommEndpoint#webrtc:remotemuted</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="global.html#applyConfig">applyConfig</a></li><li><a href="global.html#generateRandomBytes">generateRandomBytes</a></li><li><a href="global.html#validateConfig">validateConfig</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+	</div>
+</div>
+</div>
+
+
+<div class="container">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+    		<h1 class="page-title">Modules</h1>
+			
+
+	<h1 class="page-title">Modules</h1>
+<section>
+
+<header>
+    
+        <h2>
+        
+        </h2>
+        
+    
+</header>
+
+
+<article>
+    <div class="container-overview">
+    
+        
+
+        
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-rtcomm.EndpointProvider.html">EndpointProvider</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.MqttEndpoint.html">MqttEndpoint</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.PresenceMonitor.html">PresenceMonitor</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.PresenceMonitor.PresenceNode.html">PresenceNode</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.RtcommEndpoint.html">RtcommEndpoint</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.RtcommEndpoint.Chat.html">Chat</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.RtcommEndpoint.PhoneRTCConnection.html">PhoneRTCConnection</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.RtcommEndpoint.WebRTCConnection.html">WebRTCConnection</a></dt>
+            <dd></dd>
+        
+            <dt><a href="module-rtcomm.util.RtcommBaseObject.html">RtcommBaseObject</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Events</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="event:newendpoint">newendpoint</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A new RtcommEndpoint was created from an inbound</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html">module:rtcomm.RtcommEndpoint</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_EndpointProvider.js.html">EndpointProvider/EndpointProvider.js</a>,
+				 <a href="EndpointProvider_EndpointProvider.js.html#sunlight-1-line-74">line 74</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:presence_updated">presence_updated</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The Presence was Updated</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">module:rtcomm.PresenceMonitor.presenceData</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_EndpointProvider.js.html">EndpointProvider/EndpointProvider.js</a>,
+				 <a href="EndpointProvider_EndpointProvider.js.html#sunlight-1-line-87">line 87</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:queueupdate">queueupdate</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The Session Queue was updated from the server</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">module:rtcomm.Queues</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_EndpointProvider.js.html">EndpointProvider/EndpointProvider.js</a>,
+				 <a href="EndpointProvider_EndpointProvider.js.html#sunlight-1-line-80">line 80</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:reset">reset</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The endpoint Provider has reset.  Usually due to another peer logging in with the same presence. 
+The event has a 'reason' property indicating why the EndpointProvider was reset.</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">module:reason</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_EndpointProvider.js.html">EndpointProvider/EndpointProvider.js</a>,
+				 <a href="EndpointProvider_EndpointProvider.js.html#sunlight-1-line-94">line 94</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:updated">updated</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The presenceData has been updated.</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">module:rtcomm.presenceData</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_PresenceMonitor.js.html">EndpointProvider/PresenceMonitor.js</a>,
+				 <a href="EndpointProvider_PresenceMonitor.js.html#sunlight-1-line-278">line 278</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:chat:connected">chat:connected</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A chat session to a  peer has been established</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-301">line 301</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:chat:disconnected">chat:disconnected</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The connection to a peer has been closed</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-307">line 307</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:chat:message">chat:message</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A message has arrived from a peer</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-295">line 295</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:destroyed">destroyed</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The endpoint has destroyed itself, clean it up.</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html">module:rtcomm.RtcommEndpoint</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-313">line 313</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:onetimemessage">onetimemessage</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The endpoint received a 'onetimemessage'. The content of the message
+should be in the 'otm' header</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html">module:rtcomm.RtcommEndpoint</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-319">line 319</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:alerting">session:alerting</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>An inbound connection is being requested.</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-246">line 246</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:failed">session:failed</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A failure occurred establishing the session (check reason)</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-252">line 252</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:queued">session:queued</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A Queue has been contacted and we are waiting for a response.</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-234">line 234</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:refer">session:refer</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>An inbound request to establish a call via 
+3PCC was initiated</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-219">line 219</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:ringing">session:ringing</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A peer has been reached, but not connected (inbound/outound)</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-240">line 240</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:ringing">session:ringing</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A peer has been reached, but not connected (inbound/outound)</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-228">line 228</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:started">session:started</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A signaling session to a peer has been established</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-213">line 213</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:session:stopped">session:stopped</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The session has stopped</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-258">line 258</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:webrtc:connected">webrtc:connected</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>A PeerConnection to a peer has been established</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-265">line 265</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:webrtc:disconnected">webrtc:disconnected</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The connection to a peer has been closed</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-271">line 271</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:webrtc:failed">webrtc:failed</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>Creating the connection to a peer failed</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-289">line 289</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="event:webrtc:remotemuted">webrtc:remotemuted</h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        <p>The remote peer muted their stream</p>
+    </div>
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+<dl class="details">
+	
+
+	<h5 class="subsection-title">Properties:</h5>
+
+	<dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>Additional</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-rtcomm.RtcommEndpoint.html#~Event">module:rtcomm.RtcommEndpoint~Event</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>properties of the Event Object:
+ label: label of the stream
+ audio: boolean indicating muted(false) or not(true)
+ video: boolean indicating muted(false) or not(true)</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+	
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="EndpointProvider_RtcommEndpoint.js.html">EndpointProvider/RtcommEndpoint.js</a>,
+				 <a href="EndpointProvider_RtcommEndpoint.js.html#sunlight-1-line-278">line 278</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+</article>
+
+</section>
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	Copyright © 2014-2015 IBM Corp.
+	</span>
+	<br />
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.2</a>
+	on Tue Sep 15th 2015 using the <a
+	href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<!--<script src="scripts/sunlight.js"></script>-->
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/bootstrap-dropdown.js"></script>
+<script src="scripts/toc.js"></script>
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "h1,h2,h3,h4",
+		showAndHide : false,
+		scrollTo    : "100px"
+	} );
+
+	$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+	//			$( ".tutorial-section pre, .readme-section pre" ).addClass( "sunlight-highlight-javascript" ).addClass( "linenums" );
+
+	$( ".tutorial-section pre, .readme-section pre" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			lang = "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+</body>
+</html>

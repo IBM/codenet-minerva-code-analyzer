@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: db2-kustomize
+
+resources:
+- db2-secret.yaml
+- db2-svc.yaml
+- erww-db2.yaml
+- role-n-sa.yaml
