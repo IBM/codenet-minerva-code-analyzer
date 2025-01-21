@@ -1,1 +1,0 @@
-zap_proxy_security_scanning.txt   : Setting up Zap to run as a proxy on the UI test server

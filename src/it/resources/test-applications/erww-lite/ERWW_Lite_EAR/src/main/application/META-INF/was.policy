@@ -1,5 +1,0 @@
-grant codeBase "file:${application}" {
-  permission java.util.logging.LoggingPermission "control";
-  permission java.security.AllPermission;
-  permission java.lang.RuntimePermission "getProtectionDomain";
-};
