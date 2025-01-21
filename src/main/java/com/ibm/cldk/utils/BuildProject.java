@@ -39,9 +39,7 @@ public class BuildProject {
                 .orElse(null);
         File mvnWrapper = System.getProperty("os.name").toLowerCase().contains("windows") ? new File(projectRootPom, "mvnw") : new File(projectRootPom, "mvnw.cmd");
 
-        String mvnCommand = commandExists(mvnWrapper).getKey() ? mvnWrapper.toString() : mvnSystemCommand;
-        Log.debug(MessageFormat.format("Using {0} to build.", mvnWrapper.toString()));
-        return mvnCommand;
+        return commandExists(mvnWrapper).getKey() ? mvnWrapper.toString() : mvnSystemCommand;
     }
 
     /**
@@ -135,7 +133,6 @@ public class BuildProject {
     private static boolean buildWithTool(String[] buildCommand) {
         Log.info("Building the project using " + buildCommand[0] + ".");
         ProcessBuilder processBuilder = new ProcessBuilder().directory(new File(projectRootPom)).command(buildCommand);
-
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
