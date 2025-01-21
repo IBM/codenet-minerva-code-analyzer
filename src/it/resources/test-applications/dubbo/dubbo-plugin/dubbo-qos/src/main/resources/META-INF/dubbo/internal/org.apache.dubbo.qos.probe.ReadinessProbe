@@ -1,2 +1,0 @@
-deployer = org.apache.dubbo.qos.probe.impl.DeployerReadinessProbe
-provider = org.apache.dubbo.qos.probe.impl.ProviderReadinessProbe

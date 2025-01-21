@@ -1,1 +1,0 @@
-securityApplicationScopeModelInitializer = org.apache.dubbo.spring.security.model.SecurityScopeModelInitializer

@@ -1,2 +1,0 @@
-default=org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository
-isolation=org.apache.dubbo.common.threadpool.manager.IsolationExecutorRepository

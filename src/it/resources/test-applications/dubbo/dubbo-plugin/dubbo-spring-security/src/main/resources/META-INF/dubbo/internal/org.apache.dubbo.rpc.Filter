@@ -1,2 +1,0 @@
-authenticationResolver=org.apache.dubbo.spring.security.filter.ContextHolderAuthenticationResolverFilter
-authenticationExceptionTranslator=org.apache.dubbo.spring.security.filter.AuthenticationExceptionTranslatorFilter

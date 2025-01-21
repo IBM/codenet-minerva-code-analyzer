@@ -1,2 +1,0 @@
-moduleEnvironment=org.apache.dubbo.common.config.ModuleEnvironment
-moduleConfig=org.apache.dubbo.config.context.ModuleConfigManager

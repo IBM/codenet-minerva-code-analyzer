@@ -1,1 +1,0 @@
-virtual=org.apache.dubbo.common.threadpool.support.loom.VirtualThreadPool

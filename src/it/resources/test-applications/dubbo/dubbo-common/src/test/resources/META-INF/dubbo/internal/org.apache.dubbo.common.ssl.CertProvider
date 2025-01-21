@@ -1,2 +1,0 @@
-first=org.apache.dubbo.common.ssl.FirstCertProvider
-second=org.apache.dubbo.common.ssl.SecondCertProvider

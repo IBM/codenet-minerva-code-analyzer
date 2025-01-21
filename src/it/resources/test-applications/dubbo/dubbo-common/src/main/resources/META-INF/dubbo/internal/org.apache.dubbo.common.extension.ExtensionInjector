@@ -1,3 +1,0 @@
-adaptive=org.apache.dubbo.common.extension.inject.AdaptiveExtensionInjector
-spi=org.apache.dubbo.common.extension.inject.SpiExtensionInjector
-scopeBean=org.apache.dubbo.common.beans.ScopeBeanExtensionInjector
