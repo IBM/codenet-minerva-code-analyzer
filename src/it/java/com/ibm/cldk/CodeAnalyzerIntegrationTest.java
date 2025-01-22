@@ -8,6 +8,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -23,10 +24,25 @@ public class CodeAnalyzerIntegrationTest {
      * Creates a Java 11 test container that mounts the build/libs folder.
      */
     static String codeanalyzerVersion;
+
+    static {
+        // Build project first
+        try {
+            Process process = new ProcessBuilder("./gradlew", "clean", "fatJar")
+                    .directory(new File(System.getProperty("user.dir")))
+                    .start();
+            if (process.waitFor() != 0) {
+                throw new RuntimeException("Build failed");
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Failed to build codeanalyzer", e);
+        }
+    }
+
     @Container
     static final GenericContainer<?> container = new GenericContainer<>("openjdk:11-jdk")
             .withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh"))
-            .withCommand("-c", "while true; do sleep 1; done")  // Keep container running
+            .withCommand("-c", "while true; do sleep 1; done")
             .withFileSystemBind(
                     String.valueOf(Paths.get(System.getProperty("user.dir")).resolve("build/libs")),
                     "/opt/jars",
@@ -35,14 +51,12 @@ public class CodeAnalyzerIntegrationTest {
     @BeforeAll
     static void setUp() {
         Properties properties = new Properties();
-        Path propertiesPath = Paths.get(System.getProperty("user.dir"), "gradle.properties");
-
-        try (FileInputStream fis = new FileInputStream(propertiesPath.toFile())) {
+        try (FileInputStream fis = new FileInputStream(
+                Paths.get(System.getProperty("user.dir"), "gradle.properties").toFile())) {
             properties.load(fis);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         codeanalyzerVersion = properties.getProperty("version");
     }
 

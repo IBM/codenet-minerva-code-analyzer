@@ -62,6 +62,15 @@ sourceSets {
     }
 }
 
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+tasks.check { dependsOn integrationTest }
+
 // Remove that nagging bin folder vscode seems to generate every single time
 clean.doFirst {
     delete "${rootDir}/bin"
