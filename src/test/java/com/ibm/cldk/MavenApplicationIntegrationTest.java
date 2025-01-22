@@ -45,8 +45,8 @@ public class MavenApplicationIntegrationTest {
     @Container
     static final GenericContainer<?> baseJavaContainerNoMaven = new GenericContainer<>("openjdk:17-jdk").withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh")).withCommand("-c", "while true; do sleep 1; done")  // Keep container running
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/it/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/it/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
 
 
     @Container
@@ -54,8 +54,8 @@ public class MavenApplicationIntegrationTest {
             .withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh"))
             .withCommand("-c", "while true; do sleep 1; done")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/it/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/it/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
 
     @BeforeAll
     static void setUp() {

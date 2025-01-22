@@ -28,7 +28,7 @@ public class CodeAnalyzerIntegrationTest {
     static {
         // Build project first
         try {
-            Process process = new ProcessBuilder("./gradlew", "clean", "fatJar")
+            Process process = new ProcessBuilder("./gradlew", "fatJar")
                     .directory(new File(System.getProperty("user.dir")))
                     .start();
             if (process.waitFor() != 0) {

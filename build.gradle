@@ -54,22 +54,7 @@ sourceSets {
             srcDirs= ["src/test/resources"]
         }
     }
-    integrationTest {
-        java { srcDir file('src/it/java') }
-        resources { srcDir file('src/it/resources') }
-        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
-        runtimeClasspath += output + compileClasspath
-    }
 }
-
-tasks.register('integrationTest', Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-tasks.check { dependsOn integrationTest }
 
 // Remove that nagging bin folder vscode seems to generate every single time
 clean.doFirst {
