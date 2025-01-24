@@ -206,7 +206,7 @@ public class SystemDependencyGraph {
 
         // Initialize scope
         AnalysisScope scope = ScopeUtils.createScope(input, dependencies, build);
-        IClassHierarchy cha = ClassHierarchyFactory.make(scope,
+        IClassHierarchy cha = ClassHierarchyFactory.makeWithRoot(scope,
                 new ECJClassLoaderFactory(scope.getExclusions()));
         Log.done("There were a total of " + cha.getNumberOfClasses() + " classes of which "
                 + AnalysisUtils.getNumberOfApplicationClasses(cha) + " are application classes.");

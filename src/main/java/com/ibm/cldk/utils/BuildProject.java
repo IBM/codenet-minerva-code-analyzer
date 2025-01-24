@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,22 +23,17 @@ public class BuildProject {
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
     private static final String MAVEN_CMD = BuildProject.getMavenCommand();
-    private static final String GRADLE_CMD = BuildProject.getGradleCmd();
+    private static final String GRADLE_CMD = BuildProject.getGradleCommand();
 
     /**
      * Gets the maven command to be used for building the project.
      *
      * @return the maven command
      */
-    private static String getMavenCommand() {
-        Boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
-        String mvnCommand;
-        if (isWindows) {
-            mvnCommand = new File(projectRootPom, "mvnw.cmd").exists() ? String.valueOf(new File(projectRootPom, "mvnw.cmd")) : "mvn.cmd";
-        } else {
-            mvnCommand = new File(projectRootPom, "mvnw").exists() ? String.valueOf(new File(projectRootPom, "mvnw")) : "mvn";
-        }
-        return mvnCommand;
+    public static String getMavenCommand() {
+        String mvnSystemCommand = Arrays.stream(System.getenv("PATH").split(System.getProperty("path.separator"))).map(path -> new File(path, System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn")).filter(File::exists).findFirst().map(File::getAbsolutePath).orElse(null);
+        File mvnWrapper = System.getProperty("os.name").toLowerCase().contains("windows") ? new File(projectRootPom, "mvnw.cmd") : new File(projectRootPom, "mvnw");
+        return commandExists(mvnWrapper).getKey() ? mvnWrapper.toString() : mvnSystemCommand;
     }
 
     /**
@@ -45,24 +41,15 @@ public class BuildProject {
      *
      * @return the gradle command
      */
-    private static String getGradleCmd() {
-        String GRADLE_CMD;
-        String osName = System.getProperty("os.name").toLowerCase();
-        boolean isWindows = osName.contains("windows");
-        String gradleWrapper = isWindows ? "gradlew.bat" : "gradlew";
-        String gradle = isWindows ? "gradle.bat" : "gradle";
+    public static String getGradleCommand() {
+        String gradleSystemCommand = Arrays.stream(System.getenv("PATH").split(System.getProperty("path.separator"))).map(path -> new File(path, System.getProperty("os.name").toLowerCase().contains("windows") ? "gradle.bat" : "gradle")).filter(File::exists).findFirst().map(File::getAbsolutePath).orElse(null);
+        File gradleWrapper = System.getProperty("os.name").toLowerCase().contains("windows") ? new File(projectRootPom, "gradlew.bat") : new File(projectRootPom, "gradlew");
 
-        String gradleWrapperExists = new File(projectRootPom, gradleWrapper).exists() ? "true" : "false";
-
-        if (new File(projectRootPom, gradleWrapper).exists()) {
-            GRADLE_CMD = String.valueOf(new File(projectRootPom, gradleWrapper));
-        } else {
-            GRADLE_CMD = gradle;
-        }
-        return GRADLE_CMD;
+        return commandExists(gradleWrapper).getKey() ? gradleWrapper.toString() : gradleSystemCommand;
     }
 
-    public static Path  tempInitScript;
+    public static Path tempInitScript;
+
     static {
         try {
             tempInitScript = Files.createTempFile("gradle-init-", ".gradle");
@@ -71,63 +58,39 @@ public class BuildProject {
         }
     }
 
-    private static final String GRADLE_DEPENDENCIES_TASK = "allprojects { afterEvaluate { project -> task downloadDependencies(type: Copy) {\n" +
-            "        def configs = project.configurations.findAll { it.canBeResolved }\n\n" +
-            "        dependsOn configs\n" +
-            "        from configs\n" +
-            "        into project.hasProperty('outputDir') ? project.property('outputDir') : \"${project.buildDir}/libs\"\n\n" +
-            "        doFirst {\n" +
-            "            println \"Downloading dependencies for project ${project.name} to: ${destinationDir}\"\n" +
-            "            configs.each { config ->\n" +
-            "                    println \"Configuration: ${config.name}\"\n" +
-            "                config.resolvedConfiguration.resolvedArtifacts.each { artifact ->\n" +
-            "                        println \"\t${artifact.moduleVersion.id}:${artifact.extension}\"\n" +
-            "                }\n" +
-            "            }\n" +
-            "        }\n" +
-            "    }\n" +
-            "    }\n" +
-            "}";
+    private static final String GRADLE_DEPENDENCIES_TASK = "allprojects { afterEvaluate { project -> task downloadDependencies(type: Copy) {\n" + "        def configs = project.configurations.findAll { it.canBeResolved }\n\n" + "        dependsOn configs\n" + "        from configs\n" + "        into project.hasProperty('outputDir') ? project.property('outputDir') : \"${project.buildDir}/libs\"\n\n" + "        doFirst {\n" + "            println \"Downloading dependencies for project ${project.name} to: ${destinationDir}\"\n" + "            configs.each { config ->\n" + "                    println \"Configuration: ${config.name}\"\n" + "                config.resolvedConfiguration.resolvedArtifacts.each { artifact ->\n" + "                        println \"\t${artifact.moduleVersion.id}:${artifact.extension}\"\n" + "                }\n" + "            }\n" + "        }\n" + "    }\n" + "    }\n" + "}";
 
-    private static AbstractMap.SimpleEntry<Boolean, String> commandExists(String command) {
+    private static AbstractMap.SimpleEntry<Boolean, String> commandExists(File command) {
         StringBuilder output = new StringBuilder();
+        if (!command.exists()) {
+            return new AbstractMap.SimpleEntry<>(false, MessageFormat.format("Command {0} does not exist.", command));
+        }
         try {
-            Process process = new ProcessBuilder().directory(new File(projectRootPom)).command(command, "--version").start();
+            Process process = new ProcessBuilder().directory(new File(projectRootPom)).command(String.valueOf(command), "--version").start();
             // Read the output stream
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
-            );
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
             }
 
             // Read the error stream
-            BufferedReader errorReader = new BufferedReader(
-                    new InputStreamReader(process.getErrorStream())
-            );
+            BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
             while ((line = errorReader.readLine()) != null) {
                 output.append(line).append("\n");
             }
 
-
             int exitCode = process.waitFor();
-            return new AbstractMap.SimpleEntry<>(
-                    exitCode == 0,
-                    output.toString().trim()
-            );
+            return new AbstractMap.SimpleEntry<>(exitCode == 0, output.toString().trim());
         } catch (IOException | InterruptedException exceptions) {
-            return new AbstractMap.SimpleEntry<>(
-                    false,
-                    exceptions.getMessage()
-            );
+            Log.error(exceptions.getMessage());
+            return new AbstractMap.SimpleEntry<>(false, exceptions.getMessage());
         }
     }
 
     private static boolean buildWithTool(String[] buildCommand) {
         Log.info("Building the project using " + buildCommand[0] + ".");
         ProcessBuilder processBuilder = new ProcessBuilder().directory(new File(projectRootPom)).command(buildCommand);
-
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -157,7 +120,6 @@ public class BuildProject {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line = reader.readLine(); // Read the first line of the output
             if (line != null && line.contains("Apache Maven")) {
-                Log.info("Maven is installed: " + line);
                 return true;
             }
         } catch (IOException e) {
@@ -179,11 +141,7 @@ public class BuildProject {
             Log.info("Checking if Maven is installed.");
             return false;
         }
-        String[] mavenCommand = {
-                MAVEN_CMD, "clean", "compile", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip",
-                "-Dfindbugs.skip", "-Dcheckstyle.skip", "-Dpmd.skip=true", "-Dspotbugs.skip", "-Denforcer.skip",
-                "-Dmaven.javadoc.skip", "-DskipTests", "-Dmaven.test.skip.exec", "-Dlicense.skip=true",
-                "-Drat.skip=true", "-Dspotless.check.skip=true"};
+        String[] mavenCommand = {MAVEN_CMD, "clean", "compile", "-f", projectPath + "/pom.xml", "-B", "-V", "-e", "-Drat.skip", "-Dfindbugs.skip", "-Dcheckstyle.skip", "-Dpmd.skip=true", "-Dspotbugs.skip", "-Denforcer.skip", "-Dmaven.javadoc.skip", "-DskipTests", "-Dmaven.test.skip.exec", "-Dlicense.skip=true", "-Drat.skip=true", "-Dspotless.check.skip=true"};
 
         return buildWithTool(mavenCommand);
     }
@@ -193,8 +151,7 @@ public class BuildProject {
         String[] gradleCommand;
         if (GRADLE_CMD.equals("gradlew") || GRADLE_CMD.equals("gradlew.bat")) {
             gradleCommand = new String[]{projectPath + File.separator + GRADLE_CMD, "clean", "compileJava", "-p", projectPath};
-        }
-        else {
+        } else {
             gradleCommand = new String[]{GRADLE_CMD, "clean", "compileJava", "-p", projectPath};
         }
         return buildWithTool(gradleCommand);
@@ -252,31 +209,38 @@ public class BuildProject {
         }
         File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
+            if (MAVEN_CMD == null || !commandExists(new File(MAVEN_CMD)).getKey()) {
+                String msg = MAVEN_CMD == null ?
+                        "Could not find Maven or a valid Maven Wrapper" :
+                        MessageFormat.format("Could not verify that {0} exists", MAVEN_CMD);
+                Log.error(msg);
+                throw new IllegalStateException("Unable to execute Maven command. " +
+                        (MAVEN_CMD == null ?
+                                "Could not find Maven or a valid Maven Wrapper" :
+                                "Attempt failed with message\n" + commandExists(new File(MAVEN_CMD)).getValue()
+                        ));
+            }
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
-            AbstractMap.SimpleEntry<Boolean, String> mavenCheck = commandExists(MAVEN_CMD);
-            if (!mavenCheck.getKey())
-                throw new IllegalStateException("Unable to execute Maven command. Attempt failed with message\n" + mavenCheck.getValue());
-
-            String[] mavenCommand = {
-                    MAVEN_CMD, "--no-transfer-progress", "-f",
-                    Paths.get(projectRoot, "pom.xml").toString(),
-                    "dependency:copy-dependencies",
-                    "-DoutputDirectory=" + libDownloadPath.toString()
-            };
+            String[] mavenCommand = {MAVEN_CMD, "--no-transfer-progress", "-f", Paths.get(projectRoot, "pom.xml").toString(), "dependency:copy-dependencies", "-DoutputDirectory=" + libDownloadPath.toString()};
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
-            Log.info("Found build.gradle or build.gradle.kts in the project directory. Using gradle to download dependencies.");
-            AbstractMap.SimpleEntry<Boolean, String> gradleCheck = commandExists(GRADLE_CMD);
-            if (!gradleCheck.getKey())
-                throw new IllegalStateException("Could not execute Gradle command. Attempt failed with message\n" + gradleCheck.getValue());
-
-            Log.info("Found build.gradle[.kts] in the project directory. Using Gradle to download dependencies.");
+            if (GRADLE_CMD == null || !commandExists(new File(GRADLE_CMD)).getKey()) {
+                String msg = GRADLE_CMD == null ?
+                        "Could not find Gradle or valid Gradle Wrapper" :
+                        MessageFormat.format("Could not verify that {0} exists", GRADLE_CMD);
+                Log.error(msg);
+                throw new IllegalStateException("Unable to execute Maven command. " +
+                        (GRADLE_CMD == null ?
+                                "Could not find Gradle or valid Gradle Wrapper" :
+                                "Attempt failed with message\n" + commandExists(new File(GRADLE_CMD)).getValue()
+                        ));
+            }
+            Log.info("Found build.gradle or build.gradle.kts in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
             String[] gradleCommand;
             if (GRADLE_CMD.equals("gradlew") || GRADLE_CMD.equals("gradlew.bat")) {
                 gradleCommand = new String[]{projectRoot + File.separator + GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir=" + libDownloadPath.toString()};
-            }
-            else {
+            } else {
                 gradleCommand = new String[]{GRADLE_CMD, "--init-script", tempInitScript.toFile().getAbsolutePath(), "downloadDependencies", "-PoutputDir=" + libDownloadPath.toString()};
             }
             return buildWithTool(gradleCommand);
@@ -288,10 +252,7 @@ public class BuildProject {
         if (libDownloadPath != null) {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
-                Files.walk(libDownloadPath)
-                        .filter(Files::isRegularFile)
-                        .map(Path::toFile)
-                        .forEach(File::delete);
+                Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
                 Files.delete(libDownloadPath);
             } catch (IOException e) {
                 Log.error("Error deleting library dependency directory: " + e.getMessage());

@@ -21,6 +21,7 @@ import com.ibm.wala.util.config.FileOfClasses;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -70,7 +72,7 @@ public class ScopeUtils {
       throw new RuntimeException("JAVA_HOME is not set.");
     }
     
-    String[] stdlibs = Files.walk(Paths.get(System.getenv("JAVA_HOME"), "jmods"))
+    String[] stdlibs = Files.walk(getJmodsPath())
         .filter(path -> path.toString().endsWith(".jmod"))
         .map(path -> path.toAbsolutePath().toString())
         .toArray(String[]::new);
@@ -128,6 +130,19 @@ public class ScopeUtils {
         });
 
     return scope;
+  }
+
+  private static Path getJmodsPath() {
+    try {
+      try (Stream<Path> paths = Files.walk(Path.of(System.getenv("JAVA_HOME")), Integer.MAX_VALUE, FileVisitOption.FOLLOW_LINKS)) {
+        return paths
+                .filter(path -> path.getFileName().toString().equals("jmods"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("jmods directory not found in " + System.getenv("JAVA_HOME")));
+      }
+    } catch (IOException e) {
+      throw new RuntimeException("Error searching for jmods directory", e);
+    }
   }
 
   private static AnalysisScope addDefaultExclusions(AnalysisScope scope)
