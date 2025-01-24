@@ -29,6 +29,10 @@ repositories {
     mavenLocal()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 if (project.hasProperty('mainClass')) {
     mainClassName = project.getProperty('mainClass')

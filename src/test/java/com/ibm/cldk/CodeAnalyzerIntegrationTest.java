@@ -27,6 +27,7 @@ public class CodeAnalyzerIntegrationTest {
      * Creates a Java 11 test container that mounts the build/libs folder.
      */
     static String codeanalyzerVersion;
+    static final String javaVersion = "17";
 
     static {
         // Build project first
@@ -43,7 +44,7 @@ public class CodeAnalyzerIntegrationTest {
     }
 
     @Container
-    static final GenericContainer<?> container = new GenericContainer<>("openjdk:11-jdk")
+    static final GenericContainer<?> container = new GenericContainer<>("openjdk:17-jdk")
             .withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh"))
             .withCommand("-c", "while true; do sleep 1; done")
             .withFileSystemBind(
@@ -76,9 +77,11 @@ public class CodeAnalyzerIntegrationTest {
     }
 
     @Test
-    void shouldHaveJava11Installed() throws Exception {
-        var result = container.execInContainer("java", "-version");
-        Assertions.assertTrue(result.getStderr().contains("openjdk version \"11"));
+    void shouldHaveCorrectJavaVersionInstalled() throws Exception {
+        var baseContainerresult = container.execInContainer("java", "-version");
+        var mvnContainerresult = mavenContainer.execInContainer("java", "-version");
+        Assertions.assertTrue(baseContainerresult.getStderr().contains("openjdk version \"" + javaVersion), "Base container Java version should be " + javaVersion);
+        Assertions.assertTrue(mvnContainerresult.getStderr().contains("openjdk version \"" + javaVersion), "Maven container Java version should be " + javaVersion);
     }
 
     @Test
@@ -112,38 +115,34 @@ public class CodeAnalyzerIntegrationTest {
         Assertions.assertNotEquals(0, mavenProjectBuildWithWrapper.getExitCode());
     }
 
-//    @Test
-//    void corruptMavenShouldProduceAnalysisArtifactsWhenMVNCommandIsInPath() throws IOException, InterruptedException {
-//        // Let's start by building the project by itself
-//        var corruptMavenProjectBuild = mavenContainer.withWorkingDirectory("/test-applications/mvnw-corrupt-test").execInContainer("mvn", "-f", "/test-applications/mvnw-corrupt-test/pom.xml", "clean", "compile");
-//        Assertions.assertEquals(0, corruptMavenProjectBuild.getExitCode(), "Failed to build the project with system's default Maven.");
-//        // NOw run codeanalyzer and assert if analysis.json is generated.
-//        mavenContainer.execInContainer("java", "-jar", String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion), "--input=/test-applications/mvnw-corrupt-test", "--output=/tmp/", "--analysis-level=2", "--no-build");
-//        var codeAnalyzerOutputDirContents = mavenContainer.execInContainer("ls", "/tmp/analysis.json");
-//        String codeAnalyzerOutputDirContentsStdOut = codeAnalyzerOutputDirContents.getStdout();
-//        Assertions.assertTrue(codeAnalyzerOutputDirContentsStdOut.length() > 0, "Could not find 'analysis.json'.");
-//        Assertions.assertTrue(codeAnalyzerOutputDirContentsStdOut.contains("Building the project using") && codeAnalyzerOutputDirContentsStdOut.contains("/mvn."));
-//        Assertions.assertFalse(codeAnalyzerOutputDirContentsStdOut.contains("Building the project using") && codeAnalyzerOutputDirContentsStdOut.contains("/test-applications/mvnw-corrupt-test/mvnw."));
-//    }
-//
-//    @Test
-//    void corruptMavenShouldNotTerminateWithErrorWhenMavenIsNotPresentUnlessAnalysisLevel2() throws IOException, InterruptedException {
-//        // When analysis level 2, we should get a Runtime Exception
-//        assertThrows(RuntimeException.class, () ->
-//                container.execInContainer(
-//                        "java",
-//                        "-jar",
-//                        String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
-//                        "--input=/test-applications/mvnw-corrupt-test",
-//                        "--output=/tmp/",
-//                        "--analysis-level=2"
-//                )
-//        );
-//        // When analysis level is 1, we should still be able to generate an analysis.json file.
-//        container.execInContainer("java", "-jar", String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion), "--input=/test-applications/mvnw-corrupt-test", "--output=/tmp/", "--analysis-level=1");
-//        var codeAnalyzerOutputDirContents = container.execInContainer("ls", "/tmp/analysis.json");
-//        String codeAnalyzerOutputDirContentsStdOut = codeAnalyzerOutputDirContents.getStdout();
-//        Assertions.assertTrue(codeAnalyzerOutputDirContentsStdOut.length() > 0, "Could not find 'analysis.json'.");
-//        Assertions.assertTrue(codeAnalyzerOutputDirContentsStdOut.contains("Could not find Maven or a valid Maven Wrapper"));
-//    }
+    @Test
+    void corruptMavenShouldProduceAnalysisArtifactsWhenMVNCommandIsInPath() throws IOException, InterruptedException {
+        // Let's start by building the project by itself
+        var corruptMavenProjectBuild = mavenContainer.withWorkingDirectory("/test-applications/mvnw-corrupt-test").execInContainer("mvn", "-f", "/test-applications/mvnw-corrupt-test/pom.xml", "clean", "compile");
+        Assertions.assertEquals(0, corruptMavenProjectBuild.getExitCode(), "Failed to build the project with system's default Maven.");
+        // NOw run codeanalyzer and assert if analysis.json is generated.
+        var runCodeAnalyzer = mavenContainer.execInContainer("java", "-jar", String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion), "--input=/test-applications/mvnw-corrupt-test", "--output=/tmp/", "--analysis-level=2", "--verbose", "--no-build");
+        var codeAnalyzerOutputDirContents = mavenContainer.execInContainer("ls", "/tmp/analysis.json");
+        String codeAnalyzerOutputDirContentsStdOut = codeAnalyzerOutputDirContents.getStdout();
+        Assertions.assertTrue(codeAnalyzerOutputDirContentsStdOut.length() > 0, "Could not find 'analysis.json'.");
+        // mvnw is corrupt, so we should see an error message in the output.
+        Assertions.assertTrue(runCodeAnalyzer.getStdout().contains("[ERROR]\tCannot run program \"/test-applications/mvnw-corrupt-test/mvnw\"") && runCodeAnalyzer.getStdout().contains("/mvn."));
+        // We should correctly identify the build tool used in the mvn command from the system path.
+        Assertions.assertTrue(runCodeAnalyzer.getStdout().contains("[INFO]\tBuilding the project using /usr/bin/mvn."));
+        }
+
+    @Test
+    void corruptMavenShouldNotTerminateWithErrorWhenMavenIsNotPresentUnlessAnalysisLevel2() throws IOException, InterruptedException {
+        // When analysis level 2, we should get a Runtime Exception
+        var runCodeAnalyzer = container.execInContainer(
+                        "java",
+                        "-jar",
+                        String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
+                        "--input=/test-applications/mvnw-corrupt-test",
+                        "--output=/tmp/",
+                        "--analysis-level=2"
+                );
+        Assertions.assertEquals(1, runCodeAnalyzer.getExitCode());
+        Assertions.assertTrue(runCodeAnalyzer.getStderr().contains("java.lang.RuntimeException"));
+    }
 }
