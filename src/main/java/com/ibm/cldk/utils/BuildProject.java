@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
 import static com.ibm.cldk.CodeAnalyzer.projectRootPom;
+import static com.ibm.cldk.CodeAnalyzer.noCleanDependencies;
 
 public class BuildProject {
     public static Path libDownloadPath;
@@ -188,6 +189,17 @@ public class BuildProject {
         return buildProject(projectPath, build) ? classFilesStream(projectPath) : new ArrayList<>();
     }
 
+    private static boolean mkLibDepDirs(String projectPath) {
+        if (!Files.exists(libDownloadPath)) {
+            try {
+                Files.createDirectories(libDownloadPath);
+            } catch (IOException e) {
+                Log.error("Error creating library dependency directory for " + projectPath + ": " + e.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Downloads library dependency jars of the given project so that the jars can be used
      * for type resolution during symbol table creation.
@@ -198,17 +210,15 @@ public class BuildProject {
     public static boolean downloadLibraryDependencies(String projectPath, String projectRootPom) throws IOException {
         // created download dir if it does not exist
         String projectRoot = projectRootPom != null ? projectRootPom : projectPath;
-        libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
-        if (!Files.exists(libDownloadPath)) {
-            try {
-                Files.createDirectory(libDownloadPath);
-            } catch (IOException e) {
-                Log.error("Error creating library dependency directory for " + projectPath + ": " + e.getMessage());
-                return false;
-            }
-        }
+
         File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
+            libDownloadPath = Paths.get(projectPath, "target", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
+            if (mkLibDepDirs(projectPath))
+                Log.debug("Dependencies found/created in " + libDownloadPath);
+            else
+                throw new IllegalStateException("Error creating library dependency directory in " + libDownloadPath);
+
             if (MAVEN_CMD == null || !commandExists(new File(MAVEN_CMD)).getKey()) {
                 String msg = MAVEN_CMD == null ?
                         "Could not find Maven or a valid Maven Wrapper" :
@@ -225,6 +235,12 @@ public class BuildProject {
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             if (GRADLE_CMD == null || !commandExists(new File(GRADLE_CMD)).getKey()) {
+                libDownloadPath = Paths.get(projectPath, "build", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
+                if (mkLibDepDirs(projectPath))
+                    Log.debug("Dependencies found/created in " + libDownloadPath);
+                else
+                    throw new IllegalStateException("Error creating library dependency directory in " + libDownloadPath);
+
                 String msg = GRADLE_CMD == null ?
                         "Could not find Gradle or valid Gradle Wrapper" :
                         MessageFormat.format("Could not verify that {0} exists", GRADLE_CMD);
@@ -249,6 +265,9 @@ public class BuildProject {
     }
 
     public static void cleanLibraryDependencies() {
+        if (noCleanDependencies) {
+            return;
+        }
         if (libDownloadPath != null) {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
