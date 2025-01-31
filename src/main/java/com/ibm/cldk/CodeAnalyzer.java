@@ -77,7 +77,7 @@ public class CodeAnalyzer implements Runnable {
     private static boolean verbose = false;
 
     @Option(names = {"--no-clean-dependencies"}, description = "Do not attempt to auto-clean dependencies")
-    public static boolean noCleanDependencies = true;
+    public static boolean noCleanDependencies = false;
 
     private static final String outputFileName = "analysis.json";
 
