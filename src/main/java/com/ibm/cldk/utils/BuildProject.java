@@ -274,14 +274,14 @@ public class BuildProject {
                 Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
                 Files.delete(libDownloadPath);
             } catch (IOException e) {
-                Log.error("Error deleting library dependency directory: " + e.getMessage());
+                Log.warn("Unable to fully delete library dependency directory: " + e.getMessage());
             }
         }
         if (tempInitScript != null) {
             try {
                 Files.delete(tempInitScript);
             } catch (IOException e) {
-                Log.error("Error deleting temporary Gradle init script: " + e.getMessage());
+                Log.warn("Error deleting temporary Gradle init script: " + e.getMessage());
             }
         }
     }
