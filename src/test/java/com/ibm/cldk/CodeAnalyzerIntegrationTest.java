@@ -52,14 +52,16 @@ public class CodeAnalyzerIntegrationTest {
                     "/opt/jars",
                     BindMode.READ_WRITE)
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications")), "/");
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
 
     @Container
     static final GenericContainer<?> mavenContainer = new GenericContainer<>("maven:3.8.3-openjdk-17")
             .withCreateContainerCmdModifier(cmd -> cmd.withEntrypoint("sh"))
             .withCommand("-c", "while true; do sleep 1; done")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications")), "/");
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
 
 
     @BeforeAll
@@ -100,7 +102,8 @@ public class CodeAnalyzerIntegrationTest {
 
         Assertions.assertEquals(0, runCodeAnalyzerJar.getExitCode(),
                 "Command should execute successfully");
-        Assertions.assertFalse(runCodeAnalyzerJar.getStdout().isEmpty(), "Should have some output");
+        Assertions.assertTrue(runCodeAnalyzerJar.getStdout().length() > 0,
+                "Should have some output");
     }
 
     @Test
@@ -126,19 +129,19 @@ public class CodeAnalyzerIntegrationTest {
         Assertions.assertTrue(runCodeAnalyzer.getStdout().contains("[ERROR]\tCannot run program \"/test-applications/mvnw-corrupt-test/mvnw\"") && runCodeAnalyzer.getStdout().contains("/mvn."));
         // We should correctly identify the build tool used in the mvn command from the system path.
         Assertions.assertTrue(runCodeAnalyzer.getStdout().contains("[INFO]\tBuilding the project using /usr/bin/mvn."));
-        }
+    }
 
     @Test
     void corruptMavenShouldNotTerminateWithErrorWhenMavenIsNotPresentUnlessAnalysisLevel2() throws IOException, InterruptedException {
         // When analysis level 2, we should get a Runtime Exception
         var runCodeAnalyzer = container.execInContainer(
-                        "java",
-                        "-jar",
-                        String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
-                        "--input=/test-applications/mvnw-corrupt-test",
-                        "--output=/tmp/",
-                        "--analysis-level=2"
-                );
+                "java",
+                "-jar",
+                String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
+                "--input=/test-applications/mvnw-corrupt-test",
+                "--output=/tmp/",
+                "--analysis-level=2"
+        );
         Assertions.assertEquals(1, runCodeAnalyzer.getExitCode());
         Assertions.assertTrue(runCodeAnalyzer.getStderr().contains("java.lang.RuntimeException"));
     }
