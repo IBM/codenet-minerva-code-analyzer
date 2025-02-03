@@ -9,22 +9,8 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
-
+ */
 package com.ibm.cldk;
-
-import com.github.javaparser.Problem;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
-import com.ibm.cldk.entities.JavaCompilationUnit;
-import com.ibm.cldk.utils.BuildProject;
-import com.ibm.cldk.utils.Log;
-import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
-import com.ibm.wala.ipa.cha.ClassHierarchyException;
-import org.apache.commons.lang3.tuple.Pair;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 import java.io.File;
 import java.io.FileReader;
@@ -38,13 +24,32 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.github.javaparser.Problem;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.ibm.cldk.entities.JavaCompilationUnit;
+import com.ibm.cldk.utils.BuildProject;
+import com.ibm.cldk.utils.Log;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 class VersionProvider implements CommandLine.IVersionProvider {
+
     public String[] getVersion() throws Exception {
         String version = getClass().getPackage().getImplementationVersion();
-        return new String[]{ version != null ? version : "unknown" };
+        return new String[]{version != null ? version : "unknown"};
     }
 }
+
 /**
  * The type Code analyzer.
  */
@@ -69,6 +74,8 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
+    @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml/build.gradle file of the project.")
+    public static String projectRootPom;
 
     @Option(names = {"-a", "--analysis-level"}, description = "Level of analysis to perform. Options: 1 (for just symbol table) or 2 (for call graph). Default: 1")
     private static int analysisLevel = 1;
@@ -83,6 +90,7 @@ public class CodeAnalyzer implements Runnable {
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .create();
+
     /**
      * The entry point of application.
      *
@@ -108,22 +116,26 @@ public class CodeAnalyzer implements Runnable {
 
         JsonObject combinedJsonObject = new JsonObject();
         Map<String, JavaCompilationUnit> symbolTable;
+        projectRootPom = projectRootPom == null ? input : projectRootPom;
         // First of all if, sourceAnalysis is provided, we will analyze the source code instead of the project.
         if (sourceAnalysis != null) {
             // Construct symbol table for source code
             Log.debug("Single file analysis.");
             Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult = SymbolTable.extractSingle(sourceAnalysis);
             symbolTable = symbolTableExtractionResult.getLeft();
-        }
-
-        else {
+        } else {
             // download library dependencies of project for type resolution
             String dependencies = null;
-            if (BuildProject.downloadLibraryDependencies(input)) {
-                dependencies = String.valueOf(BuildProject.libDownloadPath);
-            } else {
+            try {
+                if (BuildProject.downloadLibraryDependencies(input, projectRootPom)) {
+                    dependencies = String.valueOf(BuildProject.libDownloadPath);
+                } else {
+                    Log.warn("Failed to download library dependencies of project");
+                }
+            } catch (IllegalStateException illegalStateException) {
                 Log.warn("Failed to download library dependencies of project");
             }
+
             boolean analysisFileExists = output != null && Files.exists(Paths.get(output + File.separator + outputFileName));
 
             // if target files are specified, compute symbol table information for the given files
@@ -132,8 +144,8 @@ public class CodeAnalyzer implements Runnable {
 
                 // if target files specified for analysis level 2, downgrade to analysis level 1
                 if (analysisLevel > 1) {
-                    Log.warn("Incremental analysis is supported at analysis level 1 only; " +
-                            "performing analysis level 1 for target files");
+                    Log.warn("Incremental analysis is supported at analysis level 1 only; "
+                            + "performing analysis level 1 for target files");
                     analysisLevel = 1;
                 }
 
@@ -158,12 +170,10 @@ public class CodeAnalyzer implements Runnable {
                     }
                     symbolTable = existingSymbolTable;
                 }
-            }
-
-            else {
+            } else {
                 // construct symbol table for project, write parse problems to file in output directory if specified
-                Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult =
-                        SymbolTable.extractAll(Paths.get(input));
+                Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> symbolTableExtractionResult
+                        = SymbolTable.extractAll(Paths.get(input));
 
                 symbolTable = symbolTableExtractionResult.getLeft();
             }
@@ -221,7 +231,8 @@ public class CodeAnalyzer implements Runnable {
     }
 
     private static Map<String, JavaCompilationUnit> readSymbolTableFromFile(File analysisJsonFile) {
-        Type symbolTableType = new TypeToken<Map<String, JavaCompilationUnit>>() {}.getType();
+        Type symbolTableType = new TypeToken<Map<String, JavaCompilationUnit>>() {
+        }.getType();
         try (FileReader reader = new FileReader(analysisJsonFile)) {
             JsonObject jsonObject = JsonParser.parseReader(reader).getAsJsonObject();
             return gson.fromJson(jsonObject.get("symbol_table"), symbolTableType);

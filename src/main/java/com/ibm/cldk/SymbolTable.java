@@ -10,7 +10,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
-import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
@@ -41,15 +41,13 @@ public class SymbolTable {
     private static Set<String> unresolvedExpressions = new HashSet<>();
 
     /**
-     * Processes the given compilation unit to extract information about classes and
-     * interfaces
-     * declared in the unit and returns a JSON object containing the extracted
-     * information.
+     * Processes the given compilation unit to extract information about classes
+     * and interfaces declared in the unit and returns a JSON object containing
+     * the extracted information.
      *
      * @param parseResult compilation unit to be processed
      * @return JSON object containing extracted information
      */
-
     // Let's store the known callables here for future use.
     public static Table<String, String, Callable> declaredMethodsAndConstructors = Tables.newCustomTable(new HashMap<>(), () -> new HashMap<>() {
         @Override
@@ -102,105 +100,104 @@ public class SymbolTable {
 
         // create array node for type declarations
         cUnit.setTypeDeclarations(parseResult.findAll(TypeDeclaration.class)
-            .stream().filter(typeDecl -> typeDecl.getFullyQualifiedName().isPresent())
-            .map(typeDecl -> {
-                // get type name and initialize the type object
-                String typeName = typeDecl.getFullyQualifiedName().get().toString();
-                com.ibm.cldk.entities.Type typeNode = new com.ibm.cldk.entities.Type();
+                .stream().filter(typeDecl -> typeDecl.getFullyQualifiedName().isPresent())
+                .map(typeDecl -> {
+                    // get type name and initialize the type object
+                    String typeName = typeDecl.getFullyQualifiedName().get().toString();
+                    com.ibm.cldk.entities.Type typeNode = new com.ibm.cldk.entities.Type();
 
-                if (typeDecl instanceof ClassOrInterfaceDeclaration) {
-                    ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration)typeDecl;
+                    if (typeDecl instanceof ClassOrInterfaceDeclaration) {
+                        ClassOrInterfaceDeclaration classDecl = (ClassOrInterfaceDeclaration) typeDecl;
 
-                    // Add interfaces implemented by class
-                    typeNode.setImplementsList(classDecl.getImplementedTypes().stream().map(SymbolTable::resolveType)
-                        .collect(Collectors.toList()));
+                        // Add interfaces implemented by class
+                        typeNode.setImplementsList(classDecl.getImplementedTypes().stream().map(SymbolTable::resolveType)
+                                .collect(Collectors.toList()));
 
-                    // Add class modifiers
-                    typeNode.setModifiers(classDecl.getModifiers().stream().map(m -> m.toString().strip())
-                        .collect(Collectors.toList()));
+                        // Add class modifiers
+                        typeNode.setModifiers(classDecl.getModifiers().stream().map(m -> m.toString().strip())
+                                .collect(Collectors.toList()));
 
-                    // Add class annotations
-                    typeNode.setAnnotations(classDecl.getAnnotations().stream().map(a -> a.toString().strip())
-                        .collect(Collectors.toList()));
+                        // Add class annotations
+                        typeNode.setAnnotations(classDecl.getAnnotations().stream().map(a -> a.toString().strip())
+                                .collect(Collectors.toList()));
 
-                    // add booleans indicating interfaces and inner/local classes
-                    typeNode.setInterface(classDecl.isInterface());
-                    typeNode.setInnerClass(classDecl.isInnerClass());
-                    typeNode.setLocalClass(classDecl.isLocalClassDeclaration());
+                        // add booleans indicating interfaces and inner/local classes
+                        typeNode.setInterface(classDecl.isInterface());
+                        typeNode.setInnerClass(classDecl.isInnerClass());
+                        typeNode.setLocalClass(classDecl.isLocalClassDeclaration());
 
-                    // Add extends
-                    typeNode.setExtendsList(classDecl.getExtendedTypes().stream()
-                        .map(SymbolTable::resolveType)
-                        .collect(Collectors.toList()));
+                        // Add extends
+                        typeNode.setExtendsList(classDecl.getExtendedTypes().stream()
+                                .map(SymbolTable::resolveType)
+                                .collect(Collectors.toList()));
 
-                } else if (typeDecl instanceof EnumDeclaration) {
-                    EnumDeclaration enumDecl = (EnumDeclaration)typeDecl;
+                    } else if (typeDecl instanceof EnumDeclaration) {
+                        EnumDeclaration enumDecl = (EnumDeclaration) typeDecl;
 
-                    // Add interfaces implemented by enum
-                    typeNode.setImplementsList(enumDecl.getImplementedTypes().stream().map(SymbolTable::resolveType)
-                        .collect(Collectors.toList()));
+                        // Add interfaces implemented by enum
+                        typeNode.setImplementsList(enumDecl.getImplementedTypes().stream().map(SymbolTable::resolveType)
+                                .collect(Collectors.toList()));
 
-                    // Add enum modifiers
-                    typeNode.setModifiers(enumDecl.getModifiers().stream().map(m -> m.toString().strip())
-                        .collect(Collectors.toList()));
+                        // Add enum modifiers
+                        typeNode.setModifiers(enumDecl.getModifiers().stream().map(m -> m.toString().strip())
+                                .collect(Collectors.toList()));
 
-                    // Add enum annotations
-                    typeNode.setAnnotations(enumDecl.getAnnotations().stream().map(a -> a.toString().strip())
-                        .collect(Collectors.toList()));
+                        // Add enum annotations
+                        typeNode.setAnnotations(enumDecl.getAnnotations().stream().map(a -> a.toString().strip())
+                                .collect(Collectors.toList()));
 
-                    // Add enum constants
-                    typeNode.setEnumConstants(enumDecl.getEntries().stream()
-                        .map(SymbolTable::processEnumConstantDeclaration).collect(Collectors.toList()));
+                        // Add enum constants
+                        typeNode.setEnumConstants(enumDecl.getEntries().stream()
+                                .map(SymbolTable::processEnumConstantDeclaration).collect(Collectors.toList()));
 
-                } else {
-                    // TODO: handle AnnotationDeclaration, RecordDeclaration
-                    // set the common type attributes only
-                    Log.warn("Found unsupported type declaration: "+typeDecl.toString());
-                    typeNode = new com.ibm.cldk.entities.Type();
-                }
+                    } else {
+                        // TODO: handle AnnotationDeclaration, RecordDeclaration
+                        // set the common type attributes only
+                        Log.warn("Found unsupported type declaration: " + typeDecl.toString());
+                        typeNode = new com.ibm.cldk.entities.Type();
+                    }
 
-                /* set common attributes of types that available in type declarations:
+                    /* set common attributes of types that available in type declarations:
                 is nested type, is class or interface declaration, is enum declaration,
                 comments, parent class, callable declarations, field declarations */
+                    // Set fields indicating nested, class/interface, enum, annotation, and record types
+                    typeNode.setNestedType(typeDecl.isNestedType());
+                    typeNode.setClassOrInterfaceDeclaration(typeDecl.isClassOrInterfaceDeclaration());
+                    typeNode.setEnumDeclaration(typeDecl.isEnumDeclaration());
+                    typeNode.setAnnotationDeclaration(typeDecl.isAnnotationDeclaration());
+                    typeNode.setRecordDeclaration(typeDecl.isRecordDeclaration());
 
-                // Set fields indicating nested, class/interface, enum, annotation, and record types
-                typeNode.setNestedType(typeDecl.isNestedType());
-                typeNode.setClassOrInterfaceDeclaration(typeDecl.isClassOrInterfaceDeclaration());
-                typeNode.setEnumDeclaration(typeDecl.isEnumDeclaration());
-                typeNode.setAnnotationDeclaration(typeDecl.isAnnotationDeclaration());
-                typeNode.setRecordDeclaration(typeDecl.isRecordDeclaration());
+                    // Add class comment
+                    typeNode.setComment(typeDecl.getComment().isPresent() ? typeDecl.getComment().get().asString() : "");
 
-                // Add class comment
-                typeNode.setComment(typeDecl.getComment().isPresent() ? typeDecl.getComment().get().asString() : "");
+                    // add parent class (for nested type declarations)
+                    typeNode.setParentType(typeDecl.getParentNode().get() instanceof TypeDeclaration
+                            ? ((TypeDeclaration<TypeDeclaration<?>>) typeDecl.getParentNode().get()).getFullyQualifiedName().get() : "");
 
-                // add parent class (for nested type declarations)
-                typeNode.setParentType(typeDecl.getParentNode().get() instanceof TypeDeclaration ?
-                    ((TypeDeclaration<TypeDeclaration<?>>)typeDecl.getParentNode().get()).getFullyQualifiedName().get() : "");
+                    typeNode.setNestedTypeDeclarations(typeDecl.findAll(TypeDeclaration.class).stream()
+                            .filter(typ -> typ.isClassOrInterfaceDeclaration() || typ.isEnumDeclaration())
+                            .filter(typ -> typ.getParentNode().isPresent() && typ.getParentNode().get() == typeDecl)
+                            .map(typ -> typ.getFullyQualifiedName().get().toString()).collect(Collectors.toList()));
 
-                typeNode.setNestedTypeDeclarations(typeDecl.findAll(TypeDeclaration.class).stream()
-                    .filter(typ -> typ.isClassOrInterfaceDeclaration() || typ.isEnumDeclaration())
-                    .filter(typ -> typ.getParentNode().isPresent() && typ.getParentNode().get() == typeDecl)
-                    .map(typ -> typ.getFullyQualifiedName().get().toString()).collect(Collectors.toList()));
+                    // Add information about declared fields (filtering to fields declared in the
+                    // type, not in a nested type)
+                    typeNode.setFieldDeclarations(typeDecl.findAll(FieldDeclaration.class).stream()
+                            .filter(f -> f.getParentNode().isPresent() && f.getParentNode().get() == typeDecl)
+                            .map(SymbolTable::processFieldDeclaration).collect(Collectors.toList()));
+                    List<String> fieldNames = new ArrayList<>();
+                    typeNode.getFieldDeclarations().stream().map(fd -> fd.getVariables()).forEach(fieldNames::addAll);
 
-                // Add information about declared fields (filtering to fields declared in the
-                // type, not in a nested type)
-                typeNode.setFieldDeclarations(typeDecl.findAll(FieldDeclaration.class).stream()
-                    .filter(f -> f.getParentNode().isPresent() && f.getParentNode().get() == typeDecl)
-                    .map(SymbolTable::processFieldDeclaration).collect(Collectors.toList()));
-                List<String> fieldNames = new ArrayList<>();
-                typeNode.getFieldDeclarations().stream().map(fd -> fd.getVariables()).forEach(fieldNames::addAll);
+                    // Add information about declared methods (filtering to methods declared in the class, not in a nested class)
+                    typeNode.setCallableDeclarations(typeDecl.findAll(CallableDeclaration.class).stream()
+                            .filter(c -> c.getParentNode().isPresent() && c.getParentNode().get() == typeDecl)
+                            .map(meth -> {
+                                Pair<String, Callable> callableDeclaration = processCallableDeclaration(meth, fieldNames, typeName, parseResult.getStorage().map(s -> s.getPath().toString()).orElse("<in-memory>"));
+                                declaredMethodsAndConstructors.put(typeName, callableDeclaration.getLeft(), callableDeclaration.getRight());
+                                return callableDeclaration;
+                            }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
 
-                // Add information about declared methods (filtering to methods declared in the class, not in a nested class)
-                typeNode.setCallableDeclarations(typeDecl.findAll(CallableDeclaration.class).stream()
-                    .filter(c -> c.getParentNode().isPresent() && c.getParentNode().get() == typeDecl)
-                    .map(meth -> {
-                        Pair<String, Callable> callableDeclaration = processCallableDeclaration(meth, fieldNames, typeName, parseResult.getStorage().map(s -> s.getPath().toString()).orElse("<in-memory>"));
-                        declaredMethodsAndConstructors.put(typeName, callableDeclaration.getLeft(), callableDeclaration.getRight());
-                        return callableDeclaration;
-                    }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
-
-            return Pair.of(typeName, typeNode);
-        }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
+                    return Pair.of(typeName, typeNode);
+                }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
 
         return cUnit;
     }
@@ -219,7 +216,7 @@ public class SymbolTable {
 
         // add enum constant arguments
         enumConstant.setArguments(enumConstDecl.getArguments().stream().map(a -> a.toString())
-            .collect(Collectors.toList()));
+                .collect(Collectors.toList()));
 
         return enumConstant;
     }
@@ -241,15 +238,15 @@ public class SymbolTable {
 
     /**
      * Processes the given callable declaration to extract information about the
-     * declared method or
-     * constructor and returns a JSON object containing the extracted information.
+     * declared method or constructor and returns a JSON object containing the
+     * extracted information.
      *
      * @param callableDecl callable (method or constructor) to be processed
      * @return Callable object containing extracted information
      */
     @SuppressWarnings("unchecked")
     private static Pair<String, Callable> processCallableDeclaration(CallableDeclaration callableDecl,
-                                                                     List<String> classFields, String typeName, String filePath) {
+            List<String> classFields, String typeName, String filePath) {
         Callable callableNode = new Callable();
 
         // Set file path
@@ -269,14 +266,16 @@ public class SymbolTable {
 
         // add exceptions declared in "throws" clause
         callableNode.setThrownExceptions(
-            ((NodeList<ReferenceType>)callableDecl.getThrownExceptions())
-            .stream()
-            .map(SymbolTable::resolveType)
-            .collect(Collectors.toList()));
+                ((NodeList<ReferenceType>) callableDecl.getThrownExceptions())
+                        .stream()
+                        .map(SymbolTable::resolveType)
+                        .collect(Collectors.toList()));
 
         // add the complete declaration string, including modifiers, throws, and
         // parameter names
-        callableNode.setDeclaration(callableDecl.getDeclarationAsString(true, true, true).strip());
+        callableNode.setDeclaration(callableDecl
+                .getDeclarationAsString(true, true, true)
+                .strip().replaceAll("//.*\n", ""));
 
         // add information about callable parameters: for each parameter, type, name,
         // annotations,
@@ -292,8 +291,8 @@ public class SymbolTable {
 
         // Same as above, a constructor declaration may not have a return type
         // and method declaration always has a return type.
-        callableNode.setReturnType((callableDecl instanceof MethodDeclaration) ?
-            resolveType(((MethodDeclaration)callableDecl).getType()) : null);
+        callableNode.setReturnType((callableDecl instanceof MethodDeclaration)
+                ? resolveType(((MethodDeclaration) callableDecl).getType()) : null);
 
         callableNode.setConstructor(callableDecl instanceof ConstructorDeclaration);
         callableNode.setStartLine(callableDecl.getRange().isPresent() ? callableDecl.getRange().get().begin.line : -1);
@@ -304,15 +303,36 @@ public class SymbolTable {
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
         callableNode.setCallSites(getCallSites(body));
         callableNode.setVariableDeclarations(getVariableDeclarations(body));
+        callableNode.setCyclomaticComplexity(getCyclomaticComplexity(callableDecl));
 
         String callableSignature = (callableDecl instanceof MethodDeclaration) ? callableDecl.getSignature().asString() : callableDecl.getSignature().asString().replace(callableDecl.getSignature().getName(), "<init>");
         return Pair.of(callableSignature, callableNode);
     }
 
     /**
+     * Computes cyclomatic complexity for the given callable.
+     *
+     * @param callableDeclaration Callable to compute cyclomatic complexity for
+     * @return cyclomatic complexity
+     */
+    private static int getCyclomaticComplexity(CallableDeclaration callableDeclaration) {
+        int ifStmtCount = callableDeclaration.findAll(IfStmt.class).size();
+        int loopStmtCount = callableDeclaration.findAll(DoStmt.class).size()
+                + callableDeclaration.findAll(ForStmt.class).size()
+                + callableDeclaration.findAll(ForEachStmt.class).size()
+                + callableDeclaration.findAll(WhileStmt.class).size();
+        int switchCaseCount = callableDeclaration.findAll(SwitchStmt.class).stream()
+                .map(stmt -> stmt.getEntries().size())
+                .reduce(0, Integer::sum);
+        int conditionalExprCount = callableDeclaration.findAll(ConditionalExpr.class).size();
+        int catchClauseCount = callableDeclaration.findAll(CatchClause.class).size();
+        return ifStmtCount + loopStmtCount + switchCaseCount + conditionalExprCount + catchClauseCount + 1;
+    }
+
+    /**
      * Processes the given field declaration to extract information about the
-     * declared field and
-     * returns a JSON object containing the extracted information.
+     * declared field and returns a JSON object containing the extracted
+     * information.
      *
      * @param fieldDecl field declaration to be processed
      * @return Field object containing extracted information
@@ -345,8 +365,7 @@ public class SymbolTable {
 
     /**
      * Computes and returns the set of types references in a block of statement
-     * (method or constructor
-     * body).
+     * (method or constructor body).
      *
      * @param blockStmt Block statement to compute referenced types for
      * @return List of types referenced in the block statement
@@ -354,33 +373,33 @@ public class SymbolTable {
     private static List<String> getReferencedTypes(Optional<BlockStmt> blockStmt) {
         Set<String> referencedTypes = new HashSet<>();
         blockStmt.ifPresent(bs -> bs.findAll(VariableDeclarator.class)
-            .stream()
-            .filter(vd -> vd.getType().isClassOrInterfaceType())
-            .map(vd -> resolveType(vd.getType()))
-            .forEach(referencedTypes::add));
+                .stream()
+                .filter(vd -> vd.getType().isClassOrInterfaceType())
+                .map(vd -> resolveType(vd.getType()))
+                .forEach(referencedTypes::add));
 
         // add types of accessed fields to the set of referenced types
         blockStmt.ifPresent(bs -> bs.findAll(FieldAccessExpr.class)
-            .stream()
-            .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
-            .map(faExpr -> {
-                if (faExpr.getParentNode().isPresent() && faExpr.getParentNode().get() instanceof CastExpr) {
-                    return resolveType(((CastExpr)faExpr.getParentNode().get()).getType());
-                } else {
-                    return resolveExpression(faExpr);
-                }
-            })
-            .filter(type -> !type.isEmpty())
-            .forEach(referencedTypes::add));
+                .stream()
+                .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
+                .map(faExpr -> {
+                    if (faExpr.getParentNode().isPresent() && faExpr.getParentNode().get() instanceof CastExpr) {
+                        return resolveType(((CastExpr) faExpr.getParentNode().get()).getType());
+                    } else {
+                        return resolveExpression(faExpr);
+                    }
+                })
+                .filter(type -> !type.isEmpty())
+                .forEach(referencedTypes::add));
 
         // TODO: add resolved method access expressions
-
         return new ArrayList<>(referencedTypes);
     }
 
     /**
-     * Returns information about variable declarations in the given callable. The information includes
-     * var name, var type, var initializer, and position.
+     * Returns information about variable declarations in the given callable.
+     * The information includes var name, var type, var initializer, and
+     * position.
      *
      * @param blockStmt Callable to compute var declaration information for
      * @return list of variable declarations
@@ -394,8 +413,8 @@ public class SymbolTable {
             VariableDeclaration varDeclaration = new VariableDeclaration();
             varDeclaration.setName(declarator.getNameAsString());
             varDeclaration.setType(resolveType(declarator.getType()));
-            varDeclaration.setInitializer(declarator.getInitializer().isPresent() ?
-                declarator.getInitializer().get().toString() : "");
+            varDeclaration.setInitializer(declarator.getInitializer().isPresent()
+                    ? declarator.getInitializer().get().toString() : "");
             if (declarator.getRange().isPresent()) {
                 varDeclaration.setStartLine(declarator.getRange().get().begin.line);
                 varDeclaration.setStartColumn(declarator.getRange().get().begin.column);
@@ -413,29 +432,30 @@ public class SymbolTable {
     }
 
     /**
-     * Computes and returns the list of fields accessed in the given callable body. The returned values contain
-     * field names qualified by names of the declaring types.
+     * Computes and returns the list of fields accessed in the given callable
+     * body. The returned values contain field names qualified by names of the
+     * declaring types.
      *
      * @param callableBody Callable body to compute accessed fields for
      * @return List of fully qualified field names
      */
     private static List<String> getAccessedFields(Optional<BlockStmt> callableBody, List<String> classFields,
-                                                  String typeName) {
+            String typeName) {
         Set<String> accessedFields = new HashSet<>();
 
         // process field access expressions in the callable
         callableBody.ifPresent(cb -> cb.findAll(FieldAccessExpr.class)
-            .stream()
-            .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
-            .map(faExpr -> {
-                String fieldDeclaringType = resolveExpression(faExpr.getScope());
-                if (!fieldDeclaringType.isEmpty()) {
-                    return fieldDeclaringType + "." + faExpr.getNameAsString();
-                } else {
-                    return faExpr.getNameAsString();
-                }
-            })
-            .forEach(accessedFields::add)
+                .stream()
+                .filter(faExpr -> faExpr.getParentNode().isPresent() && !(faExpr.getParentNode().get() instanceof FieldAccessExpr))
+                .map(faExpr -> {
+                    String fieldDeclaringType = resolveExpression(faExpr.getScope());
+                    if (!fieldDeclaringType.isEmpty()) {
+                        return fieldDeclaringType + "." + faExpr.getNameAsString();
+                    } else {
+                        return faExpr.getNameAsString();
+                    }
+                })
+                .forEach(accessedFields::add)
         );
 
         // process all names expressions in callable and match against names of declared fields
@@ -454,8 +474,9 @@ public class SymbolTable {
     }
 
     /**
-     * Returns information about call sites in the given callable. The information includes:
-     * the method name, the declaring type name, and types of arguments used in method call.
+     * Returns information about call sites in the given callable. The
+     * information includes: the method name, the declaring type name, and types
+     * of arguments used in method call.
      *
      * @param callableBody callable to compute call-site information for
      * @return list of call sites
@@ -478,8 +499,8 @@ public class SymbolTable {
                 if (declaringType.contains(" | ")) {
                     declaringType = declaringType.split(" \\| ")[0];
                 }
-                String declaringTypeName = declaringType.contains(".") ?
-                    declaringType.substring(declaringType.lastIndexOf(".")+1) : declaringType;
+                String declaringTypeName = declaringType.contains(".")
+                        ? declaringType.substring(declaringType.lastIndexOf(".") + 1) : declaringType;
                 if (declaringTypeName.equals(scopeExpr.toString())) {
                     isStaticCall = true;
                 }
@@ -487,7 +508,7 @@ public class SymbolTable {
 
             // compute return type for method call taking into account typecast of return value
             if (methodCallExpr.getParentNode().isPresent() && methodCallExpr.getParentNode().get() instanceof CastExpr) {
-                returnType = resolveType(((CastExpr)methodCallExpr.getParentNode().get()).getType());
+                returnType = resolveType(((CastExpr) methodCallExpr.getParentNode().get()).getType());
             } else {
                 returnType = resolveExpression(methodCallExpr);
             }
@@ -505,16 +526,15 @@ public class SymbolTable {
             try {
                 ResolvedMethodDeclaration resolvedMethodDeclaration = methodCallExpr.resolve();
                 accessSpecifier = resolvedMethodDeclaration.accessSpecifier();
-            }
-            catch (RuntimeException exception) {
+            } catch (RuntimeException exception) {
                 Log.debug("Could not resolve access specifier for method call: " + methodCallExpr + ": " + exception.getMessage());
             }
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream()
-                .map(SymbolTable::resolveExpression).collect(Collectors.toList());
+                    .map(SymbolTable::resolveExpression).collect(Collectors.toList());
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType,
-                arguments, returnType, calleeSignature, isStaticCall, false, accessSpecifier));
+                    arguments, returnType, calleeSignature, isStaticCall, false, accessSpecifier));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -523,7 +543,7 @@ public class SymbolTable {
 
             // resolve arguments of the constructor call to types
             List<String> arguments = objectCreationExpr.getArguments().stream()
-                .map(SymbolTable::resolveExpression).collect(Collectors.toList());
+                    .map(SymbolTable::resolveExpression).collect(Collectors.toList());
 
             // resolve callee and get signature
             String calleeSignature = "";
@@ -535,20 +555,20 @@ public class SymbolTable {
 
             // add a new call site object
             callSites.add(createCallSite(objectCreationExpr, "<init>",
-                objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
-                instantiatedType, arguments, instantiatedType, calleeSignature,false, true, AccessSpecifier.NONE));
+                    objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "",
+                    instantiatedType, arguments, instantiatedType, calleeSignature, false, true, AccessSpecifier.NONE));
         }
 
         return callSites;
     }
 
     /**
-     * Creates and returns a new CallSite object for the given expression, which can be a method-call or
-     * object-creation expression.
+     * Creates and returns a new CallSite object for the given expression, which
+     * can be a method-call or object-creation expression.
      *
      * @param callExpr
      * @param calleeName
-     * @param  receiverExpr
+     * @param receiverExpr
      * @param receiverType
      * @param arguments
      * @param isStaticCall
@@ -556,8 +576,8 @@ public class SymbolTable {
      * @return
      */
     private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr,
-                                           String receiverType, List<String> arguments, String returnType,
-                                           String calleeSignature, boolean isStaticCall, boolean isConstructorCall, AccessSpecifier accessSpecifier) {
+            String receiverType, List<String> arguments, String returnType,
+            String calleeSignature, boolean isStaticCall, boolean isConstructorCall, AccessSpecifier accessSpecifier) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
         callSite.setReceiverExpr(receiverExpr);
@@ -586,8 +606,8 @@ public class SymbolTable {
     }
 
     /**
-     * Calculates type for the given expression and returns the resolved type name, or empty string if
-     * exception occurs during type resolution.
+     * Calculates type for the given expression and returns the resolved type
+     * name, or empty string if exception occurs during type resolution.
      *
      * @param expression Expression to be resolved
      * @return Resolved type name or empty string if type resolution fails
@@ -609,8 +629,10 @@ public class SymbolTable {
     }
 
     /**
-     * Resolves the given type and returns string representation of the resolved type. If type resolution
-     * fails, returns string representation (name) of the type.
+     * Resolves the given type and returns string representation of the resolved
+     * type. If type resolution fails, returns string representation (name) of
+     * the type.
+     *
      * @param type Type to be resolved
      * @return Resolved (qualified) type name
      */
@@ -628,18 +650,20 @@ public class SymbolTable {
     }
 
     /**
-     * Collects all source roots (e.g., "src/main/java", "src/test/java") under the given project root path
-     * using the symbol solver collection strategy. Parses all source files under each source root and
-     * returns the complete symbol table as map of file path and java compilation unit pairs.
+     * Collects all source roots (e.g., "src/main/java", "src/test/java") under
+     * the given project root path using the symbol solver collection strategy.
+     * Parses all source files under each source root and returns the complete
+     * symbol table as map of file path and java compilation unit pairs.
      *
      * @param projectRootPath root path of the project to be analyzed
-     * @return Pair of extracted symbol table map and parse problems map for project
+     * @return Pair of extracted symbol table map and parse problems map for
+     * project
      * @throws IOException
      */
     public static Pair<Map<String, JavaCompilationUnit>, Map<String, List<Problem>>> extractAll(Path projectRootPath) throws IOException {
         SymbolSolverCollectionStrategy symbolSolverCollectionStrategy = new SymbolSolverCollectionStrategy();
         ProjectRoot projectRoot = symbolSolverCollectionStrategy.collect(projectRootPath);
-        javaSymbolSolver = (JavaSymbolSolver)symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
+        javaSymbolSolver = (JavaSymbolSolver) symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
         Map<String, JavaCompilationUnit> symbolTable = new LinkedHashMap<>();
         Map<String, List<Problem>> parseProblems = new HashMap<>();
         for (SourceRoot sourceRoot : projectRoot.getSourceRoots()) {
@@ -647,8 +671,8 @@ public class SymbolTable {
                 if (parseResult.isSuccessful()) {
                     CompilationUnit compilationUnit = parseResult.getResult().get();
                     symbolTable.put(
-                        compilationUnit.getStorage().get().getPath().toString(),
-                        processCompilationUnit(compilationUnit)
+                            compilationUnit.getStorage().get().getPath().toString(),
+                            processCompilationUnit(compilationUnit)
                     );
                 } else {
                     parseProblems.put(sourceRoot.getRoot().toString(), parseResult.getProblems());
@@ -682,7 +706,9 @@ public class SymbolTable {
     }
 
     /**
-     * Parses the given set of Java source files from the given project and constructs the symbol table.
+     * Parses the given set of Java source files from the given project and
+     * constructs the symbol table.
+     *
      * @param projectRootPath
      * @param javaFilePaths
      * @return
@@ -696,7 +722,7 @@ public class SymbolTable {
         // create symbol solver and parser configuration
         SymbolSolverCollectionStrategy symbolSolverCollectionStrategy = new SymbolSolverCollectionStrategy();
         ProjectRoot projectRoot = symbolSolverCollectionStrategy.collect(projectRootPath);
-        javaSymbolSolver = (JavaSymbolSolver)symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
+        javaSymbolSolver = (JavaSymbolSolver) symbolSolverCollectionStrategy.getParserConfiguration().getSymbolResolver().get();
         ParserConfiguration parserConfiguration = new ParserConfiguration();
         parserConfiguration.setSymbolResolver(javaSymbolSolver);
 

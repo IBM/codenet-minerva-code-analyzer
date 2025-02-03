@@ -9,8 +9,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
-
+ */
 package com.ibm.cldk.utils;
 
 import static com.ibm.cldk.SymbolTable.declaredMethodsAndConstructors;
@@ -34,6 +33,9 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.Type;
+
+import com.ibm.wala.ssa.ISSABasicBlock;
+import com.ibm.wala.ssa.SSASwitchInstruction;
 
 /**
  * The type Analysis utils.
@@ -93,36 +95,31 @@ public class AnalysisUtils {
     }
 
     /**
-     * Computes and returns cyclomatic complexity for the given IR (for a method or constructor).
+     * Computes and returns cyclomatic complexity for the given IR (for a method
+     * or constructor).
      *
      * @param ir IR for method or constructor
      * @return int Cyclomatic complexity for method/constructor
      */
     public static int getCyclomaticComplexity(IR ir) {
-        int branchCount = (int)Arrays.stream(ir.getInstructions())
-            .filter(inst -> inst instanceof SSAConditionalBranchInstruction)
-            .count();
-        return branchCount + 1;
-    }
-
-    public static void setCyclomaticComplexity(CallGraph callGraph) {
-        callGraph.forEach(
-                cgNode -> {
-                    if (cgNode.getMethod() != null) {
-                        IMethod method = cgNode.getMethod();
-                        String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
-                        List<String> arguments = Arrays.stream(Type.getMethodType(method.getDescriptor().toString()).getArgumentTypes()).map(Type::getClassName).collect(Collectors.toList());
-                        String methodSignature = String.join("", method.getName().toString(), "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
-                        Callable callable = declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature);
-                        if (callable != null) {
-                            callable.setCyclomaticComplexity(getCyclomaticComplexity(cgNode.getIR()));
-                        }
-                }
-                }
-        );
+        if (ir == null) {
+            return 0;
+        }
+        int conditionalBranchCount = (int) Arrays.stream(ir.getInstructions())
+                .filter(inst -> inst instanceof SSAConditionalBranchInstruction)
+                .count();
+        int switchBranchCount = Arrays.stream(ir.getInstructions())
+                .filter(inst -> inst instanceof SSASwitchInstruction)
+                .map(inst -> ((SSASwitchInstruction) inst).getCasesAndLabels().length).reduce(0, Integer::sum);
+        Iterable<ISSABasicBlock> iterableBasicBlocks = ir::getBlocks;
+        int catchBlockCount = (int) StreamSupport.stream(iterableBasicBlocks.spliterator(), false)
+                .filter(ISSABasicBlock::isCatchBlock)
+                .count();
+        return conditionalBranchCount + switchBranchCount + catchBlockCount + 1;
     }
 
     public static Map<String, String> getCallableFromSymbolTable(IMethod method) {
+
         // Get the class name, with a . representation.
         String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
 
@@ -133,9 +130,9 @@ public class AnalysisUtils {
         String methodSignature = String.join("", method.getName().toString(), "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
         Callable callable = declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature);
 
-        if (callable == null)
+        if (callable == null) {
             return null;
-        else{
+        } else {
             String signature = callable.getSignature();
             if (signature.contains("<init>")) {
                 signature = signature.replace("<init>", declaringClassSignature.substring(declaringClassSignature.lastIndexOf(".") + 1));
@@ -150,6 +147,21 @@ public class AnalysisUtils {
             );
         }
     }
+
+    public static Pair<String, Callable> getCallableObjectFromSymbolTable(IMethod method) {
+
+        // Get the class name, with a . representation.
+        String declaringClassSignature = method.getDeclaringClass().getName().toString().substring(1).replace("/", ".").replace("$", ".");
+
+        // Get the method arguments, use a . notation for types.
+        List<String> arguments = Arrays.stream(Type.getMethodType(method.getDescriptor().toString()).getArgumentTypes()).map(Type::getClassName).collect(Collectors.toList());
+
+        // Get the method signature.
+        String methodSignature = String.join("", method.getName().toString(), "(", String.join(", ", Optional.of(arguments).orElseGet(Collections::emptyList)), ")");
+
+        return Pair.of(declaringClassSignature, declaredMethodsAndConstructors.get(declaringClassSignature, methodSignature));
+    }
+
 
     /**
      * Verfy if a class is an application class.

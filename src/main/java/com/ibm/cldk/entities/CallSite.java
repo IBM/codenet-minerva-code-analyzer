@@ -19,6 +19,7 @@ public class CallSite {
     private boolean isUnspecified = false;
     private boolean isStaticCall;
     private boolean isConstructorCall;
+    private boolean isDatabase = false;
     private int startLine;
     private int startColumn;
     private int endLine;

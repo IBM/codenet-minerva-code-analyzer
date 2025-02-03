@@ -13,10 +13,7 @@ limitations under the License.
 
 package com.ibm.cldk;
 
-import com.ibm.cldk.entities.AbstractGraphEdge;
-import com.ibm.cldk.entities.CallEdge;
-import com.ibm.cldk.entities.CallableVertex;
-import com.ibm.cldk.entities.SystemDepEdge;
+import com.ibm.cldk.entities.*;
 import com.ibm.cldk.utils.AnalysisUtils;
 import com.ibm.cldk.utils.Log;
 import com.ibm.cldk.utils.ScopeUtils;
@@ -53,8 +50,7 @@ import java.util.function.BiFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.ibm.cldk.utils.AnalysisUtils.createAndPutNewCallableInSymbolTable;
-import static com.ibm.cldk.utils.AnalysisUtils.getCallableFromSymbolTable;
+import static com.ibm.cldk.utils.AnalysisUtils.*;
 
 
 @Data
@@ -277,7 +273,13 @@ public class SystemDependencyGraph {
                 + Math.ceil((double) (System.currentTimeMillis() - start_time) / 1000) + " seconds.");
 
         // set cyclomatic complexity for callables in the symbol table
-        AnalysisUtils.setCyclomaticComplexity(callGraph);
+        callGraph.forEach(cgNode -> {
+            Callable callable = getCallableObjectFromSymbolTable(cgNode.getMethod()).getRight();
+            if (callable != null) {
+                callable.setCyclomaticComplexity(getCyclomaticComplexity(cgNode.getIR()));
+            }
+        });
+
 
         // Build SDG graph
         Log.info("Building System Dependency Graph.");
