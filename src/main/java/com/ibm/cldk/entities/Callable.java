@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class Callable {
+    private String filePath;
     private String signature;
     private String comment;
     private List<String> annotations;

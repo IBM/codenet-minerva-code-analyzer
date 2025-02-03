@@ -180,17 +180,8 @@ public class CodeAnalyzer implements Runnable {
                 build = build == null ? "auto" : build;
                 // Is noBuild is true, we will not build the project
                 build = noBuild ? null : build;
-                String sdgAsJSONString = SystemDependencyGraph.construct(input, dependencies, build);
-                JsonElement sdgAsJSONElement = gson.fromJson(sdgAsJSONString, JsonElement.class);
-                JsonObject sdgAsJSONObject = sdgAsJSONElement.getAsJsonObject();
-                JsonElement edges = sdgAsJSONObject.get("edges");
-
-                // We don't really need these fields, so we'll remove it.
-                sdgAsJSONObject.remove("nodes");
-                sdgAsJSONObject.remove("creator");
-                sdgAsJSONObject.remove("version");
-                // Remove the 'edges' element and move the list of edges up one level
-                combinedJsonObject.add("system_dependency_graph", edges);
+                List<Dependency> sdgEdges = SystemDependencyGraph.construct(input, dependencies, build);
+                combinedJsonObject.add("system_dependency_graph", gson.toJsonTree(sdgEdges));
             }
         }
         // Cleanup library dependencies directory
