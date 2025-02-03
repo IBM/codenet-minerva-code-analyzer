@@ -76,6 +76,9 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"-v", "--verbose"}, description = "Print logs to console.")
     private static boolean verbose = false;
 
+    @Option(names = {"--no-clean-dependencies"}, description = "Do not attempt to auto-clean dependencies")
+    public static boolean noCleanDependencies = false;
+
     private static final String outputFileName = "analysis.json";
 
     public static Gson gson = new GsonBuilder()

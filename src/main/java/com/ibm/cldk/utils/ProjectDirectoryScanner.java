@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class ProjectDirectoryScanner {
     public static List<Path> classFilesStream(String projectPath) throws IOException {
@@ -35,6 +37,30 @@ public class ProjectDirectoryScanner {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a stream of class files inside the jars and class files in the project.
+     * @param projectPath
+     * @return
+     * @throws IOException
+     */
+    public static Stream<String> classesFromJarFileStream(String projectPath) throws IOException {
+        List<Path> jarPaths = jarFilesStream(projectPath);
+
+        if (jarPaths == null) {
+            return Stream.empty();
+        }
+
+        return jarPaths.stream().flatMap(jarPath -> {
+            try (ZipFile zip = new ZipFile(jarPath.toFile())) {
+                return zip.stream()
+                        .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".class"))
+                        .map(ZipEntry::getName);
+            } catch (IOException e) {
+                return Stream.empty();
+            }
+        });
     }
 
     public static List<Path> sourceFilesStream(String projectPath) throws IOException {
