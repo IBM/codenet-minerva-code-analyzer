@@ -1,5 +1,7 @@
 package com.ibm.cldk.utils;
 
+import com.ibm.cldk.CodeAnalyzer;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -13,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ibm.cldk.CodeAnalyzer.projectRootPom;
+
 import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
+import static com.ibm.cldk.CodeAnalyzer.projectRootPom;
+import static com.ibm.cldk.CodeAnalyzer.noCleanDependencies;
 
 public class BuildProject {
-
     public static Path libDownloadPath;
     private static final String LIB_DEPS_DOWNLOAD_DIR = "_library_dependencies";
     private static final String MAVEN_CMD = BuildProject.getMavenCommand();
@@ -186,9 +189,20 @@ public class BuildProject {
         return buildProject(projectPath, build) ? classFilesStream(projectPath) : new ArrayList<>();
     }
 
+    private static boolean mkLibDepDirs(String projectPath) {
+        if (!Files.exists(libDownloadPath)) {
+            try {
+                Files.createDirectories(libDownloadPath);
+            } catch (IOException e) {
+                Log.error("Error creating library dependency directory for " + projectPath + ": " + e.getMessage());
+                return false;
+            }
+        }
+        return true;
+    }
     /**
-     * Downloads library dependency jars of the given project so that the jars
-     * can be used for type resolution during symbol table creation.
+     * Downloads library dependency jars of the given project so that the jars can be used
+     * for type resolution during symbol table creation.
      *
      * @param projectPath Path to the project under analysis
      * @return true if dependency download succeeds; false otherwise
@@ -196,40 +210,46 @@ public class BuildProject {
     public static boolean downloadLibraryDependencies(String projectPath, String projectRootPom) throws IOException {
         // created download dir if it does not exist
         String projectRoot = projectRootPom != null ? projectRootPom : projectPath;
-        libDownloadPath = Paths.get(projectPath, LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
-        if (!Files.exists(libDownloadPath)) {
-            try {
-                Files.createDirectory(libDownloadPath);
-            } catch (IOException e) {
-                Log.error("Error creating library dependency directory for " + projectPath + ": " + e.getMessage());
-                return false;
-            }
-        }
+
         File pomFile = new File(projectRoot, "pom.xml");
         if (pomFile.exists()) {
+            libDownloadPath = Paths.get(projectPath, "target", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
+            if (mkLibDepDirs(projectPath))
+                Log.debug("Dependencies found/created in " + libDownloadPath);
+            else
+                throw new IllegalStateException("Error creating library dependency directory in " + libDownloadPath);
+
             if (MAVEN_CMD == null || !commandExists(new File(MAVEN_CMD)).getKey()) {
-                String msg = MAVEN_CMD == null
-                        ? "Could not find Maven or a valid Maven Wrapper"
-                        : MessageFormat.format("Could not verify that {0} exists", MAVEN_CMD);
+                String msg = MAVEN_CMD == null ?
+                        "Could not find Maven or a valid Maven Wrapper" :
+                        MessageFormat.format("Could not verify that {0} exists", MAVEN_CMD);
                 Log.error(msg);
-                throw new IllegalStateException("Unable to execute Maven command. "
-                        + (MAVEN_CMD == null
-                                ? "Could not find Maven or a valid Maven Wrapper"
-                                : "Attempt failed with message\n" + commandExists(new File(MAVEN_CMD)).getValue()));
+                throw new IllegalStateException("Unable to execute Maven command. " +
+                        (MAVEN_CMD == null ?
+                                "Could not find Maven or a valid Maven Wrapper" :
+                                "Attempt failed with message\n" + commandExists(new File(MAVEN_CMD)).getValue()
+                        ));
             }
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
             String[] mavenCommand = {MAVEN_CMD, "--no-transfer-progress", "-f", Paths.get(projectRoot, "pom.xml").toString(), "dependency:copy-dependencies", "-DoutputDirectory=" + libDownloadPath.toString()};
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             if (GRADLE_CMD == null || !commandExists(new File(GRADLE_CMD)).getKey()) {
-                String msg = GRADLE_CMD == null
-                        ? "Could not find Gradle or valid Gradle Wrapper"
-                        : MessageFormat.format("Could not verify that {0} exists", GRADLE_CMD);
+                libDownloadPath = Paths.get(projectPath, "build", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
+                if (mkLibDepDirs(projectPath))
+                    Log.debug("Dependencies found/created in " + libDownloadPath);
+                else
+                    throw new IllegalStateException("Error creating library dependency directory in " + libDownloadPath);
+
+                String msg = GRADLE_CMD == null ?
+                        "Could not find Gradle or valid Gradle Wrapper" :
+                        MessageFormat.format("Could not verify that {0} exists", GRADLE_CMD);
                 Log.error(msg);
-                throw new IllegalStateException("Unable to execute Maven command. "
-                        + (GRADLE_CMD == null
-                                ? "Could not find Gradle or valid Gradle Wrapper"
-                                : "Attempt failed with message\n" + commandExists(new File(GRADLE_CMD)).getValue()));
+                throw new IllegalStateException("Unable to execute Maven command. " +
+                        (GRADLE_CMD == null ?
+                                "Could not find Gradle or valid Gradle Wrapper" :
+                                "Attempt failed with message\n" + commandExists(new File(GRADLE_CMD)).getValue()
+                        ));
             }
             Log.info("Found build.gradle or build.gradle.kts in the project directory. Using Gradle to download dependencies.");
             tempInitScript = Files.writeString(tempInitScript, GRADLE_DEPENDENCIES_TASK);
@@ -245,20 +265,23 @@ public class BuildProject {
     }
 
     public static void cleanLibraryDependencies() {
+        if (noCleanDependencies) {
+            return;
+        }
         if (libDownloadPath != null) {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
                 Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
                 Files.delete(libDownloadPath);
             } catch (IOException e) {
-                Log.error("Error deleting library dependency directory: " + e.getMessage());
+                Log.warn("Unable to fully delete library dependency directory: " + e.getMessage());
             }
         }
         if (tempInitScript != null) {
             try {
                 Files.delete(tempInitScript);
             } catch (IOException e) {
-                Log.error("Error deleting temporary Gradle init script: " + e.getMessage());
+                Log.warn("Error deleting temporary Gradle init script: " + e.getMessage());
             }
         }
     }

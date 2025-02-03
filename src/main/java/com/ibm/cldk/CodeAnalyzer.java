@@ -74,6 +74,9 @@ public class CodeAnalyzer implements Runnable {
     @Option(names = {"--no-build"}, description = "Do not build your application. Use this option if you have already built your application.")
     private static boolean noBuild = false;
 
+    @Option(names = {"--no-clean-dependencies"}, description = "Do not attempt to auto-clean dependencies")
+    public static boolean noCleanDependencies = false;
+
     @Option(names = {"-f", "--project-root-path"}, description = "Path to the root pom.xml/build.gradle file of the project.")
     public static String projectRootPom;
 
