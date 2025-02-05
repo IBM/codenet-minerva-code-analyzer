@@ -2,6 +2,7 @@ package com.ibm.cldk.entities;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,4 +26,6 @@ public class Callable {
     private List<CallSite> callSites;
     private List<VariableDeclaration> variableDeclarations;
     private int cyclomaticComplexity;
+    private boolean isEntrypoint = false;
+    private List<CRUDOperation> crudOperations = null;
 }

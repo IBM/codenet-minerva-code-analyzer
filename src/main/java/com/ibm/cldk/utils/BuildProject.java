@@ -234,18 +234,18 @@ public class BuildProject {
             String[] mavenCommand = {MAVEN_CMD, "--no-transfer-progress", "-f", Paths.get(projectRoot, "pom.xml").toString(), "dependency:copy-dependencies", "-DoutputDirectory=" + libDownloadPath.toString()};
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
-            if (GRADLE_CMD == null || !commandExists(new File(GRADLE_CMD)).getKey()) {
-                libDownloadPath = Paths.get(projectPath, "build", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
+            libDownloadPath = Paths.get(projectPath, "build", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
                 if (mkLibDepDirs(projectPath))
                     Log.debug("Dependencies found/created in " + libDownloadPath);
                 else
                     throw new IllegalStateException("Error creating library dependency directory in " + libDownloadPath);
 
+            if (GRADLE_CMD == null || !commandExists(new File(GRADLE_CMD)).getKey()) {
                 String msg = GRADLE_CMD == null ?
                         "Could not find Gradle or valid Gradle Wrapper" :
                         MessageFormat.format("Could not verify that {0} exists", GRADLE_CMD);
                 Log.error(msg);
-                throw new IllegalStateException("Unable to execute Maven command. " +
+                throw new IllegalStateException("Unable to execute Gradle command. " +
                         (GRADLE_CMD == null ?
                                 "Could not find Gradle or valid Gradle Wrapper" :
                                 "Attempt failed with message\n" + commandExists(new File(GRADLE_CMD)).getValue()
