@@ -25,4 +25,5 @@ public class Type {
     private Map<String, Callable> callableDeclarations;
     private List<Field> fieldDeclarations;
     private List<EnumConstant> enumConstants;
+    private boolean isEntryPointClass = false;
 }

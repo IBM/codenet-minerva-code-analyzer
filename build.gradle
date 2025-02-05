@@ -15,7 +15,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'eclipse'
     id 'application'
-    id 'org.graalvm.buildtools.native' version '0.9.28'
+    id 'org.graalvm.buildtools.native' version '0.10.4'
 }
 
 // Get the version from the property file first

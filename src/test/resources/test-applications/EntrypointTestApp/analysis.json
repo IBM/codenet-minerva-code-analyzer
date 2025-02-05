@@ -1,0 +1,2828 @@
+{
+  "symbol_table": {
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/MessageConsumer.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/MessageConsumer.java",
+      "comment": "",
+      "imports": [
+        "org.apache.camel.Consume",
+        "org.apache.camel.Handler",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.camel.MessageConsumer": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "processMessage(String)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/MessageConsumer.java",
+              "signature": "processMessage(String)",
+              "comment": "",
+              "annotations": [
+                "@Consume(uri = \"direct:processMessage\")",
+                "@Handler"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void processMessage(String message)",
+              "parameters": [
+                {
+                  "type": "java.lang.String",
+                  "name": "message",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    // Process message\n}",
+              "start_line": 10,
+              "end_line": 14,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CustomRouteBuilder.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CustomRouteBuilder.java",
+      "comment": "",
+      "imports": [
+        "org.apache.camel.builder.RouteBuilder",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.camel.CustomRouteBuilder": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [
+            "RouteBuilder"
+          ],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "configure()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CustomRouteBuilder.java",
+              "signature": "configure()",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.lang.Exception"
+              ],
+              "declaration": "public void configure() throws Exception",
+              "parameters": [],
+              "code": "{\n    from(\"file:input/orders\").routeId(\"orderProcessingRoute\").to(\"direct:processOrder\");\n    from(\"direct:processOrder\").process(exchange -> {\n        // Process order\n    }).to(\"file:output/processed\");\n}",
+              "start_line": 9,
+              "end_line": 20,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "to",
+                  "receiver_expr": "from(\"file:input/orders\").routeId(\"orderProcessingRoute\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 13,
+                  "end_column": 42
+                },
+                {
+                  "method_name": "routeId",
+                  "receiver_expr": "from(\"file:input/orders\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 12,
+                  "end_column": 48
+                },
+                {
+                  "method_name": "from",
+                  "receiver_expr": "",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 11,
+                  "end_column": 33
+                },
+                {
+                  "method_name": "to",
+                  "receiver_expr": "from(\"direct:processOrder\").process(exchange -> {\n    // Process order\n})",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 19,
+                  "end_column": 44
+                },
+                {
+                  "method_name": "process",
+                  "receiver_expr": "from(\"direct:processOrder\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    ""
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 18,
+                  "end_column": 18
+                },
+                {
+                  "method_name": "from",
+                  "receiver_expr": "",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 15,
+                  "end_column": 35
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomApplicationRunner.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomApplicationRunner.java",
+      "comment": "",
+      "imports": [
+        "org.springframework.boot.ApplicationRunner",
+        "org.springframework.boot.ApplicationArguments",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.spring.CustomApplicationRunner": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [
+            "ApplicationRunner"
+          ],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "run(ApplicationArguments)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomApplicationRunner.java",
+              "signature": "run(ApplicationArguments)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void run(ApplicationArguments args)",
+              "parameters": [
+                {
+                  "type": "ApplicationArguments",
+                  "name": "args",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    System.out.println(\"ApplicationRunner executed\");\n}",
+              "start_line": 10,
+              "end_line": 13,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [
+                "java.io.PrintStream"
+              ],
+              "accessed_fields": [
+                "java.lang.System.out"
+              ],
+              "call_sites": [
+                {
+                  "method_name": "println",
+                  "receiver_expr": "System.out",
+                  "receiver_type": "java.io.PrintStream",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "println(java.lang.String)",
+                  "is_public": true,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": false,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 12,
+                  "start_column": 9,
+                  "end_line": 12,
+                  "end_column": 56
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringController.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringController.java",
+      "comment": "",
+      "imports": [
+        "org.springframework.web.bind.annotation.RestController",
+        "org.springframework.web.bind.annotation.GetMapping"
+      ],
+      "type_declarations": {
+        "org.entrypoints.spring.SpringController": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@RestController"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "hello()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringController.java",
+              "signature": "hello()",
+              "comment": "",
+              "annotations": [
+                "@GetMapping(\"/hello\")"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String hello()",
+              "parameters": [],
+              "code": "{\n    return \"Hello from Spring!\";\n}",
+              "start_line": 9,
+              "end_line": 12,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/SpringBootApplication.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/SpringBootApplication.java",
+      "comment": "",
+      "imports": [],
+      "type_declarations": {},
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/RestRouteBuilder.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/RestRouteBuilder.java",
+      "comment": "",
+      "imports": [
+        "org.apache.camel.builder.RouteBuilder",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.camel.RestRouteBuilder": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [
+            "RouteBuilder"
+          ],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "configure()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/RestRouteBuilder.java",
+              "signature": "configure()",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.lang.Exception"
+              ],
+              "declaration": "public void configure() throws Exception",
+              "parameters": [],
+              "code": "{\n    restConfiguration().component(\"servlet\").bindingMode(\"json\");\n    rest(\"/api\").get(\"/status\").to(\"direct:getStatus\").post(\"/order\").to(\"direct:submitOrder\");\n}",
+              "start_line": 9,
+              "end_line": 18,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "bindingMode",
+                  "receiver_expr": "restConfiguration().component(\"servlet\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 13,
+                  "end_column": 36
+                },
+                {
+                  "method_name": "component",
+                  "receiver_expr": "restConfiguration()",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 12,
+                  "end_column": 37
+                },
+                {
+                  "method_name": "restConfiguration",
+                  "receiver_expr": "",
+                  "receiver_type": "",
+                  "argument_types": [],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 11,
+                  "end_column": 27
+                },
+                {
+                  "method_name": "to",
+                  "receiver_expr": "rest(\"/api\").get(\"/status\").to(\"direct:getStatus\").post(\"/order\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 17,
+                  "end_column": 56
+                },
+                {
+                  "method_name": "post",
+                  "receiver_expr": "rest(\"/api\").get(\"/status\").to(\"direct:getStatus\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 17,
+                  "end_column": 31
+                },
+                {
+                  "method_name": "to",
+                  "receiver_expr": "rest(\"/api\").get(\"/status\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 16,
+                  "end_column": 54
+                },
+                {
+                  "method_name": "get",
+                  "receiver_expr": "rest(\"/api\")",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 16,
+                  "end_column": 31
+                },
+                {
+                  "method_name": "rest",
+                  "receiver_expr": "",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 15,
+                  "start_column": 9,
+                  "end_line": 15,
+                  "end_column": 20
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+      "comment": "",
+      "imports": [
+        "jakarta.annotation.PostConstruct",
+        "jakarta.annotation.PreDestroy",
+        "jakarta.batch.api.Batchlet",
+        "jakarta.batch.api.chunk.ItemProcessor",
+        "jakarta.ejb",
+        "jakarta.jms.Message",
+        "jakarta.jms.MessageListener",
+        "jakarta.jws.WebService",
+        "jakarta.jws.WebMethod",
+        "jakarta.servlet",
+        "jakarta.servlet.annotation",
+        "jakarta.servlet.http",
+        "jakarta.websocket",
+        "jakarta.websocket.server.ServerEndpoint",
+        "jakarta.xml.ws.WebServiceProvider",
+        "java.io.IOException"
+      ],
+      "type_declarations": {
+        "org.entrypoints.jakarta.JavaEEEntrypoints": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [
+            "HttpServlet"
+          ],
+          "comment": "",
+          "implements_list": [
+            "ServletContextListener",
+            "MessageListener"
+          ],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@WebServlet(urlPatterns = \"/example\", asyncSupported = true)",
+            "@WebService",
+            "@ServerEndpoint(\"/websocket\")"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [
+            "org.entrypoints.jakarta.JavaEEEntrypoints.RemoteBusinessInterface"
+          ],
+          "callable_declarations": {
+            "doTrace(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doTrace(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doTrace(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 56,
+              "end_line": 59,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "postPersist()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "postPersist()",
+              "comment": "",
+              "annotations": [
+                "@PostPersist"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void postPersist()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 219,
+              "end_line": 221,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doPost(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doPost(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 31,
+              "end_line": 34,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onMessage(Session, String)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onMessage(Session, String)",
+              "comment": "",
+              "annotations": [
+                "@OnMessage"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void onMessage(Session session, String message)",
+              "parameters": [
+                {
+                  "type": "Session",
+                  "name": "session",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "java.lang.String",
+                  "name": "message",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 100,
+              "end_line": 102,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onClose(Session)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onClose(Session)",
+              "comment": "",
+              "annotations": [
+                "@OnClose"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void onClose(Session session)",
+              "parameters": [
+                {
+                  "type": "Session",
+                  "name": "session",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 104,
+              "end_line": 106,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "preRemove()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "preRemove()",
+              "comment": "",
+              "annotations": [
+                "@PreRemove"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void preRemove()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 231,
+              "end_line": 233,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "contextDestroyed(ServletContextEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "contextDestroyed(ServletContextEvent)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void contextDestroyed(ServletContextEvent sce)",
+              "parameters": [
+                {
+                  "type": "ServletContextEvent",
+                  "name": "sce",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 129,
+              "end_line": 131,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doDelete(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doDelete(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 41,
+              "end_line": 44,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "scheduledTask()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "scheduledTask()",
+              "comment": "// EJB Timer Methods",
+              "annotations": [
+                "@Schedule(second = \"*/10\", minute = \"*\", hour = \"*\", persistent = false)"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void scheduledTask()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 150,
+              "end_line": 152,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "webServiceOperation(String)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "webServiceOperation(String)",
+              "comment": "// Web Service Methods",
+              "annotations": [
+                "@WebMethod"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String webServiceOperation(String input)",
+              "parameters": [
+                {
+                  "type": "java.lang.String",
+                  "name": "input",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    return input;\n}",
+              "start_line": 185,
+              "end_line": 188,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "programmaticTimeout(Timer)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "programmaticTimeout(Timer)",
+              "comment": "",
+              "annotations": [
+                "@Timeout"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void programmaticTimeout(Timer timer)",
+              "parameters": [
+                {
+                  "type": "Timer",
+                  "name": "timer",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 154,
+              "end_line": 156,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "getResource()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "getResource()",
+              "comment": "// JAX-RS Resource Methods (REST)",
+              "annotations": [
+                "@GET",
+                "@Path(\"/resource\")"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String getResource()",
+              "parameters": [],
+              "code": "{\n    return \"resource\";\n}",
+              "start_line": 195,
+              "end_line": 199,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "process()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "process()",
+              "comment": "// Batch Processing",
+              "annotations": [
+                "@Batchlet"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String process()",
+              "parameters": [],
+              "code": "{\n    return \"COMPLETED\";\n}",
+              "start_line": 113,
+              "end_line": 116,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doHead(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doHead(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 46,
+              "end_line": 49,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "destroy()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "destroy()",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void destroy()",
+              "parameters": [],
+              "code": "{\n    super.destroy();\n}",
+              "start_line": 67,
+              "end_line": 70,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "destroy",
+                  "receiver_expr": "super",
+                  "receiver_type": "",
+                  "argument_types": [],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 69,
+                  "start_column": 9,
+                  "end_line": 69,
+                  "end_column": 23
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onComplete(AsyncEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onComplete(AsyncEvent)",
+              "comment": "// Async Servlet Methods",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.io.IOException"
+              ],
+              "declaration": "public void onComplete(AsyncEvent event) throws IOException",
+              "parameters": [
+                {
+                  "type": "AsyncEvent",
+                  "name": "event",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 79,
+              "end_line": 81,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "handleRequest(String)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "handleRequest(String)",
+              "comment": "",
+              "annotations": [
+                "@WebServiceProvider"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void handleRequest(String request)",
+              "parameters": [
+                {
+                  "type": "java.lang.String",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 190,
+              "end_line": 192,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "automaticTimeout()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "automaticTimeout()",
+              "comment": "",
+              "annotations": [
+                "@AutomaticTimeout"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void automaticTimeout()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 158,
+              "end_line": 160,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "postConstruct()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "postConstruct()",
+              "comment": "// Lifecycle Callbacks",
+              "annotations": [
+                "@PostConstruct"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void postConstruct()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 163,
+              "end_line": 165,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onMessage(Message)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onMessage(Message)",
+              "comment": "// Message-Driven Bean Methods",
+              "annotations": [
+                "@MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = \"destinationType\", propertyValue = \"jakarta.jms.Queue\") })",
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void onMessage(Message message)",
+              "parameters": [
+                {
+                  "type": "Message",
+                  "name": "message",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 172,
+              "end_line": 182,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onOpen(Session)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onOpen(Session)",
+              "comment": "// WebSocket Methods",
+              "annotations": [
+                "@OnOpen"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void onOpen(Session session)",
+              "parameters": [
+                {
+                  "type": "Session",
+                  "name": "session",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 96,
+              "end_line": 98,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "contextInitialized(ServletContextEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "contextInitialized(ServletContextEvent)",
+              "comment": "// ServletContext Listener Methods",
+              "annotations": [
+                "@Override",
+                "@WebListener"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void contextInitialized(ServletContextEvent sce)",
+              "parameters": [
+                {
+                  "type": "ServletContextEvent",
+                  "name": "sce",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 124,
+              "end_line": 127,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "postUpdate()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "postUpdate()",
+              "comment": "",
+              "annotations": [
+                "@PostUpdate"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void postUpdate()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 227,
+              "end_line": 229,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doOptions(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doOptions(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 51,
+              "end_line": 54,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doFilter(ServletRequest, ServletResponse, FilterChain)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doFilter(ServletRequest, ServletResponse, FilterChain)",
+              "comment": "// Filter Methods",
+              "annotations": [
+                "@WebFilter(\"/path/*\")"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.io.IOException",
+                "ServletException"
+              ],
+              "declaration": "public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException",
+              "parameters": [
+                {
+                  "type": "ServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "ServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "FilterChain",
+                  "name": "chain",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 73,
+              "end_line": 76,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "requestInitialized(ServletRequestEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "requestInitialized(ServletRequestEvent)",
+              "comment": "// Request Listener Methods",
+              "annotations": [
+                "@WebListener"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void requestInitialized(ServletRequestEvent sre)",
+              "parameters": [
+                {
+                  "type": "ServletRequestEvent",
+                  "name": "sre",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 142,
+              "end_line": 144,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onTimeout(AsyncEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onTimeout(AsyncEvent)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.io.IOException"
+              ],
+              "declaration": "public void onTimeout(AsyncEvent event) throws IOException",
+              "parameters": [
+                {
+                  "type": "AsyncEvent",
+                  "name": "event",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 83,
+              "end_line": 85,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "processItem(Object)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "processItem(Object)",
+              "comment": "",
+              "annotations": [
+                "@ItemProcessor"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public Object processItem(Object item)",
+              "parameters": [
+                {
+                  "type": "java.lang.Object",
+                  "name": "item",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    return item;\n}",
+              "start_line": 118,
+              "end_line": 121,
+              "return_type": "java.lang.Object",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "securedMethod()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "securedMethod()",
+              "comment": "// Security Related Methods",
+              "annotations": [
+                "@DeclareRoles({ \"admin\", \"user\" })",
+                "@RolesAllowed({ \"admin\" })"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void securedMethod()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 209,
+              "end_line": 212,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "postLoad()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "postLoad()",
+              "comment": "",
+              "annotations": [
+                "@PostLoad"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void postLoad()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 239,
+              "end_line": 241,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doGet(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doGet(HttpServletRequest, HttpServletResponse)",
+              "comment": "// Servlet HTTP Methods",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 26,
+              "end_line": 29,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onError(AsyncEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onError(AsyncEvent)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.io.IOException"
+              ],
+              "declaration": "public void onError(AsyncEvent event) throws IOException",
+              "parameters": [
+                {
+                  "type": "AsyncEvent",
+                  "name": "event",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 87,
+              "end_line": 89,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "sessionDestroyed(HttpSessionEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "sessionDestroyed(HttpSessionEvent)",
+              "comment": "",
+              "annotations": [],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void sessionDestroyed(HttpSessionEvent se)",
+              "parameters": [
+                {
+                  "type": "HttpSessionEvent",
+                  "name": "se",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 138,
+              "end_line": 139,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "postRemove()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "postRemove()",
+              "comment": "",
+              "annotations": [
+                "@PostRemove"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void postRemove()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 235,
+              "end_line": 237,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "requestDestroyed(ServletRequestEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "requestDestroyed(ServletRequestEvent)",
+              "comment": "",
+              "annotations": [],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void requestDestroyed(ServletRequestEvent sre)",
+              "parameters": [
+                {
+                  "type": "ServletRequestEvent",
+                  "name": "sre",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 146,
+              "end_line": 147,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "init(ServletConfig)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "init(ServletConfig)",
+              "comment": "// Servlet Lifecycle Methods",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "ServletException"
+              ],
+              "declaration": "public void init(ServletConfig config) throws ServletException",
+              "parameters": [
+                {
+                  "type": "ServletConfig",
+                  "name": "config",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    super.init(config);\n}",
+              "start_line": 62,
+              "end_line": 65,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "init",
+                  "receiver_expr": "super",
+                  "receiver_type": "",
+                  "argument_types": [
+                    ""
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 64,
+                  "start_column": 9,
+                  "end_line": 64,
+                  "end_column": 26
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onStartAsync(AsyncEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onStartAsync(AsyncEvent)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.io.IOException"
+              ],
+              "declaration": "public void onStartAsync(AsyncEvent event) throws IOException",
+              "parameters": [
+                {
+                  "type": "AsyncEvent",
+                  "name": "event",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 91,
+              "end_line": 93,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "onError(Session, Throwable)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "onError(Session, Throwable)",
+              "comment": "",
+              "annotations": [
+                "@OnError"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void onError(Session session, Throwable throwable)",
+              "parameters": [
+                {
+                  "type": "Session",
+                  "name": "session",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "java.lang.Throwable",
+                  "name": "throwable",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 108,
+              "end_line": 110,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "prePersist()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "prePersist()",
+              "comment": "// JPA Entity Lifecycle Methods",
+              "annotations": [
+                "@PrePersist"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void prePersist()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 215,
+              "end_line": 217,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "doPut(HttpServletRequest, HttpServletResponse)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "doPut(HttpServletRequest, HttpServletResponse)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "protected"
+              ],
+              "thrown_exceptions": [
+                "ServletException",
+                "java.io.IOException"
+              ],
+              "declaration": "protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException",
+              "parameters": [
+                {
+                  "type": "HttpServletRequest",
+                  "name": "request",
+                  "annotations": [],
+                  "modifiers": []
+                },
+                {
+                  "type": "HttpServletResponse",
+                  "name": "response",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 36,
+              "end_line": 39,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "sessionCreated(HttpSessionEvent)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "sessionCreated(HttpSessionEvent)",
+              "comment": "// Session Listener Methods",
+              "annotations": [
+                "@WebListener"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void sessionCreated(HttpSessionEvent se)",
+              "parameters": [
+                {
+                  "type": "HttpSessionEvent",
+                  "name": "se",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n}",
+              "start_line": 134,
+              "end_line": 136,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "preUpdate()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "preUpdate()",
+              "comment": "",
+              "annotations": [
+                "@PreUpdate"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void preUpdate()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 223,
+              "end_line": 225,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "preDestroy()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "preDestroy()",
+              "comment": "",
+              "annotations": [
+                "@PreDestroy"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void preDestroy()",
+              "parameters": [],
+              "code": "{\n}",
+              "start_line": 167,
+              "end_line": 169,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        },
+        "org.entrypoints.jakarta.JavaEEEntrypoints.RemoteBusinessInterface": {
+          "is_nested_type": true,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": true,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "// EJB Remote Business Interface Methods",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Remote"
+          ],
+          "parent_type": "org.entrypoints.jakarta.JavaEEEntrypoints",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "businessMethod()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jakarta/JavaEEEntrypoints.java",
+              "signature": "businessMethod()",
+              "comment": "",
+              "annotations": [],
+              "modifiers": [],
+              "thrown_exceptions": [],
+              "declaration": "abstract void businessMethod()",
+              "parameters": [],
+              "code": "",
+              "start_line": 205,
+              "end_line": 205,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": false
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jaxrs/JaxRsResource.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jaxrs/JaxRsResource.java",
+      "comment": "",
+      "imports": [
+        "jakarta.ws.rs.GET",
+        "jakarta.ws.rs.Path",
+        "jakarta.ws.rs.Produces",
+        "jakarta.ws.rs.core.MediaType"
+      ],
+      "type_declarations": {
+        "org.entrypoints.jaxrs.JaxRsResource": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Path(\"/api\")"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "hello()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/jaxrs/JaxRsResource.java",
+              "signature": "hello()",
+              "comment": "",
+              "annotations": [
+                "@GET",
+                "@Path(\"/hello\")",
+                "@Produces(MediaType.TEXT_PLAIN)"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String hello()",
+              "parameters": [],
+              "code": "{\n    return \"Hello from JAX-RS!\";\n}",
+              "start_line": 11,
+              "end_line": 16,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomCommandLineRunner.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomCommandLineRunner.java",
+      "comment": "",
+      "imports": [
+        "org.springframework.boot.CommandLineRunner",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.spring.CustomCommandLineRunner": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [
+            "CommandLineRunner"
+          ],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "run(String[])": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/CustomCommandLineRunner.java",
+              "signature": "run(String[])",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public void run(String... args)",
+              "parameters": [
+                {
+                  "type": "java.lang.String",
+                  "name": "args",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    System.out.println(\"CommandLineRunner executed\");\n}",
+              "start_line": 9,
+              "end_line": 12,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [
+                "java.io.PrintStream"
+              ],
+              "accessed_fields": [
+                "java.lang.System.out"
+              ],
+              "call_sites": [
+                {
+                  "method_name": "println",
+                  "receiver_expr": "System.out",
+                  "receiver_type": "java.io.PrintStream",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "println(java.lang.String)",
+                  "is_public": true,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": false,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 9,
+                  "end_line": 11,
+                  "end_column": 56
+                }
+              ],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringBootController.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringBootController.java",
+      "comment": "",
+      "imports": [
+        "org.springframework.web.bind.annotation.RestController",
+        "org.springframework.web.bind.annotation.PostMapping",
+        "org.springframework.web.bind.annotation.RequestBody"
+      ],
+      "type_declarations": {
+        "org.entrypoints.spring.SpringBootController": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@RestController"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "processData(String)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/spring/SpringBootController.java",
+              "signature": "processData(String)",
+              "comment": "",
+              "annotations": [
+                "@PostMapping(\"/api/data\")"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String processData(@RequestBody String data)",
+              "parameters": [
+                {
+                  "type": "java.lang.String",
+                  "name": "data",
+                  "annotations": [
+                    "@RequestBody"
+                  ],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    return \"Processed: \" + data;\n}",
+              "start_line": 10,
+              "end_line": 13,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/UserAction.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/UserAction.java",
+      "comment": "",
+      "imports": [
+        "com.opensymphony.xwork2.ActionSupport",
+        "org.apache.struts2.convention.annotation.Action",
+        "org.apache.struts2.convention.annotation.Namespace",
+        "org.apache.struts2.convention.annotation.Result"
+      ],
+      "type_declarations": {
+        "org.entrypoints.struts.UserAction": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [
+            "ActionSupport"
+          ],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Namespace(\"/user\")"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "listUsers()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/UserAction.java",
+              "signature": "listUsers()",
+              "comment": "",
+              "annotations": [
+                "@Action(value = \"list\", results = { @Result(name = \"success\", location = \"/user/list.jsp\") })"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String listUsers()",
+              "parameters": [],
+              "code": "{\n    return SUCCESS;\n}",
+              "start_line": 11,
+              "end_line": 16,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            },
+            "addUser()": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/UserAction.java",
+              "signature": "addUser()",
+              "comment": "",
+              "annotations": [
+                "@Action(value = \"add\", results = { @Result(name = \"success\", location = \"/user/add.jsp\") })"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [],
+              "declaration": "public String addUser()",
+              "parameters": [],
+              "code": "{\n    return SUCCESS;\n}",
+              "start_line": 18,
+              "end_line": 23,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [],
+              "accessed_fields": [],
+              "call_sites": [],
+              "variable_declarations": [],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CamelProcessor.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CamelProcessor.java",
+      "comment": "",
+      "imports": [
+        "org.apache.camel.Exchange",
+        "org.apache.camel.Processor",
+        "org.springframework.stereotype.Component"
+      ],
+      "type_declarations": {
+        "org.entrypoints.camel.CamelProcessor": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [],
+          "comment": "",
+          "implements_list": [
+            "Processor"
+          ],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [
+            "@Component"
+          ],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "process(Exchange)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/camel/CamelProcessor.java",
+              "signature": "process(Exchange)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.lang.Exception"
+              ],
+              "declaration": "public void process(Exchange exchange) throws Exception",
+              "parameters": [
+                {
+                  "type": "Exchange",
+                  "name": "exchange",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    // Process message\n    String body = exchange.getIn().getBody(String.class);\n    exchange.getMessage().setBody(\"Processed: \" + body);\n}",
+              "start_line": 10,
+              "end_line": 15,
+              "return_type": "void",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [
+                "java.lang.String"
+              ],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "getBody",
+                  "receiver_expr": "exchange.getIn()",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.Class<java.lang.String>"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 13,
+                  "start_column": 23,
+                  "end_line": 13,
+                  "end_column": 60
+                },
+                {
+                  "method_name": "getIn",
+                  "receiver_expr": "exchange",
+                  "receiver_type": "",
+                  "argument_types": [],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 13,
+                  "start_column": 23,
+                  "end_line": 13,
+                  "end_column": 38
+                },
+                {
+                  "method_name": "setBody",
+                  "receiver_expr": "exchange.getMessage()",
+                  "receiver_type": "",
+                  "argument_types": [
+                    "java.lang.String"
+                  ],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 14,
+                  "start_column": 9,
+                  "end_line": 14,
+                  "end_column": 59
+                },
+                {
+                  "method_name": "getMessage",
+                  "receiver_expr": "exchange",
+                  "receiver_type": "",
+                  "argument_types": [],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 14,
+                  "start_column": 9,
+                  "end_line": 14,
+                  "end_column": 29
+                }
+              ],
+              "variable_declarations": [
+                {
+                  "name": "body",
+                  "type": "java.lang.String",
+                  "initializer": "exchange.getIn().getBody(String.class)",
+                  "start_line": 13,
+                  "start_column": 16,
+                  "end_line": 13,
+                  "end_column": 60
+                }
+              ],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": true
+        }
+      },
+      "is_modified": false
+    },
+    "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/InterceptorExample.java": {
+      "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/InterceptorExample.java",
+      "comment": "",
+      "imports": [
+        "com.opensymphony.xwork2.ActionInvocation",
+        "com.opensymphony.xwork2.interceptor.AbstractInterceptor"
+      ],
+      "type_declarations": {
+        "org.entrypoints.struts.InterceptorExample": {
+          "is_nested_type": false,
+          "is_class_or_interface_declaration": true,
+          "is_enum_declaration": false,
+          "is_annotation_declaration": false,
+          "is_record_declaration": false,
+          "is_interface": false,
+          "is_inner_class": false,
+          "is_local_class": false,
+          "extends_list": [
+            "AbstractInterceptor"
+          ],
+          "comment": "",
+          "implements_list": [],
+          "modifiers": [
+            "public"
+          ],
+          "annotations": [],
+          "parent_type": "",
+          "nested_type_declarations": [],
+          "callable_declarations": {
+            "intercept(ActionInvocation)": {
+              "file_path": "/Users/rkrsn/workspace/codellm-devkit/codenet-minerva-code-analyzer/src/test/resources/test-applications/EntrypointTestApp/src/main/java/org/entrypoints/struts/InterceptorExample.java",
+              "signature": "intercept(ActionInvocation)",
+              "comment": "",
+              "annotations": [
+                "@Override"
+              ],
+              "modifiers": [
+                "public"
+              ],
+              "thrown_exceptions": [
+                "java.lang.Exception"
+              ],
+              "declaration": "public String intercept(ActionInvocation invocation) throws Exception",
+              "parameters": [
+                {
+                  "type": "ActionInvocation",
+                  "name": "invocation",
+                  "annotations": [],
+                  "modifiers": []
+                }
+              ],
+              "code": "{\n    // Pre-processing\n    String result = invocation.invoke();\n    // Post-processing\n    return result;\n}",
+              "start_line": 8,
+              "end_line": 14,
+              "return_type": "java.lang.String",
+              "is_implicit": false,
+              "is_constructor": false,
+              "referenced_types": [
+                "java.lang.String"
+              ],
+              "accessed_fields": [],
+              "call_sites": [
+                {
+                  "method_name": "invoke",
+                  "receiver_expr": "invocation",
+                  "receiver_type": "",
+                  "argument_types": [],
+                  "return_type": "",
+                  "callee_signature": "",
+                  "is_public": false,
+                  "is_protected": false,
+                  "is_private": false,
+                  "is_unspecified": true,
+                  "is_static_call": false,
+                  "is_constructor_call": false,
+                  "is_database": false,
+                  "start_line": 11,
+                  "start_column": 25,
+                  "end_line": 11,
+                  "end_column": 43
+                }
+              ],
+              "variable_declarations": [
+                {
+                  "name": "result",
+                  "type": "java.lang.String",
+                  "initializer": "invocation.invoke()",
+                  "start_line": 11,
+                  "start_column": 16,
+                  "end_line": 11,
+                  "end_column": 43
+                }
+              ],
+              "cyclomatic_complexity": 1,
+              "is_entry_point": false
+            }
+          },
+          "field_declarations": [],
+          "is_entry_point_class": false
+        }
+      },
+      "is_modified": false
+    }
+  },
+  "version": "2.1.0"
+}
