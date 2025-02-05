@@ -1,6 +1,7 @@
 package com.ibm.cldk.entities;
 
 import com.ibm.cldk.utils.annotations.NotImplemented;
+import com.ibm.cldk.utils.annotations.Todo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,13 @@ public class CRUDOperation {
         UNKNOWN
     }
 
+    @Todo(comment = "Add more frameworks, and consider moving this outside because this may be generic.")
+    @NotImplemented
+    public enum JavaFramework {
+        JPA,
+        SPRING
+    }
+
     private OperationType operationType;
     private String targetTable;
     private int lineNumber;
@@ -34,7 +42,7 @@ public class CRUDOperation {
     @NotImplemented
     private List<String> joinedTables;
     @NotImplemented
-    private String technology;
+    private JavaFramework framework;
     @NotImplemented
     private boolean isBatchOperation = false;
 }

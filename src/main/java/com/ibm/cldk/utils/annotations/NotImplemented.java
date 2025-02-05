@@ -8,5 +8,6 @@ import java.lang.annotation.*;
 public @interface NotImplemented {
     String value() default "";
     String since() default "";
-    String ticketId() default "";
+    String issue() default "";
+    String comment() default "";
 }
