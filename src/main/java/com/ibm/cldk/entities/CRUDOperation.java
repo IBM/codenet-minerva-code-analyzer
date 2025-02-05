@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NotImplemented
 public class CRUDOperation {
     public enum OperationType {
         CREATE,

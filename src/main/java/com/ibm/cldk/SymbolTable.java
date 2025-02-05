@@ -183,7 +183,7 @@ public class SymbolTable {
             }).collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight())));
 
             // Add information about if the TypeNode is an entry point class
-            typeNode.setEntryPointClass(isEntryPointClass(typeDecl));
+            typeNode.setEntrypointClass(isEntryPointClass(typeDecl));
 
             return Pair.of(typeName, typeNode);
 
@@ -389,7 +389,7 @@ public class SymbolTable {
         // modifiers
         callableNode.setParameters((List<ParameterInCallable>) callableDecl.getParameters().stream().map(param -> processParameterDeclaration((Parameter) param)).collect(Collectors.toList()));
 
-        callableNode.setEntryPoint(isEntryPointMethod(callableDecl));
+        callableNode.setEntrypoint(isEntryPointMethod(callableDecl));
         // A method declaration may not have a body if it is an abstract method. A
         // constructor always
         // has a body. So, we need to check if the body is present before processing it

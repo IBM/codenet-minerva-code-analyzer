@@ -162,7 +162,7 @@ public class CodeAnalyzerIntegrationTest {
                 "--input=/test-applications/daytrader8",
                 "--analysis-level=1"
         );
-        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entry_point_class\": true"), "No entry point classes found");
-        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entry_point\": true"), "No entry point methods found");
+        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entrypoint_class\": true"), "No entry point classes found");
+        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entrypoint\": true"), "No entry point methods found");
     }
 }

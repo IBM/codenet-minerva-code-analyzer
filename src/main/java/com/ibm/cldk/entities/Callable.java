@@ -26,6 +26,6 @@ public class Callable {
     private List<CallSite> callSites;
     private List<VariableDeclaration> variableDeclarations;
     private int cyclomaticComplexity;
-    private boolean isEntryPoint = false;
+    private boolean isEntrypoint = false;
     private List<CRUDOperation> crudOperations = null;
 }
