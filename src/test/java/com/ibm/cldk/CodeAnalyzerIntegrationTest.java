@@ -1,5 +1,8 @@
 package com.ibm.cldk;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -15,8 +18,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.Properties;
 
+import static com.ibm.cldk.CodeAnalyzer.gson;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
@@ -61,7 +67,8 @@ public class CodeAnalyzerIntegrationTest {
             .withCommand("-c", "while true; do sleep 1; done")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
-            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/daytrader8")), "/test-applications/daytrader8");
 
 
     @BeforeAll
@@ -144,5 +151,18 @@ public class CodeAnalyzerIntegrationTest {
         );
         Assertions.assertEquals(1, runCodeAnalyzer.getExitCode());
         Assertions.assertTrue(runCodeAnalyzer.getStderr().contains("java.lang.RuntimeException"));
+    }
+
+    @Test
+    void shouldBeAbleToGenerateAnalysisArtifactForDaytrader8() throws Exception {
+        var runCodeAnalyzerOnDaytrader8 = mavenContainer.execInContainer(
+                "java",
+                "-jar",
+                String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
+                "--input=/test-applications/daytrader8",
+                "--analysis-level=1"
+        );
+        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entry_point_class\": true"), "No entry point classes found");
+        Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entry_point\": true"), "No entry point methods found");
     }
 }
