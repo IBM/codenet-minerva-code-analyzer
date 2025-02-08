@@ -178,20 +178,29 @@ public class CodeAnalyzerIntegrationTest {
         String expectedCrudOperation =
                 "\"crud_operations\": [" +
                         "{" +
-                            "\"line_number\": 115," +
-                            "\"operation_type\": \"READ\"," +
-                            "\"target_table\": null," +
-                            "\"involved_fields\": null," +
-                            "\"condition\": null," +
-                            "\"joined_tables\": null," +
-                            "\"technology\": null," +
-                            "\"is_batch_operation\": false" +
+                        "\"line_number\": 115," +
+                        "\"operation_type\": \"READ\"," +
+                        "\"target_table\": null," +
+                        "\"involved_fields\": null," +
+                        "\"condition\": null," +
+                        "\"joined_tables\": null," +
+                        "\"technology\": null," +
+                        "\"is_batch_operation\": false" +
                         "}]";
 
-        // Remove whitespace and newlines for a more robust comparison
+        // Expected JSON for CRUD Queries
+        String expectedCrudQuery =
+                "\"crud_queries\": [" +
+                        "{" +
+                        "\"line_number\": 141,";
+
+        // Normalize the output and expected strings to ignore formatting differences
         String normalizedOutput = output.replaceAll("\\s+", "");
         String normalizedExpectedCrudOperation = expectedCrudOperation.replaceAll("\\s+", "");
+        String normalizedExpectedCrudQuery = expectedCrudQuery.replaceAll("\\s+", "");
 
+        // Assertions for both CRUD operations and queries
         Assertions.assertTrue(normalizedOutput.contains(normalizedExpectedCrudOperation), "Expected CRUD operation JSON structure not found");
+        Assertions.assertTrue(normalizedOutput.contains(normalizedExpectedCrudQuery), "Expected CRUD query JSON structure not found");
     }
 }
