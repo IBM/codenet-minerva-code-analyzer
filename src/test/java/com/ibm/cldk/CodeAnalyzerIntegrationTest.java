@@ -181,11 +181,9 @@ public class CodeAnalyzerIntegrationTest {
                         "\"line_number\": 115," +
                         "\"operation_type\": \"READ\"," +
                         "\"target_table\": null," +
-                        "\"involved_fields\": null," +
+                        "\"involved_columns\": null," +
                         "\"condition\": null," +
-                        "\"joined_tables\": null," +
-                        "\"technology\": null," +
-                        "\"is_batch_operation\": false" +
+                        "\"joined_tables\": null" +
                         "}]";
 
         // Expected JSON for CRUD Queries

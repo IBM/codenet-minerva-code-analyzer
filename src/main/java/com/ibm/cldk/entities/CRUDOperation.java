@@ -17,18 +17,9 @@ public class CRUDOperation {
     @NotImplemented
     private String targetTable = null;
     @NotImplemented
-    private List<String> involvedFields;
+    private List<String> involvedColumns;
     @NotImplemented
     private String condition;
     @NotImplemented
     private List<String> joinedTables;
-    @NotImplemented
-    private String technology;
-    @NotImplemented
-    private boolean isBatchOperation = false;
-
-    public CRUDOperation(int lineNumber, CRUDOperationType crudOperationType) {
-        this.lineNumber = lineNumber;
-        this.operationType = crudOperationType;
-    }
 }
