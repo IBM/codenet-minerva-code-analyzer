@@ -27,10 +27,9 @@ import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import com.ibm.cldk.analysis.CRUDFinderFactory;
-import com.ibm.cldk.analysis.interfaces.AbstractCRUDFinder;
-import com.ibm.cldk.analysis.utils.enums.CRUDOperationType;
-import com.ibm.cldk.analysis.utils.enums.CRUDQueryType;
+import com.ibm.cldk.javaee.CRUDFinderFactory;
+import com.ibm.cldk.javaee.utils.enums.CRUDOperationType;
+import com.ibm.cldk.javaee.utils.enums.CRUDQueryType;
 import com.ibm.cldk.entities.*;
 import com.ibm.cldk.utils.Log;
 import org.apache.commons.lang3.tuple.Pair;
@@ -689,18 +688,27 @@ public class SymbolTable {
             }
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream().map(SymbolTable::resolveExpression).collect(Collectors.toList());
-
+            // Get argument string from the callsite
+            List<String> listOfArgumentStrings = methodCallExpr.getArguments().stream().map(Expression::toString).collect(Collectors.toList());
             // Determine if this call site is potentially a CRUD operation.
-            CRUDOperation crudOperation = null;
+            CRUDOperation crudOperation = new CRUDOperation();
             Optional<CRUDOperationType> crudOperationType = findCRUDOperation(declaringType, methodCallExpr.getNameAsString());
             if (crudOperationType.isPresent()) {
                 // We found a CRUD operation, so we need to populate the details of the call site this CRUD operation.
                 int lineNumber = methodCallExpr.getRange().isPresent() ? methodCallExpr.getRange().get().begin.line : -1;
-                crudOperation = new CRUDOperation(lineNumber, crudOperationType.get());
+                crudOperation.setLineNumber(lineNumber);
+                crudOperation.setOperationType(crudOperationType.get());
             }
             // Determine if this call site is potentially a CRUD query.
-            CRUDQuery crudQuery = null;
-            Optional<CRUDQueryType> crudQueryType = findCRUDQuery(declaringType, methodCallExpr.getNameAsString());
+            CRUDQuery crudQuery = new CRUDQuery();
+            Optional<CRUDQueryType> crudQueryType = findCRUDQuery(declaringType, methodCallExpr.getNameAsString(), Optional.of(listOfArgumentStrings));
+            if (crudQueryType.isPresent()) {
+                // We found a CRUD query, so we need to populate the details of the call site this CRUD query.
+                int lineNumber = methodCallExpr.getRange().isPresent() ? methodCallExpr.getRange().get().begin.line : -1;
+                crudQuery.setLineNumber(lineNumber);
+                crudQuery.setQueryType(crudQueryType.get());
+                crudQuery.setQueryArguments(listOfArgumentStrings);
+            }
             // add a new call site object
             callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType, arguments, returnType, calleeSignature, isStaticCall, false, crudOperation, crudQuery, accessSpecifier));
         }
@@ -726,15 +734,18 @@ public class SymbolTable {
 
         return callSites;
     }
-
-    private static Optional<CRUDQueryType> findCRUDQuery(String declaringType, String nameAsString) {
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static Optional<CRUDQueryType> findCRUDQuery(String declaringType, String nameAsString, Optional<List<String>> arguments) {
         return CRUDFinderFactory.getCRUDFinders().map(
                 finder -> {
-                    if (finder.isReadQuery(declaringType, nameAsString)) {
+                    if (finder.isReadQuery(declaringType, nameAsString, arguments)) {
                         return CRUDQueryType.READ;
                     }
-                    else if (finder.isWriteQuery(declaringType, nameAsString)) {
+                    else if (finder.isWriteQuery(declaringType, nameAsString, arguments)) {
                         return CRUDQueryType.WRITE;
+                    }
+                    else if (finder.isNamedQuery(declaringType, nameAsString, arguments)) {
+                        return CRUDQueryType.NAMED;
                     }
                     else
                         return null;
@@ -805,6 +816,8 @@ public class SymbolTable {
         callSite.setPublic(accessSpecifier.equals(AccessSpecifier.PUBLIC));
         callSite.setProtected(accessSpecifier.equals(AccessSpecifier.PROTECTED));
         callSite.setUnspecified(accessSpecifier.equals(AccessSpecifier.NONE));
+        callSite.setCrudOperation(crudOperation);
+        callSite.setCrudQuery(crudQuery);
         if (callExpr.getRange().isPresent()) {
             callSite.setStartLine(callExpr.getRange().get().begin.line);
             callSite.setStartColumn(callExpr.getRange().get().begin.column);

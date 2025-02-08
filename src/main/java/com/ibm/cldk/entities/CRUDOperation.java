@@ -1,6 +1,6 @@
 package com.ibm.cldk.entities;
 
-import com.ibm.cldk.analysis.utils.enums.CRUDOperationType;
+import com.ibm.cldk.javaee.utils.enums.CRUDOperationType;
 import com.ibm.cldk.utils.annotations.NotImplemented;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -204,7 +204,7 @@ public class BuildProject {
      * Downloads library dependency jars of the given project so that the jars can be used
      * for type resolution during symbol table creation.
      *
-     * @param projectPath Path to the project under analysis
+     * @param projectPath Path to the project under javaee
      * @return true if dependency download succeeds; false otherwise
      */
     public static boolean downloadLibraryDependencies(String projectPath, String projectRootPom) throws IOException {

@@ -4,8 +4,10 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Data
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class CallSite {
     private String methodName;
     private String receiverExpr;
@@ -21,6 +23,7 @@ public class CallSite {
     private boolean isStaticCall;
     private boolean isConstructorCall;
     private CRUDOperation crudOperation = null;
+    private CRUDQuery crudQuery = null;
     private int startLine;
     private int startColumn;
     private int endLine;

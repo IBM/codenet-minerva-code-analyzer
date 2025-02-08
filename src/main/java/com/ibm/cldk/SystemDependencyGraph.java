@@ -241,7 +241,7 @@ public class SystemDependencyGraph {
         Log.done("There were a total of " + cha.getNumberOfClasses() + " classes of which "
                 + AnalysisUtils.getNumberOfApplicationClasses(cha) + " are application classes.");
 
-        // Initialize analysis options
+        // Initialize javaee options
         AnalysisOptions options = new AnalysisOptions();
         Iterable<Entrypoint> entryPoints = AnalysisUtils.getEntryPoints(cha);
         options.setEntrypoints(entryPoints);
