@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+
 @Testcontainers
 @SuppressWarnings("resource")
 public class CodeAnalyzerIntegrationTest {
@@ -165,9 +166,32 @@ public class CodeAnalyzerIntegrationTest {
                 "--input=/test-applications/plantsbywebsphere",
                 "--analysis-level=1", "--verbose"
         );
-        Assertions.assertTrue(runCodeAnalyzerOnPlantsByWebsphere.getStdout().contains("\"query_type\": \"NAMED\""), "No entry point classes found");
-        Assertions.assertTrue(runCodeAnalyzerOnPlantsByWebsphere.getStdout().contains("\"operation_type\": \"READ\""), "No entry point methods found");
-        Assertions.assertTrue(runCodeAnalyzerOnPlantsByWebsphere.getStdout().contains("\"operation_type\": \"UPDATE\""), "No entry point methods found");
-        Assertions.assertTrue(runCodeAnalyzerOnPlantsByWebsphere.getStdout().contains("\"operation_type\": \"CREATE\""), "No entry point methods found");
+
+        String output = runCodeAnalyzerOnPlantsByWebsphere.getStdout();
+
+        Assertions.assertTrue(output.contains("\"query_type\": \"NAMED\""), "No entry point classes found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"READ\""), "No entry point methods found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"UPDATE\""), "No entry point methods found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"CREATE\""), "No entry point methods found");
+
+        // Convert the expected JSON structure into a string
+        String expectedCrudOperation =
+                "\"crud_operations\": [" +
+                        "{" +
+                            "\"line_number\": 115," +
+                            "\"operation_type\": \"READ\"," +
+                            "\"target_table\": null," +
+                            "\"involved_fields\": null," +
+                            "\"condition\": null," +
+                            "\"joined_tables\": null," +
+                            "\"technology\": null," +
+                            "\"is_batch_operation\": false" +
+                        "}]";
+
+        // Remove whitespace and newlines for a more robust comparison
+        String normalizedOutput = output.replaceAll("\\s+", "");
+        String normalizedExpectedCrudOperation = expectedCrudOperation.replaceAll("\\s+", "");
+
+        Assertions.assertTrue(normalizedOutput.contains(normalizedExpectedCrudOperation), "Expected CRUD operation JSON structure not found");
     }
 }

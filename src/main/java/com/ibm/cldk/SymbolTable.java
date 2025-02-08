@@ -418,6 +418,12 @@ public class SymbolTable {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList())
         );
+        callableNode.setCrudQueries(
+                callableNode.getCallSites().stream()
+                        .map(CallSite::getCrudQuery)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
         callableNode.setVariableDeclarations(getVariableDeclarations(body));
         callableNode.setCyclomaticComplexity(getCyclomaticComplexity(callableDecl));
 
@@ -697,20 +703,22 @@ public class SymbolTable {
             // Get argument string from the callsite
             List<String> listOfArgumentStrings = methodCallExpr.getArguments().stream().map(Expression::toString).collect(Collectors.toList());
             // Determine if this call site is potentially a CRUD operation.
-            CRUDOperation crudOperation = new CRUDOperation();
+            CRUDOperation crudOperation = null;
             Optional<CRUDOperationType> crudOperationType = findCRUDOperation(declaringType, methodCallExpr.getNameAsString());
             if (crudOperationType.isPresent()) {
                 // We found a CRUD operation, so we need to populate the details of the call site this CRUD operation.
                 int lineNumber = methodCallExpr.getRange().isPresent() ? methodCallExpr.getRange().get().begin.line : -1;
+                crudOperation = new CRUDOperation();
                 crudOperation.setLineNumber(lineNumber);
                 crudOperation.setOperationType(crudOperationType.get());
             }
             // Determine if this call site is potentially a CRUD query.
-            CRUDQuery crudQuery = new CRUDQuery();
+            CRUDQuery crudQuery = null;
             Optional<CRUDQueryType> crudQueryType = findCRUDQuery(declaringType, methodCallExpr.getNameAsString(), Optional.of(listOfArgumentStrings));
             if (crudQueryType.isPresent()) {
                 // We found a CRUD query, so we need to populate the details of the call site this CRUD query.
                 int lineNumber = methodCallExpr.getRange().isPresent() ? methodCallExpr.getRange().get().begin.line : -1;
+                crudQuery = new CRUDQuery();
                 crudQuery.setLineNumber(lineNumber);
                 crudQuery.setQueryType(crudQueryType.get());
                 crudQuery.setQueryArguments(listOfArgumentStrings);
