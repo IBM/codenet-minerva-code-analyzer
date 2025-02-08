@@ -412,6 +412,12 @@ public class SymbolTable {
 
         callableNode.setAccessedFields(getAccessedFields(body, classFields, typeName));
         callableNode.setCallSites(getCallSites(body));
+        callableNode.setCrudOperations(
+                callableNode.getCallSites().stream()
+                        .map(CallSite::getCrudOperation)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList())
+        );
         callableNode.setVariableDeclarations(getVariableDeclarations(body));
         callableNode.setCyclomaticComplexity(getCyclomaticComplexity(callableDecl));
 

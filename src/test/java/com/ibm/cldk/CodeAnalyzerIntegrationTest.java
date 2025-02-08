@@ -1,8 +1,5 @@
 package com.ibm.cldk;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -15,15 +12,8 @@ import org.testcontainers.utility.MountableFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.Map;
 import java.util.Properties;
-
-import static com.ibm.cldk.CodeAnalyzer.gson;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
 @SuppressWarnings("resource")
