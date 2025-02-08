@@ -1,5 +1,6 @@
 package com.ibm.cldk.entities;
 
+import com.ibm.cldk.analysis.utils.enums.CRUDOperationType;
 import com.ibm.cldk.utils.annotations.NotImplemented;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,24 +10,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotImplemented
 public class CRUDOperation {
-    public enum OperationType {
-        CREATE,
-        READ,
-        UPDATE,
-        DELETE,
-        UNKNOWN
-    }
-
-    private OperationType operationType;
-    private String targetTable;
-    private int lineNumber;
-    private int startPosition;
-    private int endPosition;
+    private int lineNumber = -1;
+    private CRUDOperationType operationType;
 
     @NotImplemented
-    private String operationString;
+    private String targetTable = null;
     @NotImplemented
     private List<String> involvedFields;
     @NotImplemented
@@ -37,4 +26,9 @@ public class CRUDOperation {
     private String technology;
     @NotImplemented
     private boolean isBatchOperation = false;
+
+    public CRUDOperation(int lineNumber, CRUDOperationType crudOperationType) {
+        this.lineNumber = lineNumber;
+        this.operationType = crudOperationType;
+    }
 }

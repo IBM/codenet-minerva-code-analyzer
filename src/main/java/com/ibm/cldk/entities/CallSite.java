@@ -2,6 +2,7 @@ package com.ibm.cldk.entities;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class CallSite {
     private boolean isUnspecified = false;
     private boolean isStaticCall;
     private boolean isConstructorCall;
-    private boolean isDatabase = false;
+    private CRUDOperation crudOperations = null;
     private int startLine;
     private int startColumn;
     private int endLine;

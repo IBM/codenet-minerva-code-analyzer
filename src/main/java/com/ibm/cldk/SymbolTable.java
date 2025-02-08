@@ -27,6 +27,10 @@ import com.github.javaparser.utils.ProjectRoot;
 import com.github.javaparser.utils.SourceRoot;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import com.ibm.cldk.analysis.CRUDFinderFactory;
+import com.ibm.cldk.analysis.interfaces.AbstractCRUDFinder;
+import com.ibm.cldk.analysis.utils.enums.CRUDOperationType;
+import com.ibm.cldk.analysis.utils.enums.CRUDQueryType;
 import com.ibm.cldk.entities.*;
 import com.ibm.cldk.utils.Log;
 import org.apache.commons.lang3.tuple.Pair;
@@ -420,16 +424,19 @@ public class SymbolTable {
         return isServletEntrypointMethod(callableDecl) || isJaxRsEntrypointMethod(callableDecl) || isSpringEntrypointMethod(callableDecl) | isStrutsEntryPointMethod(callableDecl);
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isServletEntrypointMethod(CallableDeclaration callableDecl) {
         return ((NodeList<Parameter>) callableDecl.getParameters()).stream()
                 .anyMatch(parameter -> parameter.getType().asString().contains("HttpServletRequest") ||
                         parameter.getType().asString().contains("HttpServletResponse"));
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isJaxRsEntrypointMethod(CallableDeclaration callableDecl) {
         return callableDecl.getAnnotations().stream().anyMatch(a -> a.toString().contains("POST") || a.toString().contains("PUT") || a.toString().contains("GET") || a.toString().contains("HEAD") || a.toString().contains("DELETE"));
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isSpringEntrypointMethod(CallableDeclaration callableDecl) {
         return callableDecl.getAnnotations().stream().anyMatch(a ->
                 a.toString().contains("GetMapping") ||
@@ -455,10 +462,11 @@ public class SymbolTable {
         );
     }
 
+    @SuppressWarnings("unchecked")
     private static boolean isStrutsEntryPointMethod(CallableDeclaration callableDecl) {
         // First check if this method is in a Struts Action class
         Optional<Node> parentNode = callableDecl.getParentNode();
-        if (!parentNode.isPresent() || !(parentNode.get() instanceof ClassOrInterfaceDeclaration)) {
+        if (parentNode.isEmpty() || !(parentNode.get() instanceof ClassOrInterfaceDeclaration)) {
             return false;
         }
 
@@ -631,6 +639,7 @@ public class SymbolTable {
      * @param callableBody callable to compute call-site information for
      * @return list of call sites
      */
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType"})
     private static List<CallSite> getCallSites(Optional<BlockStmt> callableBody) {
         List<CallSite> callSites = new ArrayList<>();
         if (callableBody.isEmpty()) {
@@ -680,8 +689,20 @@ public class SymbolTable {
             }
             // resolve arguments of the method call to types
             List<String> arguments = methodCallExpr.getArguments().stream().map(SymbolTable::resolveExpression).collect(Collectors.toList());
+
+            // Determine if this call site is potentially a CRUD operation.
+            CRUDOperation crudOperation = null;
+            Optional<CRUDOperationType> crudOperationType = findCRUDOperation(declaringType, methodCallExpr.getNameAsString());
+            if (crudOperationType.isPresent()) {
+                // We found a CRUD operation, so we need to populate the details of the call site this CRUD operation.
+                int lineNumber = methodCallExpr.getRange().isPresent() ? methodCallExpr.getRange().get().begin.line : -1;
+                crudOperation = new CRUDOperation(lineNumber, crudOperationType.get());
+            }
+            // Determine if this call site is potentially a CRUD query.
+            CRUDQuery crudQuery = null;
+            Optional<CRUDQueryType> crudQueryType = findCRUDQuery(declaringType, methodCallExpr.getNameAsString());
             // add a new call site object
-            callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType, arguments, returnType, calleeSignature, isStaticCall, false, accessSpecifier));
+            callSites.add(createCallSite(methodCallExpr, methodCallExpr.getNameAsString(), receiverName, declaringType, arguments, returnType, calleeSignature, isStaticCall, false, crudOperation, crudQuery, accessSpecifier));
         }
 
         for (ObjectCreationExpr objectCreationExpr : callableBody.get().findAll(ObjectCreationExpr.class)) {
@@ -700,10 +721,48 @@ public class SymbolTable {
             }
 
             // add a new call site object
-            callSites.add(createCallSite(objectCreationExpr, "<init>", objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "", instantiatedType, arguments, instantiatedType, calleeSignature, false, true, AccessSpecifier.NONE));
+            callSites.add(createCallSite(objectCreationExpr, "<init>", objectCreationExpr.getScope().isPresent() ? objectCreationExpr.getScope().get().toString() : "", instantiatedType, arguments, instantiatedType, calleeSignature, false, true, null, null, AccessSpecifier.NONE));
         }
 
         return callSites;
+    }
+
+    private static Optional<CRUDQueryType> findCRUDQuery(String declaringType, String nameAsString) {
+        return CRUDFinderFactory.getCRUDFinders().map(
+                finder -> {
+                    if (finder.isReadQuery(declaringType, nameAsString)) {
+                        return CRUDQueryType.READ;
+                    }
+                    else if (finder.isWriteQuery(declaringType, nameAsString)) {
+                        return CRUDQueryType.WRITE;
+                    }
+                    else
+                        return null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst();
+    }
+
+    private static Optional<CRUDOperationType> findCRUDOperation(String declaringType, String nameAsString) {
+        return CRUDFinderFactory.getCRUDFinders().map(
+                finder -> {
+                    if (finder.isCreateOperation(declaringType, nameAsString)) {
+                        return CRUDOperationType.CREATE;
+                    }
+                    else if (finder.isReadOperation(declaringType, nameAsString)) {
+                        return CRUDOperationType.READ;
+                    }
+                    else if (finder.isUpdateOperation(declaringType, nameAsString)) {
+                        return CRUDOperationType.UPDATE;
+                    }
+                    else if (finder.isDeleteOperation(declaringType, nameAsString)) {
+                        return CRUDOperationType.DELETE;
+                    }
+                    else
+                        return null;
+                })
+                .filter(Objects::nonNull)
+                .findFirst();
     }
 
     /**
@@ -719,7 +778,20 @@ public class SymbolTable {
      * @param isConstructorCall
      * @return
      */
-    private static CallSite createCallSite(Expression callExpr, String calleeName, String receiverExpr, String receiverType, List<String> arguments, String returnType, String calleeSignature, boolean isStaticCall, boolean isConstructorCall, AccessSpecifier accessSpecifier) {
+    private static CallSite createCallSite(
+            Expression callExpr,
+            String calleeName,
+            String receiverExpr,
+            String receiverType,
+            List<String> arguments,
+            String returnType,
+            String calleeSignature,
+            boolean isStaticCall,
+            boolean isConstructorCall,
+            CRUDOperation crudOperation,
+            CRUDQuery crudQuery,
+            AccessSpecifier accessSpecifier
+            ) {
         CallSite callSite = new CallSite();
         callSite.setMethodName(calleeName);
         callSite.setReceiverExpr(receiverExpr);

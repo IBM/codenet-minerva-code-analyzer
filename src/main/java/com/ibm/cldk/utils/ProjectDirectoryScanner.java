@@ -14,10 +14,13 @@ public class ProjectDirectoryScanner {
         Log.info("Finding *.class files in " + projectDir);
         if (Files.exists(projectDir)) {
             try (Stream<Path> paths = Files.walk(projectDir)) {
-                return paths
-                        .filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".class"))
-                        .filter(file -> !file.toAbsolutePath().toString().contains("test/resources/"))
-                        .filter(file -> !file.toAbsolutePath().toString().contains("main/resources/"))
+                return paths.filter(file -> !Files.isDirectory(file) && file.toString().endsWith(".class"))
+                        .filter(file -> {
+                            // Let's find the path relative to the project directory
+                            Path relativePath = projectDir.relativize(file.toAbsolutePath());
+                            String relativePathAsString = relativePath.toString().replace("\\", "/"); // Windows fix
+                            return !relativePathAsString.contains("test/resources/") && !relativePathAsString.contains("main/resources/");
+                        })
                         .collect(Collectors.toList());
             }
         }
