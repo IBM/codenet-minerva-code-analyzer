@@ -427,7 +427,7 @@ public class SymbolTable {
     private static boolean isServletEntrypointMethod(CallableDeclaration callableDecl) {
         return ((NodeList<Parameter>) callableDecl.getParameters()).stream()
                 .anyMatch(parameter -> parameter.getType().asString().contains("HttpServletRequest") ||
-                        parameter.getType().asString().contains("HttpServletResponse"));
+                        parameter.getType().asString().contains("HttpServletResponse")) && callableDecl.getAnnotations().stream().anyMatch(a -> a.toString().contains("Override"));
     }
 
     @SuppressWarnings("unchecked")
