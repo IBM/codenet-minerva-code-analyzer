@@ -20,7 +20,7 @@ public class CallSite {
     private boolean isUnspecified = false;
     private boolean isStaticCall;
     private boolean isConstructorCall;
-    private CRUDOperation crudOperations = null;
+    private CRUDOperation crudOperation = null;
     private int startLine;
     private int startColumn;
     private int endLine;
