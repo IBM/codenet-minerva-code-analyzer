@@ -2,7 +2,6 @@
 
 Native WALA implementation of source code analysis tool for Enterprise Java Applications.
 
-![example workflow](https://github.com/IBM/codenet-minerva-code-analyzer/actions/workflows/main.yml/badge.svg)
 ## 1. Prerequisites
 
 Before you begin, ensure you have met the following requirements:
