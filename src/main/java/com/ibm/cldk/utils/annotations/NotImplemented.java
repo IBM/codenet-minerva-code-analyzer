@@ -7,7 +7,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotImplemented {
     String value() default "";
-    String since() default "";
-    String issue() default "";
     String comment() default "";
 }

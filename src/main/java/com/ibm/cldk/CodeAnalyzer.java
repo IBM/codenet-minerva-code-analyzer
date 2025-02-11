@@ -91,6 +91,7 @@ public class CodeAnalyzer implements Runnable {
     public static Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .setPrettyPrinting()
+            .serializeNulls() // Fix for issue #108
             .disableHtmlEscaping()
             .create();
 

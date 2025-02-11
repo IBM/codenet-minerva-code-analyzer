@@ -1,8 +1,5 @@
 package com.ibm.cldk;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -15,15 +12,9 @@ import org.testcontainers.utility.MountableFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.Map;
 import java.util.Properties;
 
-import static com.ibm.cldk.CodeAnalyzer.gson;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
 @SuppressWarnings("resource")
@@ -59,6 +50,7 @@ public class CodeAnalyzerIntegrationTest {
                     BindMode.READ_WRITE)
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("build/libs")), "/opt/jars")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
+            .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/plantsbywebsphere")), "/test-applications/plantsbywebsphere")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test");
 
     @Container
@@ -69,7 +61,6 @@ public class CodeAnalyzerIntegrationTest {
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-corrupt-test")), "/test-applications/mvnw-corrupt-test")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/mvnw-working-test")), "/test-applications/mvnw-working-test")
             .withCopyFileToContainer(MountableFile.forHostPath(Paths.get(System.getProperty("user.dir")).resolve("src/test/resources/test-applications/daytrader8")), "/test-applications/daytrader8");
-
 
     @BeforeAll
     static void setUp() {
@@ -140,7 +131,7 @@ public class CodeAnalyzerIntegrationTest {
 
     @Test
     void corruptMavenShouldNotTerminateWithErrorWhenMavenIsNotPresentUnlessAnalysisLevel2() throws IOException, InterruptedException {
-        // When analysis level 2, we should get a Runtime Exception
+        // When javaee level 2, we should get a Runtime Exception
         var runCodeAnalyzer = container.execInContainer(
                 "java",
                 "-jar",
@@ -164,5 +155,50 @@ public class CodeAnalyzerIntegrationTest {
         );
         Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entrypoint_class\": true"), "No entry point classes found");
         Assertions.assertTrue(runCodeAnalyzerOnDaytrader8.getStdout().contains("\"is_entrypoint\": true"), "No entry point methods found");
+    }
+
+    @Test
+    void shouldBeAbleToDetectCRUDOperationsAndQueriesForPlantByWebsphere() throws Exception {
+        var runCodeAnalyzerOnPlantsByWebsphere = container.execInContainer(
+                "java",
+                "-jar",
+                String.format("/opt/jars/codeanalyzer-%s.jar", codeanalyzerVersion),
+                "--input=/test-applications/plantsbywebsphere",
+                "--analysis-level=1", "--verbose"
+        );
+
+        String output = runCodeAnalyzerOnPlantsByWebsphere.getStdout();
+
+        Assertions.assertTrue(output.contains("\"query_type\": \"NAMED\""), "No entry point classes found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"READ\""), "No entry point methods found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"UPDATE\""), "No entry point methods found");
+        Assertions.assertTrue(output.contains("\"operation_type\": \"CREATE\""), "No entry point methods found");
+
+        // Convert the expected JSON structure into a string
+        String expectedCrudOperation =
+                "\"crud_operations\": [" +
+                        "{" +
+                        "\"line_number\": 115," +
+                        "\"operation_type\": \"READ\"," +
+                        "\"target_table\": null," +
+                        "\"involved_columns\": null," +
+                        "\"condition\": null," +
+                        "\"joined_tables\": null" +
+                        "}]";
+
+        // Expected JSON for CRUD Queries
+        String expectedCrudQuery =
+                "\"crud_queries\": [" +
+                        "{" +
+                        "\"line_number\": 141,";
+
+        // Normalize the output and expected strings to ignore formatting differences
+        String normalizedOutput = output.replaceAll("\\s+", "");
+        String normalizedExpectedCrudOperation = expectedCrudOperation.replaceAll("\\s+", "");
+        String normalizedExpectedCrudQuery = expectedCrudQuery.replaceAll("\\s+", "");
+
+        // Assertions for both CRUD operations and queries
+        Assertions.assertTrue(normalizedOutput.contains(normalizedExpectedCrudOperation), "Expected CRUD operation JSON structure not found");
+        Assertions.assertTrue(normalizedOutput.contains(normalizedExpectedCrudQuery), "Expected CRUD query JSON structure not found");
     }
 }

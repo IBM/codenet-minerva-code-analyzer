@@ -1,7 +1,7 @@
 package com.ibm.cldk.entities;
 
+import com.ibm.cldk.javaee.utils.enums.CRUDOperationType;
 import com.ibm.cldk.utils.annotations.NotImplemented;
-import com.ibm.cldk.utils.annotations.Todo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,39 +10,16 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotImplemented
 public class CRUDOperation {
-    public enum OperationType {
-        CREATE,
-        READ,
-        UPDATE,
-        DELETE,
-        UNKNOWN
-    }
-
-    @Todo(comment = "Add more frameworks, and consider moving this outside because this may be generic.")
-    @NotImplemented
-    public enum JavaFramework {
-        JPA,
-        SPRING
-    }
-
-    private OperationType operationType;
-    private String targetTable;
-    private int lineNumber;
-    private int startPosition;
-    private int endPosition;
+    private int lineNumber = -1;
+    private CRUDOperationType operationType;
 
     @NotImplemented
-    private String operationString;
+    private String targetTable = null;
     @NotImplemented
-    private List<String> involvedFields;
+    private List<String> involvedColumns;
     @NotImplemented
     private String condition;
     @NotImplemented
     private List<String> joinedTables;
-    @NotImplemented
-    private JavaFramework framework;
-    @NotImplemented
-    private boolean isBatchOperation = false;
 }

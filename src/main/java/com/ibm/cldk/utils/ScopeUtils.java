@@ -43,23 +43,23 @@ public class ScopeUtils {
   public static String[] stdLibs;
 
   /**
-   * Create an analysis scope base on the input
+   * Create an javaee scope base on the input
    *
    * @param projectPath The root directory of the project to be analyzed.
-   * @return scope The created analysis scope
+   * @return scope The created javaee scope
    * @throws IOException the io exception
    */
   /**
-   * Create an analysis scope base on the input
+   * Create an javaee scope base on the input
    *
    * @param projectPath     The root directory of the project to be analyzed.
    * @param applicationDeps the application deps
-   * @return scope The created analysis scope
+   * @return scope The created javaee scope
    * @throws IOException the io exception
    */
   public static AnalysisScope createScope(String projectPath, String applicationDeps, String build)
       throws IOException {
-    Log.info("Create analysis scope.");
+    Log.info("Create javaee scope.");
     AnalysisScope scope = new JavaSourceAnalysisScope();
     addDefaultExclusions(scope);
 
@@ -88,7 +88,7 @@ public class ScopeUtils {
       Objects.requireNonNull(jarFilesStream(applicationDeps)).stream()
           .forEach(
               extraLibJar -> {
-                Log.info("-> Adding dependency " + extraLibJar + " to analysis scope.");
+                Log.info("-> Adding dependency " + extraLibJar + " to javaee scope.");
                 try {
                   scope.addToScope(ClassLoaderReference.Extension, new JarFile(extraLibJar.toAbsolutePath().toFile()));
                 } catch (IOException e) {

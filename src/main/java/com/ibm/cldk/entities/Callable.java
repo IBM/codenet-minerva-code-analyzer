@@ -25,7 +25,8 @@ public class Callable {
     private List<String> accessedFields;
     private List<CallSite> callSites;
     private List<VariableDeclaration> variableDeclarations;
+    private List<CRUDOperation> crudOperations = new ArrayList<>();
+    private List<CRUDQuery> crudQueries = new ArrayList<>();
     private int cyclomaticComplexity;
     private boolean isEntrypoint = false;
-    private List<CRUDOperation> crudOperations = null;
 }
