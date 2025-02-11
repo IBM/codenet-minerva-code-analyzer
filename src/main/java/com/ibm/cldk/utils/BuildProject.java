@@ -34,7 +34,7 @@ public class BuildProject {
     public static String getMavenCommand() {
         String mvnSystemCommand = Arrays.stream(System.getenv("PATH").split(System.getProperty("path.separator"))).map(path -> new File(path, System.getProperty("os.name").toLowerCase().contains("windows") ? "mvn.cmd" : "mvn")).filter(File::exists).findFirst().map(File::getAbsolutePath).orElse(null);
         File mvnWrapper = System.getProperty("os.name").toLowerCase().contains("windows") ? new File(projectRootPom, "mvnw.cmd") : new File(projectRootPom, "mvnw");
-        return commandExists(mvnWrapper).getKey() ? mvnWrapper.toString() : mvnSystemCommand;
+        return commandExists(mvnWrapper.getAbsoluteFile()).getKey() ? mvnWrapper.getAbsoluteFile().toString() : mvnSystemCommand;
     }
 
     /**
@@ -46,7 +46,7 @@ public class BuildProject {
         String gradleSystemCommand = Arrays.stream(System.getenv("PATH").split(System.getProperty("path.separator"))).map(path -> new File(path, System.getProperty("os.name").toLowerCase().contains("windows") ? "gradle.bat" : "gradle")).filter(File::exists).findFirst().map(File::getAbsolutePath).orElse(null);
         File gradleWrapper = System.getProperty("os.name").toLowerCase().contains("windows") ? new File(projectRootPom, "gradlew.bat") : new File(projectRootPom, "gradlew");
 
-        return commandExists(gradleWrapper).getKey() ? gradleWrapper.toString() : gradleSystemCommand;
+        return commandExists(gradleWrapper.getAbsoluteFile()).getKey() ? gradleWrapper.getAbsoluteFile().toString() : gradleSystemCommand;
     }
 
     public static Path tempInitScript;
