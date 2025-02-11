@@ -29,8 +29,16 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew clean fatJar
+      - name: Build and Test
+        id: build
+        continue-on-error: true  # Allow the workflow to continue if this fails
+        run: ./gradlew clean fatJar test
+
+      - name: Delete tag on failure
+        if: steps.build.outcome != 'success'
+        run: |
+          git push --delete origin ${GITHUB_REF#refs/tags/}
+          exit 1  # Fail the workflow
 
       - name: Build Changelog
         id: gen_changelog
