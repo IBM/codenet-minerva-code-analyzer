@@ -55,10 +55,6 @@ public class TradeDirectDBUtils implements TradeDB {
   // For Wildfly - add java:/ to this resource.
   
   @Resource(lookup = "jdbc/TradeDataSource")
-<<<<<<< HEAD
-=======
-  //@Resource(lookup = "java:/jdbc/TradeDataSource")
->>>>>>> 1.X.X
   private DataSource datasource;
 
   @Inject 
@@ -255,10 +251,6 @@ public class TradeDirectDBUtils implements TradeDB {
     try {
 
       conn = datasource.getConnection();
-<<<<<<< HEAD
-=======
-      conn.setAutoCommit(false);
->>>>>>> 1.X.X
       PreparedStatement stmt = null;
       ResultSet rs = null;
 

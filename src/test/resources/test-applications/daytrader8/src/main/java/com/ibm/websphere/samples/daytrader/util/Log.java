@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
  * (C) Copyright IBM Corporation 2015.
-=======
- * (C) Copyright IBM Corporation 2015, 2022.
->>>>>>> 1.X.X
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,11 +155,4 @@ public class Log {
   public static boolean doTrace() {
     return log.isLoggable(Level.FINE);
   }
-<<<<<<< HEAD
-=======
-  
-  public static void warning(String message) {
-    log.log(Level.WARNING, message);
-  }
->>>>>>> 1.X.X
 }

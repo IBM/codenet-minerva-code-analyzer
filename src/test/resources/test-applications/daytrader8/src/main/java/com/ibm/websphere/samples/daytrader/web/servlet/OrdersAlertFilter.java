@@ -1,9 +1,5 @@
 /**
-<<<<<<< HEAD
  * (C) Copyright IBM Corporation 2015.
-=======
- * (C) Copyright IBM Corporation 2015, 2022.
->>>>>>> 1.X.X
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.ibm.websphere.samples.daytrader.interfaces.Trace;
 import com.ibm.websphere.samples.daytrader.interfaces.TradeServices;
-<<<<<<< HEAD
-=======
-import com.ibm.websphere.samples.daytrader.util.Diagnostics;
->>>>>>> 1.X.X
 import com.ibm.websphere.samples.daytrader.util.Log;
 import com.ibm.websphere.samples.daytrader.util.TradeConfig;
 import com.ibm.websphere.samples.daytrader.util.TradeRunTimeModeLiteral;
@@ -47,11 +39,7 @@ import com.ibm.websphere.samples.daytrader.util.TradeRunTimeModeLiteral;
 @WebFilter(filterName = "OrdersAlertFilter", urlPatterns = "/app")
 @Trace
 public class OrdersAlertFilter implements Filter {
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> 1.X.X
   private TradeServices tradeAction;
 
   @Inject 
@@ -110,11 +98,6 @@ public class OrdersAlertFilter implements Filter {
         Log.error(e, "OrdersAlertFilter - Error checking for closedOrders");
       }
     }
-<<<<<<< HEAD
-=======
-    
-    Diagnostics.checkDiagnostics();
->>>>>>> 1.X.X
 
     chain.doFilter(req, resp/* wrapper */);
   }

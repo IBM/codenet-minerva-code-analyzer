@@ -67,22 +67,14 @@ public class TradeWebContextListener implements ServletContextListener {
         } else {
           TradeConfig.setMAX_USERS(Integer.parseInt(prop.getProperty("maxUsers")));
         }
-<<<<<<< HEAD
         System.out.print("MAX_USERS = " +  prop.getProperty("maxUsers") + " users");
-=======
-        System.out.print("MAX_USERS = " +  TradeConfig.getMAX_USERS() + " users");
->>>>>>> 1.X.X
         
         if (System.getenv("MAX_QUOTES") != null) {
           TradeConfig.setMAX_QUOTES(Integer.parseInt(System.getenv("MAX_QUOTES")));
         } else {
           TradeConfig.setMAX_QUOTES(Integer.parseInt(prop.getProperty("maxQuotes")));
         }
-<<<<<<< HEAD
         System.out.print("MAX_QUOTES = " +  prop.getProperty("maxQuotes") + " quotes");
-=======
-        System.out.print("MAX_QUOTES = " +  TradeConfig.getMAX_QUOTES() + " quotes");
->>>>>>> 1.X.X
        
         if (System.getenv("PUBLISH_QUOTES") != null) {
           TradeConfig.setPublishQuotePriceChange(Boolean.parseBoolean(System.getenv("PUBLISH_QUOTES")));

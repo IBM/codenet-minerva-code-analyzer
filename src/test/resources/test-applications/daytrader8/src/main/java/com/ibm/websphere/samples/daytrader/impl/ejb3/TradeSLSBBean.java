@@ -72,7 +72,6 @@ import com.ibm.websphere.samples.daytrader.util.TradeConfig;
 public class TradeSLSBBean implements TradeServices {
 
     // For Wildfly - add java:/ to these resource names.
-<<<<<<< HEAD
 
     @Resource(name = "jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
     private QueueConnectionFactory queueConnectionFactory;
@@ -84,22 +83,6 @@ public class TradeSLSBBean implements TradeServices {
     private Topic tradeStreamerTopic;
 
     @Resource(lookup = "jms/TradeBrokerQueue")
-=======
-    @Resource(name = "jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-    //@Resource(name = "java:/jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-    private QueueConnectionFactory queueConnectionFactory;
-
-    @Resource(name = "jms/TopicConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-    //@Resource(name = "java:/jms/TopicConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-    private TopicConnectionFactory topicConnectionFactory;
-
-    @Resource(lookup = "jms/TradeStreamerTopic")
-    //@Resource(lookup = "java:/jms/TradeStreamerTopic")
-    private Topic tradeStreamerTopic;
-
-    @Resource(lookup = "jms/TradeBrokerQueue")
-    //@Resource(lookup = "java:/jms/TradeBrokerQueue")
->>>>>>> 1.X.X
     private Queue tradeBrokerQueue;
 
     @PersistenceContext
@@ -585,21 +568,6 @@ public class TradeSLSBBean implements TradeServices {
         try (JMSContext queueContext = queueConnectionFactory.createContext();) {
             // Get a Quote and send a JMS message in a 2-phase commit
             quoteData = entityManager.find(QuoteDataBean.class, symbol);
-<<<<<<< HEAD
-=======
-            
-            double sharesTraded = (Math.random() * 100) + 1 ;
-            BigDecimal oldPrice = quoteData.getPrice();
-            BigDecimal openPrice = quoteData.getOpen();
-            BigDecimal changeFactor = new BigDecimal (Math.random() * 100);
-
-            BigDecimal newPrice = changeFactor.multiply(oldPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
-
-            quoteData.setPrice(newPrice);
-            quoteData.setChange(newPrice.subtract(openPrice).doubleValue());
-            quoteData.setVolume(quoteData.getVolume() + sharesTraded);
-            entityManager.merge(quoteData);
->>>>>>> 1.X.X
 
             TextMessage message = queueContext.createTextMessage();
 

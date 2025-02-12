@@ -98,7 +98,6 @@ public class TradeDirect implements TradeServices, Serializable {
   private boolean inSession = false;
 
   // For Wildfly - add java:/ to these resource names.
-<<<<<<< HEAD
   
   @Resource(name = "jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
   private QueueConnectionFactory queueConnectionFactory;
@@ -113,27 +112,6 @@ public class TradeDirect implements TradeServices, Serializable {
   private Queue tradeBrokerQueue;
 
   @Resource(lookup = "jdbc/TradeDataSource")
-=======
-
-  @Resource(name = "jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-  //@Resource(name = "java:/jms/QueueConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-  private QueueConnectionFactory queueConnectionFactory;
-
-  @Resource(name = "jms/TopicConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-  //@Resource(name = "java:/jms/TopicConnectionFactory", authenticationType = javax.annotation.Resource.AuthenticationType.APPLICATION)
-  private TopicConnectionFactory topicConnectionFactory;
-
-  @Resource(lookup = "jms/TradeStreamerTopic")
-  //@Resource(lookup = "java:/jms/TradeStreamerTopic")
-  private Topic tradeStreamerTopic;
-
-  @Resource(lookup = "jms/TradeBrokerQueue")
-  //@Resource(lookup = "java:/jms/TradeBrokerQueue")
-  private Queue tradeBrokerQueue;
-
-  @Resource(lookup = "jdbc/TradeDataSource")
-  //@Resource(lookup = "java:/jdbc/TradeDataSource")
->>>>>>> 1.X.X
   private DataSource datasource;
 
   @Resource
