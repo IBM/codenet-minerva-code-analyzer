@@ -10,10 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
 
 import static com.ibm.cldk.utils.ProjectDirectoryScanner.classFilesStream;
@@ -272,8 +270,14 @@ public class BuildProject {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
                 if (libDownloadPath.toFile().getAbsoluteFile().exists()) {
-                    Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
-                    Files.delete(libDownloadPath);
+                    try (Stream<Path> paths = Files.walk(libDownloadPath)) {
+                        paths.sorted(Comparator.reverseOrder())  // Delete files first, then directories
+                            .map(Path::toFile)
+                            .forEach(file -> {
+                                if (!file.delete())
+                                    Log.warn("Failed to delete: " + file.getAbsolutePath());
+                        });
+                    }
                 }
             } catch (IOException e) {
                 Log.warn("Unable to fully delete library dependency directory: " + e.getMessage());

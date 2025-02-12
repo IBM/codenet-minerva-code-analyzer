@@ -251,7 +251,7 @@ public class SystemDependencyGraph {
         options.setReflectionOptions(ReflectionOptions.NONE);
         IAnalysisCacheView cache = new AnalysisCacheImpl(AstIRFactory.makeDefaultFactory(),
                 options.getSSAOptions());
-        Language java = new JavaLanguage();
+
         // Build call graph
         Log.info("Building call graph.");
 
@@ -262,9 +262,9 @@ public class SystemDependencyGraph {
         CallGraph callGraph;
         CallGraphBuilder<InstanceKey> builder;
         try {
-            System.setOut(new PrintStream(new NullOutputStream()));
-            System.setErr(new PrintStream(new NullOutputStream()));
-            builder = Util.makeVanillaZeroOneCFABuilder(java, options, cache, cha);
+            System.setOut(new PrintStream(NullOutputStream.INSTANCE));
+            System.setErr(new PrintStream(NullOutputStream.INSTANCE));
+            builder = Util.makeVanillaZeroOneCFABuilder(new JavaLanguage(), options, cache, cha);
             callGraph = builder.makeCallGraph(options, null);
         } finally {
             System.setOut(originalOut);
