@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+        with:
+          ref: 1.X.X
 
       - name: Set up JDK 11 from GraalVM
         run: |
