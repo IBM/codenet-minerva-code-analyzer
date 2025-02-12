@@ -24,7 +24,11 @@
 		<httpOptions maxKeepAliveRequests="-1"/>
 	</httpEndpoint>
 
+<<<<<<< HEAD
 	<webApplication id="daytrader8" location="io.openliberty.sample.daytrader8.war" name="daytrader8" context-root="${env.contextRoot}"/>
+=======
+	<webApplication id="daytrader8" location="io.openliberty.sample.daytrader8.war" name="daytrader8" context-root="${contextRoot}"/>
+>>>>>>> 1.X.X
 
         <keyStore id="defaultKeyStore" password="yourPassword" />
 
@@ -34,11 +38,19 @@
         <library id="DB2JCCLib" filesetRef="DB2JCCFileset"/>
         <fileset id="DB2JCCFileset" dir="${shared.resource.dir}/db2jars" includes="db2jcc4.jar"/>
 
+<<<<<<< HEAD
         <authData id="TradeDataSourceAuthData" user="${env.dbUser}" password="${env.dbPass}"/>
         <authData id="TradeAdminAuthData" user="${env.dbUser}" password="${env.dbPass}"/>
 
         <dataSource jndiName="jdbc/TradeDataSource" jdbcDriverRef="DB2JCC" id="DefaultDataSource" connectionManagerRef="conMgr1" statementCacheSize="60" isolationLevel="TRANSACTION_READ_COMMITTED" type="javax.sql.ConnectionPoolDataSource">
           <properties serverName="${env.tradeDbHost}" portNumber="${env.tradeDbPort}" databaseName="${env.tradeDbName}" driverType="4" user="${env.dbUser}" password="${env.dbPass}"/>
+=======
+        <authData id="TradeDataSourceAuthData" user="${dbUser}" password="${dbPass}"/>
+        <authData id="TradeAdminAuthData" user="${dbUser}" password="${dbPass}"/>
+
+        <dataSource jndiName="jdbc/TradeDataSource" jdbcDriverRef="DB2JCC" id="DefaultDataSource" connectionManagerRef="conMgr1" statementCacheSize="60" isolationLevel="TRANSACTION_READ_COMMITTED" type="javax.sql.ConnectionPoolDataSource">
+          <properties serverName="${tradeDbHost}" portNumber="${tradeDbPort}" databaseName="${tradeDbName}" driverType="4" user="${dbUser}" password="${dbPass}"/>
+>>>>>>> 1.X.X
         </dataSource>
 
 	<messagingEngine id="defaultME">
