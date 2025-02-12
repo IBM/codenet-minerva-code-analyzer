@@ -20,6 +20,8 @@ import com.ibm.cldk.utils.ScopeUtils;
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.CallSiteReference;
+import com.ibm.wala.classLoader.JavaLanguage;
+import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.impl.Util;
@@ -249,7 +251,7 @@ public class SystemDependencyGraph {
         options.setReflectionOptions(ReflectionOptions.NONE);
         IAnalysisCacheView cache = new AnalysisCacheImpl(AstIRFactory.makeDefaultFactory(),
                 options.getSSAOptions());
-
+        Language java = new JavaLanguage();
         // Build call graph
         Log.info("Building call graph.");
 
@@ -262,7 +264,7 @@ public class SystemDependencyGraph {
         try {
             System.setOut(new PrintStream(new NullOutputStream()));
             System.setErr(new PrintStream(new NullOutputStream()));
-            builder = Util.makeRTABuilder(options, cache, cha);
+            builder = Util.makeVanillaZeroOneCFABuilder(java, options, cache, cha);
             callGraph = builder.makeCallGraph(options, null);
         } finally {
             System.setOut(originalOut);

@@ -271,8 +271,10 @@ public class BuildProject {
         if (libDownloadPath != null) {
             Log.info("Cleaning up library dependency directory: " + libDownloadPath);
             try {
-                Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
-                Files.delete(libDownloadPath);
+                if (libDownloadPath.toFile().getAbsoluteFile().exists()) {
+                    Files.walk(libDownloadPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
+                    Files.delete(libDownloadPath);
+                }
             } catch (IOException e) {
                 Log.warn("Unable to fully delete library dependency directory: " + e.getMessage());
             }
