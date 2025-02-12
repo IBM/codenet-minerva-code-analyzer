@@ -159,13 +159,13 @@ public class BuildProject {
     }
 
     private static boolean buildProject(String projectPath, String build) {
-        File pomFile = new File(projectPath, "pom.xml");
+        File pomFile = new File(String.valueOf(Paths.get(projectPath).toAbsolutePath()), "pom.xml");
         if (build == null) {
             return true;
         } else if (build.equals("auto")) {
             if (pomFile.exists()) {
                 Log.info("Found pom.xml in the project directory. Using Maven to build the project.");
-                return mavenBuild(projectPath); // Use Maven if pom.xml exists
+                return mavenBuild(Paths.get(projectPath).toAbsolutePath().toString()); // Use Maven if pom.xml exists
             } else {
                 Log.info("Did not find a pom.xml in the project directory. Using Gradle to build the project.");
                 return gradleBuild(projectPath); // Otherwise, use Gradle
@@ -211,7 +211,7 @@ public class BuildProject {
         // created download dir if it does not exist
         String projectRoot = projectRootPom != null ? projectRootPom : projectPath;
 
-        File pomFile = new File(projectRoot, "pom.xml");
+        File pomFile = new File((new File(projectRoot)).getAbsoluteFile(), "pom.xml");
         if (pomFile.exists()) {
             libDownloadPath = Paths.get(projectPath, "target", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
             if (mkLibDepDirs(projectPath))
@@ -231,7 +231,7 @@ public class BuildProject {
                         ));
             }
             Log.info("Found pom.xml in the project directory. Using Maven to download dependencies.");
-            String[] mavenCommand = {MAVEN_CMD, "--no-transfer-progress", "-f", Paths.get(projectRoot, "pom.xml").toString(), "dependency:copy-dependencies", "-DoutputDirectory=" + libDownloadPath.toString()};
+            String[] mavenCommand = {MAVEN_CMD, "--no-transfer-progress", "-f", Paths.get(projectRoot, "pom.xml").toAbsolutePath().toString(), "dependency:copy-dependencies", "-DoutputDirectory=" + libDownloadPath.toString()};
             return buildWithTool(mavenCommand);
         } else if (new File(projectRoot, "build.gradle").exists() || new File(projectRoot, "build.gradle.kts").exists()) {
             libDownloadPath = Paths.get(projectPath, "build", LIB_DEPS_DOWNLOAD_DIR).toAbsolutePath();
