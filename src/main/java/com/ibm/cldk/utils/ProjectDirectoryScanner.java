@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class ProjectDirectoryScanner {
     public static List<Path> classFilesStream(String projectPath) throws IOException {
-        Path projectDir = Paths.get(projectPath);
+        Path projectDir = Paths.get(projectPath).toAbsolutePath();
         Log.info("Finding *.class files in " + projectDir);
         if (Files.exists(projectDir)) {
             try (Stream<Path> paths = Files.walk(projectDir)) {

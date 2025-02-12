@@ -20,6 +20,8 @@ import com.ibm.cldk.utils.ScopeUtils;
 import com.ibm.wala.cast.ir.ssa.AstIRFactory;
 import com.ibm.wala.cast.java.translator.jdt.ecj.ECJClassLoaderFactory;
 import com.ibm.wala.classLoader.CallSiteReference;
+import com.ibm.wala.classLoader.JavaLanguage;
+import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.impl.Util;
@@ -260,9 +262,9 @@ public class SystemDependencyGraph {
         CallGraph callGraph;
         CallGraphBuilder<InstanceKey> builder;
         try {
-            System.setOut(new PrintStream(new NullOutputStream()));
-            System.setErr(new PrintStream(new NullOutputStream()));
-            builder = Util.makeRTABuilder(options, cache, cha);
+            System.setOut(new PrintStream(NullOutputStream.INSTANCE));
+            System.setErr(new PrintStream(NullOutputStream.INSTANCE));
+            builder = Util.makeVanillaZeroOneCFABuilder(new JavaLanguage(), options, cache, cha);
             callGraph = builder.makeCallGraph(options, null);
         } finally {
             System.setOut(originalOut);
