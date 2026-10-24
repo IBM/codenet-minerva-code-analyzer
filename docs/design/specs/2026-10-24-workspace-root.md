@@ -1,6 +1,6 @@
 # `--workspace-root`: repo-relative file keys
 
-**Status:** accepted · 2026-10-24 · tracks _(issue to be filed)_
+**Status:** accepted · 2026-10-24 · tracks [#274](https://github.com/codellm-devkit/codeanalyzer-java/issues/274)
 
 ## Problem
 
