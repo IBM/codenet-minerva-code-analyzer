@@ -146,6 +146,11 @@ public class CodeAnalyzer implements Runnable {
     // values between CommandLine instances in the same JVM. New flags do not add to that.
     private String schema = "v2";
 
+    @Option(names = {
+            "--workspace-root" }, description = "Directory that file keys, module ids and artifact ids are "
+                    + "relative to (default: --input). Must contain --input. Not supported with --schema v1.")
+    private String workspaceRoot;
+
     @Option(names = {"-c",
             "--cache-dir" }, description = "Directory holding the incremental analysis cache. When set, "
                     + "unchanged files are reused from analysis_cache.json instead of being reparsed.")
@@ -260,6 +265,11 @@ public class CodeAnalyzer implements Runnable {
         if (isV2Schema()) {
             analyzeV2();
             return;
+        }
+        if (workspaceRoot != null) {
+            // v1 keys are absolute paths, so there is nothing for a workspace root to relativize.
+            throw new ParameterException(spec.commandLine(),
+                    "error: --workspace-root is not supported with --schema v1");
         }
 
         JsonObject combinedJsonObject = new JsonObject();
@@ -399,9 +409,11 @@ public class CodeAnalyzer implements Runnable {
      * which {@code --artifact-text}/{@code --artifact-text-max-bytes} may have emptied or truncated —
      * delegates to {@link DependencyView#readFromDisk} rather than re-reading the file itself, so that
      * from-disk logic exists exactly once in this codebase.
+     *
+     * @param keyRoot the directory artifact paths are relative to (the workspace root, else --input)
      */
-    private static String readFully(JArtifact artifact) {
-        return DependencyView.readFromDisk(Paths.get(input), artifact.getPath());
+    private static String readFully(Path keyRoot, JArtifact artifact) {
+        return DependencyView.readFromDisk(keyRoot, artifact.getPath());
     }
 
     /**
@@ -455,6 +467,15 @@ public class CodeAnalyzer implements Runnable {
         if (input == null) {
             throw new ParameterException(spec.commandLine(), "error: --input is required");
         }
+        // What every emitted file key, module id and artifact id is relative to. Discovery, builds and
+        // dependency download still run against --input; only the key changes.
+        Path inputRoot = Paths.get(input).toAbsolutePath().normalize();
+        Path keyRoot = workspaceRoot == null ? inputRoot : Paths.get(workspaceRoot).toAbsolutePath().normalize();
+        if (!inputRoot.startsWith(keyRoot)) {
+            // Relativizing would yield `..` keys, which the schema forbids (relative, never absolute or `..`).
+            throw new ParameterException(spec.commandLine(),
+                    "error: --input " + inputRoot + " is not inside --workspace-root " + keyRoot);
+        }
 
         String application = appName != null && !appName.isBlank()
                 ? appName
@@ -497,7 +518,7 @@ public class CodeAnalyzer implements Runnable {
         List<String> degraded = new ArrayList<>();
         try {
             modules = L1Extractor.extractAll(
-                    Paths.get(input), application, dependencyDir, cached,
+                    Paths.get(input), keyRoot, application, dependencyDir, cached,
                     analysisLevel, graphFieldDepth, l3Engine, entrypointReport);
             // The WALA L3 engine needs the RTA build; --no-rta suppresses it, so a level-3 wala run with
             // --no-rta would silently carry no overlays. Warn rather than degrade without a signal.
@@ -567,13 +588,13 @@ public class CodeAnalyzer implements Runnable {
         // -- but unlike them it is L1 data and runs at EVERY analysis level, so it is computed here,
         // ahead of the level gate, rather than inside either branch of it.
         Map<String, JArtifact> artifacts =
-                ArtifactDiscovery.discover(Paths.get(input), application, artifactText, artifactTextMaxBytes);
-        List<JDependency> dependencies = DependencyView.build(Paths.get(input), artifacts);
+                ArtifactDiscovery.discover(inputRoot, keyRoot, application, artifactText, artifactTextMaxBytes);
+        List<JDependency> dependencies = DependencyView.build(keyRoot, artifacts);
         for (JArtifact a : artifacts.values()) {
             if (ConfigKeys.isEligible(a)) {
                 // Re-read from disk: `source` may be truncated or suppressed, and extraction
                 // must not silently degrade with a capture flag.
-                ConfigKeys.Result r = ConfigKeys.extract(a, readFully(a), artifactText);
+                ConfigKeys.Result r = ConfigKeys.extract(a, readFully(keyRoot, a), artifactText);
                 a.setConfigKeys(r.keys);
                 // A pre-existing "partial" from the dependency pass is never overwritten.
                 if (!r.ok) {

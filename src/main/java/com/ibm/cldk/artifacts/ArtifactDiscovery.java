@@ -136,7 +136,20 @@ public final class ArtifactDiscovery {
      */
     public static Map<String, JArtifact> discover(
             Path projectDir, String appName, boolean captureText, int textMaxBytes) throws IOException {
+        return discover(projectDir, projectDir, appName, captureText, textMaxBytes);
+    }
+
+    /**
+     * As above, with each artifact's key, {@code path} and id relative to {@code keyRoot} rather than
+     * {@code projectDir} — {@code --workspace-root}. Ignore rules and classification still see the
+     * {@code projectDir}-relative path, so a rule like {@code gradle/libs.versions.toml} matches the
+     * same files whatever the key root is. {@code projectDir} must be {@code keyRoot} or inside it.
+     */
+    public static Map<String, JArtifact> discover(
+            Path projectDir, Path keyRoot, String appName, boolean captureText, int textMaxBytes)
+            throws IOException {
         Path root = projectDir.toAbsolutePath().normalize();
+        Path keyBase = keyRoot.toAbsolutePath().normalize();
         List<Path> files;
         try (Stream<Path> walk = Files.walk(root)) {
             files = walk.filter(Files::isRegularFile).sorted().collect(Collectors.toList());
@@ -172,9 +185,10 @@ public final class ArtifactDiscovery {
                 roles = (!name.contains(".") && text.startsWith("#!")) ? List.of("script") : List.of("unknown");
             }
 
+            String keyPosix = keyBase.relativize(file).toString().replace('\\', '/');
             JArtifact artifact = new JArtifact();
-            artifact.setId(CanId.artifactId(appName, relPosix));
-            artifact.setPath(relPosix);
+            artifact.setId(CanId.artifactId(appName, keyPosix));
+            artifact.setPath(keyPosix);
             artifact.setFormat(format);
             artifact.setRoles(roles);
             // sha256/sizeBytes always describe the whole file, independent of capture/truncation
@@ -192,7 +206,7 @@ public final class ArtifactDiscovery {
                 }
             }
 
-            artifacts.put(relPosix, artifact);
+            artifacts.put(keyPosix, artifact);
         }
         return artifacts;
     }

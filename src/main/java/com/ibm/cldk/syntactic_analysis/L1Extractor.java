@@ -121,6 +121,19 @@ public final class L1Extractor {
             Path projectRoot, String appName, Path dependencyDir, Map<String, JModule> cached,
             int analysisLevel, int graphFieldDepth, String l3Engine, JEntrypointReport entrypointReport)
             throws IOException {
+        return extractAll(projectRoot, projectRoot, appName, dependencyDir, cached, analysisLevel,
+                graphFieldDepth, l3Engine, entrypointReport);
+    }
+
+    /**
+     * As above, with file keys (and so every module id below them) relative to {@code keyRoot} rather
+     * than {@code projectRoot} — {@code --workspace-root}. Source discovery still runs over
+     * {@code projectRoot}, which the caller guarantees is {@code keyRoot} or inside it.
+     */
+    public static Map<String, JModule> extractAll(
+            Path projectRoot, Path keyRoot, String appName, Path dependencyDir, Map<String, JModule> cached,
+            int analysisLevel, int graphFieldDepth, String l3Engine, JEntrypointReport entrypointReport)
+            throws IOException {
         // JavaParser's collection strategy silently finds zero source roots for a path with a `.`
         // element (`-i .` arrives here as exactly that), so normalize before discovery.
         projectRoot = projectRoot.toAbsolutePath().normalize();
@@ -145,7 +158,7 @@ public final class L1Extractor {
         int reused = 0;
         for (SourceRoot sourceRoot : sourceRoots) {
             for (Path path : javaFilesUnder(sourceRoot.getRoot())) {
-                String fileKey = fileKey(projectRoot, path);
+                String fileKey = fileKey(keyRoot, path);
                 // Read the file's own text rather than printing the AST: `span.bytes` must index the
                 // real file, byte for byte.
                 String source = Files.readString(path, StandardCharsets.UTF_8);
@@ -249,9 +262,9 @@ public final class L1Extractor {
         return solver;
     }
 
-    /** The {@code symbol_table} key: path relative to the project root, always {@code /}-separated. */
-    private static String fileKey(Path projectRoot, Path file) {
-        Path relative = projectRoot.toAbsolutePath().normalize().relativize(file.toAbsolutePath().normalize());
+    /** The {@code symbol_table} key: path relative to the key root, always {@code /}-separated. */
+    private static String fileKey(Path keyRoot, Path file) {
+        Path relative = keyRoot.toAbsolutePath().normalize().relativize(file.toAbsolutePath().normalize());
         return relative.toString().replace('\\', '/');
     }
 

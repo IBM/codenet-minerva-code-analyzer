@@ -32,6 +32,17 @@ class CanIdTest {
     }
 
     @Test
+    void moduleId_keepsARepoRelativeKeyWhole() {
+        // --workspace-root keys carry the path from the repository root; the leading-[./] strip must
+        // only drop a `./`, never eat into the key's own first segment.
+        String app = CanId.applicationId("myapp");
+        assertEquals("can://myapp/java/services/app/src/Foo.java",
+                CanId.moduleId(app, "services/app/src/Foo.java"));
+        assertEquals("can://myapp/java/services/app/src/Foo.java",
+                CanId.moduleId(app, "./services/app/src/Foo.java"));
+    }
+
+    @Test
     void childId_appendsSegmentWithSlash() {
         assertEquals(
                 "can://myapp/java/src/Foo.java/com.example.Foo",

@@ -791,4 +791,124 @@ class CodeAnalyzerV2CliTest {
         assertEquals(1, rows, "one J_DISPATCHES_TO row: the resolved forward, and not the unresolved one");
         assertTrue(script.contains("via: 'forward'"), "the row carries its mechanism");
     }
+
+    // ---- --workspace-root -----------------------------------------------------------------------
+
+    /** Every key in {@code keys} is repo-relative under {@code prefix}: never absolute, never {@code ..}. */
+    private static void assertRepoRelative(Set<String> keys, String prefix) {
+        assertFalse(keys.isEmpty(), "precondition: something was emitted");
+        for (String key : keys) {
+            assertTrue(key.startsWith(prefix), "expected the " + prefix + " prefix, got: " + key);
+            assertFalse(key.startsWith("/") || key.contains(".."), "keys stay relative: " + key);
+        }
+    }
+
+    @Test
+    void workspaceRootMakesSymbolTableKeysAndIdsRepoRelative(@TempDir Path tmp) throws IOException {
+        Path repo = tmp.resolve("repo");
+        Path in = project(repo.resolve("services/app"));
+        Path out = tmp.resolve("out");
+        assertEquals(0, run("-i", in.toString(), "-o", out.toString(), "-a", "2",
+                "--workspace-root", repo.toString(), "--app-name", "widgets"));
+
+        JsonObject app = application(out);
+        assertEquals(CanId.applicationId("widgets"), app.get("id").getAsString(),
+                "the app segment does not move with the workspace root");
+        JsonObject symbolTable = app.getAsJsonObject("symbol_table");
+        assertRepoRelative(symbolTable.keySet(), "services/app/");
+        String key = "services/app/src/main/java/com/example/Widget.java";
+        assertTrue(symbolTable.has(key), "got: " + symbolTable.keySet());
+        assertEquals(CanId.moduleId(CanId.applicationId("widgets"), key),
+                symbolTable.getAsJsonObject(key).get("id").getAsString());
+
+        String moduleId = CanId.moduleId(CanId.applicationId("widgets"), key);
+        JsonArray callGraph = app.getAsJsonArray("call_graph");
+        assertFalse(callGraph.isEmpty(), "precondition: size() -> count() is an in-project edge");
+        for (JsonElement e : callGraph) {
+            assertTrue(e.getAsJsonObject().get("src").getAsString().startsWith(moduleId + "/"),
+                    "call-graph ids carry the repo-relative module id: " + e);
+        }
+        assertConformsToV2Schema(out);
+    }
+
+    @Test
+    void workspaceRootCarriesIntoLevelThreeOverlayIds(@TempDir Path tmp) throws IOException {
+        Path repo = tmp.resolve("repo");
+        Path in = project(repo.resolve("services/app"));
+        Path out = tmp.resolve("out");
+        assertEquals(0, run("-i", in.toString(), "-o", out.toString(), "-a", "3",
+                "--workspace-root", repo.toString(), "--app-name", "widgets"));
+
+        String moduleId = CanId.moduleId(CanId.applicationId("widgets"),
+                "services/app/src/main/java/com/example/Widget.java");
+        String json = Files.readString(out.resolve("analysis.json"));
+        assertTrue(json.contains("\"cfg\""), "precondition: level 3 lays the cfg overlay");
+        java.util.regex.Matcher ids = java.util.regex.Pattern.compile("\"(can://widgets/java/[^\"]*)\"").matcher(json);
+        int seen = 0;
+        while (ids.find()) {
+            assertTrue(ids.group(1).startsWith(moduleId),
+                    "every code id, overlay endpoints included, is under the repo-relative module: " + ids.group(1));
+            seen++;
+        }
+        assertTrue(seen > 0, "precondition: ids were emitted");
+        assertConformsToV2Schema(out);
+    }
+
+    @Test
+    void workspaceRootPrefixesArtifactKeysWithoutChangingClassification(@TempDir Path tmp) throws IOException {
+        Path repo = tmp.resolve("repo");
+        Path in = artifactProject(repo.resolve("services/app"));
+        Path out = tmp.resolve("out");
+        assertEquals(0, run("-i", in.toString(), "-o", out.toString(),
+                "--workspace-root", repo.toString(), "--app-name", "widgets"));
+
+        JsonObject app = application(out);
+        JsonObject artifacts = app.getAsJsonObject("artifacts");
+        assertRepoRelative(artifacts.keySet(), "services/app/");
+
+        JsonObject pom = artifacts.getAsJsonObject("services/app/pom.xml");
+        assertNotNull(pom, "got: " + artifacts.keySet());
+        assertEquals("services/app/pom.xml", pom.get("path").getAsString());
+        assertEquals(CanId.artifactId("widgets", "services/app/pom.xml"), pom.get("id").getAsString());
+        assertEquals("full", pom.get("extraction").getAsString(),
+                "the manifest is still read from disk under the repo-relative key");
+        assertFalse(app.getAsJsonArray("dependencies").isEmpty(), "and its dependency still extracted");
+
+        JsonArray propsKeys = artifacts.getAsJsonObject("services/app/application.properties")
+                .getAsJsonArray("config_keys");
+        assertEquals(1, propsKeys.size(), "config keys are still extracted");
+        assertConformsToV2Schema(out);
+    }
+
+    @Test
+    void workspaceRootEqualToInputChangesNothing(@TempDir Path tmp) throws IOException {
+        Path in = artifactProject(tmp.resolve("app"));
+        Path without = tmp.resolve("without");
+        Path with = tmp.resolve("with");
+        assertEquals(0, run("-i", in.toString(), "-o", without.toString(), "--app-name", "widgets"));
+        assertEquals(0, run("-i", in.toString(), "-o", with.toString(), "--app-name", "widgets",
+                "--workspace-root", in.toString()));
+        assertEquals(application(without).get("symbol_table").toString(),
+                application(with).get("symbol_table").toString());
+        assertEquals(application(without).get("artifacts").toString(),
+                application(with).get("artifacts").toString());
+    }
+
+    @Test
+    void workspaceRootMustContainTheInput(@TempDir Path tmp) throws IOException {
+        Path in = project(tmp.resolve("app"));
+        Path elsewhere = Files.createDirectories(tmp.resolve("elsewhere"));
+        assertNotEquals(0, run("-i", in.toString(), "-o", tmp.resolve("out").toString(),
+                        "--workspace-root", elsewhere.toString()),
+                "an input outside the workspace root would need absolute or .. keys");
+        assertFalse(Files.exists(tmp.resolve("out/analysis.json")), "and nothing is written");
+    }
+
+    @Test
+    void workspaceRootIsRejectedWithSchemaV1(@TempDir Path tmp) throws IOException {
+        Path in = project(tmp.resolve("app"));
+        assertNotEquals(0, run("-i", in.toString(), "-o", tmp.resolve("out").toString(),
+                        "--schema", "v1", "--workspace-root", tmp.toString()),
+                "v1 keys are absolute: the flag has nothing to relativize");
+    }
 }

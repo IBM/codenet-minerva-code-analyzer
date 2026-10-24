@@ -126,6 +126,7 @@ Usage: codeanalyzer [-hvV] [--no-build] [--no-clean-dependencies]
                     [-a=<analysisLevel>] [-b=<build>] [-f=<projectRootPom>]
                     [-i=<input>] [-o=<output>] [-s=<sourceAnalysis>]
                     [--emit=<emit>] [--app-name=<appName>]
+                    [--workspace-root=<dir>]
                     [--neo4j-uri=<uri>] [--neo4j-user=<user>]
                     [--neo4j-password=<password>] [--neo4j-database=<db>]
                     [-t=<targetFiles>]...
@@ -145,6 +146,9 @@ Analyze java application.
                                schema (the Neo4j schema.neo4j.json contract).
       --app-name=<name>      Logical application name for the graph :JApplication
                                anchor (default: input dir name).
+      --workspace-root=<dir> Directory that file keys, module ids and artifact
+                               ids are relative to (default: --input). Must
+                               contain --input. Not supported with --schema v1.
       --neo4j-uri=<uri>      Push the graph to a live Neo4j over Bolt (incremental);
                                omit to write graph.cypher. Falls back to the
                                NEO4J_URI environment variable.
@@ -156,6 +160,19 @@ Analyze java application.
   -h, --help                 Show this help message and exit.
   -V, --version              Print version information and exit.
 ```
+
+**Repository-relative paths.** By default, `symbol_table` keys and the ids built from them are relative to
+`--input`. When the project sits inside a larger repository, pass `--workspace-root` to make them
+repository-relative instead:
+
+```bash
+codeanalyzer -i monorepo/services/orders --workspace-root monorepo
+# symbol_table key: services/orders/src/main/java/com/acme/Order.java
+```
+
+Only the path part of ids changes. The application id (`can://<app-name>`) stays the same. Keys
+change when you toggle the flag, so a `--cache-dir` written without it is not reused by a run with
+it, and the other way round.
 
 
 ## 3. Installing `codeanalyzer` as a native binary (once built, no JVM will be required for running `codeanalyzer`)
